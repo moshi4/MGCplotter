@@ -26,16 +26,24 @@ def run(ref_file: Path, outdir: Path, thread_num: int, evalue: float):
     """Run CSplotter workflow"""
     outdir.mkdir(exist_ok=True)
 
+    config_dir = outdir / "circos_config"
+    config_dir.mkdir(exist_ok=True)
+
     gbk = Genbank(ref_file)
-    circos_config = CircosConfig(gbk, outdir)
+    circos_config = CircosConfig(gbk, config_dir, window_size=5000, step_size=2000)
 
     # karyotype_file = outdir / "karyotype.txt"
     # circos_config.write_karyotype_file(karyotype_file)
 
-    config_file = outdir / "circos.conf"
+    config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
     sp.run(f"circos -conf {config_file}", shell=True)
+
+    circos_png_file, circos_svg_file = "circos.png", "circos.svg"
+    (outdir / circos_png_file).unlink(missing_ok=True)
+    os.rename(circos_png_file, outdir / circos_png_file)
+    os.rename(circos_svg_file, outdir / circos_svg_file)
 
 
 def get_args():

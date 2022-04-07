@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import List, Union
 
-from Bio import SeqIO
+from Bio import SeqIO, SeqUtils
 from Bio.SeqFeature import Seq, SeqFeature
 from Bio.SeqRecord import SeqRecord
 
@@ -30,9 +30,9 @@ class Genbank:
         """Genome sequence length of Genbank first record"""
         return len(self._first_record.seq)
 
-    def gc_skew(self, window_size: int = 5000, step_size: int = 200) -> List[float]:
+    def gc_skew(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
         """GC Skew"""
-        values = []
+        gc_skew_values = []
         seq = self._first_record.seq
         for i in range(0, len(seq), step_size):
             start_pos = i - int(window_size / 2)
@@ -47,8 +47,22 @@ class Genbank:
                 skew = (g - c) / float(g + c)
             except ZeroDivisionError:
                 skew = 0.0
-            values.append(skew)
-        return values
+            gc_skew_values.append(skew)
+        return gc_skew_values
+
+    def gc_content(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
+        """GC Content"""
+        gc_content_values = []
+        seq = self._first_record.seq
+        for i in range(0, len(seq), step_size):
+            start_pos = i - int(window_size / 2)
+            start_pos = 0 if start_pos < 0 else start_pos
+            end_pos = i + int(window_size / 2)
+            end_pos = len(seq) if end_pos > len(seq) else end_pos
+
+            subseq = seq[start_pos:end_pos]
+            gc_content_values.append(SeqUtils.GC(subseq))
+        return gc_content_values
 
     def extract_all_features(
         self,
