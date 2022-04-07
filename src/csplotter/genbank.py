@@ -1,6 +1,6 @@
 from functools import cached_property
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from Bio import SeqIO, SeqUtils
 from Bio.SeqFeature import Seq, SeqFeature
@@ -72,26 +72,39 @@ class Genbank:
 
     def extract_all_features(
         self,
-        only_first_record: bool = False,
         feature_types: List[str] = ["CDS"],
+        target_strand: Optional[int] = None,
+        only_first_record: bool = False,
     ) -> List[SeqFeature]:
         """Extract all features
 
         Args:
-            only_first_record (bool): Exatract from only first record or not
             feature_types (List[str]): Feature types to extract
+            target_strand (Optional[int]): Target starnd to extract
+            only_first_record (bool): Exatract from only first record or not
         Returns:
             List[SeqFeature]: All features
         """
+        features = []
         if only_first_record:
-            return [f for f in self._first_record.features if f.type in feature_types]
+            features = [
+                f for f in self._first_record.features if f.type in feature_types
+            ]
         else:
-            features = []
             for record in self._records:
                 for f in record.features:
                     if f.type in feature_types:
                         features.append(f)
-            return features
+
+        result_features = []
+        for feature in features:
+            start = feature.location.parts[0].start
+            end = feature.location.parts[0].end
+            if start > end:
+                continue
+            if target_strand is None or target_strand == feature.strand:
+                result_features.append(feature)
+        return result_features
 
     def write_cds_protein_features_fasta(
         self,
@@ -99,7 +112,7 @@ class Genbank:
         only_first_record: bool = False,
     ):
         """Write CDS protein features fasta"""
-        features = self.extract_all_features(only_first_record, ["CDS"])
+        features = self.extract_all_features(["CDS"], only_first_record)
         cds_seq_records: List[SeqRecord] = []
         for idx, feature in enumerate(features, 1):
             qualifiers = feature.qualifiers

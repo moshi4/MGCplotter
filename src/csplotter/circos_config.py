@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List, Optional
 
 from csplotter.genbank import Genbank
 
@@ -23,6 +24,8 @@ class CircosConfig:
         self._ideogram_file = outdir / "ideogram.conf"
         self._ticks_file = outdir / "ticks.conf"
         self._karyotype_file = outdir / "karyotype.txt"
+        self._forward_cds_file = outdir / "forward_cds.txt"
+        self._reverse_cds_file = outdir / "reverse_cds.txt"
         self._gc_skew_file = outdir / "gc_skew.txt"
         self._gc_content_file = outdir / "gc_content.txt"
 
@@ -31,6 +34,7 @@ class CircosConfig:
         self._write_karyotype_file()
         self._write_ideogram_conf()
         self._write_ticks_conf()
+        forward_cds_conf = self._add_feature(feature_types=["CDS"], target_strand=1)
         gc_content_conf = self._add_gc_content()
         gc_skew_conf = self._add_gc_skew()
         config_contents = (
@@ -39,6 +43,7 @@ class CircosConfig:
             + f"<<include {self._ideogram_file}>>\n"
             + f"<<include {self._ticks_file}>>\n"
             + "<plots>\n"
+            + forward_cds_conf
             + gc_content_conf
             + gc_skew_conf
             + "</plots>\n"
@@ -107,12 +112,46 @@ class CircosConfig:
         with open(self._ticks_file, "w") as f:
             f.write(contents)
 
+    def _add_feature(
+        self, feature_types: List[str], target_strand: Optional[int] = None
+    ) -> str:
+        self._write_feature_file(feature_types, target_strand)
+        contents = (
+            f"##### {'-'.join(feature_types)} Features #####\n"
+            + "<plot>\n"
+            + "type = tile\n"
+            + f"file = {self._forward_cds_file}\n"
+            + "r0 = 0.95r\n"
+            + "r1 = 1.00r\n"
+            + "orientation = out\n"
+            + "layers = 1\n"
+            + "margin = 0.01u\n"
+            + "thickness = 50\n"
+            + "padding = 1\n"
+            + "stroke_thickness = .5\n"
+            + "stroke_color = black\n"
+            + "layers_overflow = collapse\n"
+            + "</plot>\n"
+        )
+        return contents
+
+    def _write_feature_file(
+        self, feature_types: List[str], target_strand: Optional[int]
+    ) -> None:
+        features = self.ref_gbk.extract_all_features(feature_types, target_strand)
+        contents = ""
+        for f in features:
+            start, end, strand = f.location.start, f.location.end, f.strand
+            strand = "+" if strand == 1 else "-"
+            contents += f"main {start} {end} {strand} color=ff0000\n"
+        with open(self._forward_cds_file, "w") as f:
+            f.write(contents)
+
     def _add_gc_skew(self) -> str:
         abs_max_value = self._write_gc_skew_file()
         contents = (
             "##### GC skew #####\n"
             + "<plot>\n"
-            # + "type = histogram\n"
             + "type = line\n"
             + f"file = {self._gc_skew_file}\n"
             + "extend_bin = yes\n"
@@ -142,7 +181,6 @@ class CircosConfig:
         contents = (
             "##### GC content #####\n"
             + "<plot>\n"
-            # + "type = histogram\n"
             + "type = line\n"
             + f"file = {self._gc_content_file}\n"
             + "extend_bin = yes\n"
