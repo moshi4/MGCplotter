@@ -26,8 +26,6 @@ class CircosConfig:
         self._gc_skew_file = outdir / "gc_skew.txt"
         self._gc_content_file = outdir / "gc_content.txt"
 
-        self._karyotype_filename = "karyotype.txt"
-
     def write_config_file(self, config_outfile: Path) -> Path:
         """Write circos config file"""
         self._write_karyotype_file()
@@ -160,11 +158,11 @@ class CircosConfig:
 
     def _write_gc_content_file(self) -> float:
         gc_content_values = self.ref_gbk.gc_content(self.window_size, self.step_size)
-        gc_content_values = [v - 50 for v in gc_content_values]
+        gc_content_values = [v - self.ref_gbk.average_gc for v in gc_content_values]
         contents = ""
         for i, gc_content in enumerate(gc_content_values):
             pos = i * self.step_size
-            color = "purple" if gc_content > 0 else "green"
+            color = "black" if gc_content > 0 else "grey"
             contents += f"main {pos} {pos} {gc_content} fill_color={color}\n"
         with open(self._gc_content_file, "w") as f:
             f.write(contents)

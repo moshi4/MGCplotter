@@ -1,3 +1,4 @@
+from functools import cached_property
 from pathlib import Path
 from typing import List, Union
 
@@ -63,6 +64,11 @@ class Genbank:
             subseq = seq[start_pos:end_pos]
             gc_content_values.append(SeqUtils.GC(subseq))
         return gc_content_values
+
+    @cached_property
+    def average_gc(self) -> float:
+        """Average GC content"""
+        return SeqUtils.GC(self._first_record.seq)
 
     def extract_all_features(
         self,

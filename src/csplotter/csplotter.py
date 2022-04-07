@@ -32,9 +32,6 @@ def run(ref_file: Path, outdir: Path, thread_num: int, evalue: float):
     gbk = Genbank(ref_file)
     circos_config = CircosConfig(gbk, config_dir, window_size=5000, step_size=2000)
 
-    # karyotype_file = outdir / "karyotype.txt"
-    # circos_config.write_karyotype_file(karyotype_file)
-
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
