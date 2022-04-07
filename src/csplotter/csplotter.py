@@ -91,7 +91,7 @@ def get_args():
         "-v",
         "--version",
         action="version",
-        version=f"COGclassifier: v{__version__}",
+        version=f"v{__version__}",
         help="Print version information",
     )
     return parser.parse_args()
