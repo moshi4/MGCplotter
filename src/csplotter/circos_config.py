@@ -37,21 +37,23 @@ class CircosConfig:
         forward_cds_conf = self._add_feature(feature_types=["CDS"], target_strand=1)
         gc_content_conf = self._add_gc_content()
         gc_skew_conf = self._add_gc_skew()
-        config_contents = (
-            f"karyotype = {self._karyotype_file}\n"
-            + "chromosomes_units = 1000000\n"
-            + f"<<include {self._ideogram_file}>>\n"
-            + f"<<include {self._ticks_file}>>\n"
-            + "<plots>\n"
-            + forward_cds_conf
-            + gc_content_conf
-            + gc_skew_conf
-            + "</plots>\n"
-            + "<image>\n"
-            + "<<include image.conf>>\n"
-            + "</image>\n"
-            + "<<include colors_fonts_patterns.conf>> \n"
-            + "<<include housekeeping.conf>> \n"
+        config_contents = self._concat_lines(
+            [
+                "karyotype = {0}".format(self._karyotype_file),
+                "chromosomes_units = 1000000",
+                "<<include {0}>>".format(self._ideogram_file),
+                "<<include {0}>>".format(self._ticks_file),
+                "<plots>",
+                forward_cds_conf,
+                gc_content_conf,
+                gc_skew_conf,
+                "</plots>",
+                "<image>",
+                "<<include image.conf>>",
+                "</image>",
+                "<<include colors_fonts_patterns.conf>> ",
+                "<<include housekeeping.conf>> ",
+            ]
         )
 
         with open(config_outfile, "w") as f:
@@ -60,78 +62,82 @@ class CircosConfig:
         return self._config_file
 
     def _write_ideogram_conf(self) -> None:
-        contents = (
-            ""
-            + "<ideogram>\n"
-            + "<spacing>\n"
-            + "default = 0.005r\n"
-            + "</spacing>\n"
-            + "# Ideogram position, fill and outline\n"
-            + "radius           = 0.90r\n"
-            + "thickness        = 20p\n"
-            + "fill             = yes\n"
-            + "stroke_color     = dgrey\n"
-            + "stroke_thickness = 2p\n"
-            + "# Minimum definition for ideogram labels.\n"
-            + "show_label       = yes\n"
-            + "# see etc/fonts.conf for list of font names\n"
-            + "label_font       = default \n"
-            + "label_radius     = 1r + 75p\n"
-            + "label_size       = 30\n"
-            + "label_parallel   = yes\n"
-            + "</ideogram>\n"
+        contents = self._concat_lines(
+            [
+                "<ideogram>",
+                "<spacing>",
+                "default = 0.005r",
+                "</spacing>",
+                "radius           = 0.90r",
+                "thickness        = 20p",
+                "fill             = yes",
+                "stroke_color     = dgrey",
+                "stroke_thickness = 2p",
+                "show_label       = yes",
+                "label_font       = default ",
+                "label_radius     = 1r + 75p",
+                "label_size       = 30",
+                "label_parallel   = yes",
+                "</ideogram>",
+            ]
         )
         with open(self._ideogram_file, "w") as f:
             f.write(contents)
 
     def _write_ticks_conf(self) -> None:
-        contents = (
-            ""
-            + "show_ticks          = yes\n"
-            + "show_tick_labels    = yes\n"
-            + "<ticks>\n"
-            + "radius           = 1r\n"
-            + "color            = black\n"
-            + "thickness        = 2p\n"
-            + "multiplier       = 1e-6\n"
-            + "format           = %d\n"
-            + "<tick>\n"
-            + "spacing        = 5u\n"
-            + "size           = 10p\n"
-            + "</tick>\n"
-            + "<tick>\n"
-            + "spacing        = 25u\n"
-            + "size           = 15p\n"
-            + "show_label     = yes\n"
-            + "label_size     = 20p\n"
-            + "label_offset   = 10p\n"
-            + "format         = %d\n"
-            + "</tick>\n"
-            + "</ticks>\n"
+        contents = self._concat_lines(
+            [
+                "show_ticks       = yes",
+                "show_tick_labels = yes",
+                "<ticks>",
+                "radius     = 1r",
+                "color      = black",
+                "thickness  = 2p",
+                "multiplier = 1e-6",
+                "format     = %d",
+                "<tick>",
+                "spacing = 5u",
+                "size    = 10p",
+                "</tick>",
+                "<tick>",
+                "spacing      = 25u",
+                "size         = 15p",
+                "show_label   = yes",
+                "label_size   = 20p",
+                "label_offset = 10p",
+                "format       = %d",
+                "</tick>",
+                "</ticks>",
+            ]
         )
         with open(self._ticks_file, "w") as f:
             f.write(contents)
 
+    ###########################################################################
+    # Feature(CDS, rRNA, tRNA) config
+    ###########################################################################
     def _add_feature(
         self, feature_types: List[str], target_strand: Optional[int] = None
     ) -> str:
         self._write_feature_file(feature_types, target_strand)
-        contents = (
-            f"##### {'-'.join(feature_types)} Features #####\n"
-            + "<plot>\n"
-            + "type = tile\n"
-            + f"file = {self._forward_cds_file}\n"
-            + "r0 = 0.95r\n"
-            + "r1 = 1.00r\n"
-            + "orientation = out\n"
-            + "layers = 1\n"
-            + "margin = 0.01u\n"
-            + "thickness = 50\n"
-            + "padding = 1\n"
-            + "stroke_thickness = .5\n"
-            + "stroke_color = black\n"
-            + "layers_overflow = collapse\n"
-            + "</plot>\n"
+        contents = self._concat_lines(
+            [
+                f"##### {'-'.join(feature_types)} Features #####",
+                "<plot>",
+                "type             = tile",
+                "file             = {0}".format(self._forward_cds_file),
+                "r0               = 0.95r",
+                "r1               = 1.00r",
+                "orientation      = out",
+                "layers           = 1",
+                "margin           = 0.01u",
+                "thickness        = 50",
+                "padding          = 1",
+                "stroke_color     = black",
+                "stroke_thickness = 0",
+                "layers_overflow  = collapse",
+                "</plot>",
+            ]
         )
         return contents
 
@@ -147,21 +153,25 @@ class CircosConfig:
         with open(self._forward_cds_file, "w") as f:
             f.write(contents)
 
+    ###########################################################################
+    # GC skew config
+    ###########################################################################
     def _add_gc_skew(self) -> str:
         abs_max_value = self._write_gc_skew_file()
-        contents = (
-            "##### GC skew #####\n"
-            + "<plot>\n"
-            + "type = line\n"
-            + f"file = {self._gc_skew_file}\n"
-            + "extend_bin = yes\n"
-            + "thickness = 0\n"
-            + "r0 = 0.2r\n"
-            + "r1 = 0.35r\n"
-            + "orientation = out\n"
-            + f"min = -{abs_max_value}\n"
-            + f"max = {abs_max_value}\n"
-            + "</plot>\n"
+        contents = self._concat_lines(
+            [
+                "##### GC Skew #####",
+                "<plot>",
+                "type        = line",
+                "file        = {0}".format(self._gc_skew_file),
+                "r0          = 0.2r",
+                "r1          = 0.35r",
+                "min         = -{0}".format(abs_max_value),
+                "max         = {0}".format(abs_max_value),
+                "thickness   = 0",
+                "orientation = out",
+                "</plot>",
+            ]
         )
         return contents
 
@@ -176,21 +186,25 @@ class CircosConfig:
             f.write(contents)
         return max(abs(v) for v in gc_skew_values)
 
+    ###########################################################################
+    # GC content config
+    ###########################################################################
     def _add_gc_content(self) -> str:
         abs_max_value = self._write_gc_content_file()
-        contents = (
-            "##### GC content #####\n"
-            + "<plot>\n"
-            + "type = line\n"
-            + f"file = {self._gc_content_file}\n"
-            + "extend_bin = yes\n"
-            + "thickness = 0\n"
-            + "r0 = 0.35r\n"
-            + "r1 = 0.5r\n"
-            + "orientation = out\n"
-            + f"min = -{abs_max_value}\n"
-            + f"max = {abs_max_value}\n"
-            + "</plot>\n"
+        contents = self._concat_lines(
+            [
+                "##### GC Content #####",
+                "<plot>",
+                "type        = line",
+                "file        = {0}".format(self._gc_content_file),
+                "r0          = 0.35r",
+                "r1          = 0.5r",
+                "min         = -{0}".format(abs_max_value),
+                "max         = {0}".format(abs_max_value),
+                "thickness   = 0",
+                "orientation = out",
+                "</plot>",
+            ]
         )
         return contents
 
@@ -210,3 +224,6 @@ class CircosConfig:
         genome_length = self.ref_gbk.genome_length
         with open(self._karyotype_file, "w") as f:
             f.write(f"chr - main 1 0 {genome_length} grey")
+
+    def _concat_lines(self, lines: List[str]) -> str:
+        return "\n".join(lines) + "\n"
