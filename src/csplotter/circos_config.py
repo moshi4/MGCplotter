@@ -53,12 +53,17 @@ class CircosConfig:
         self._gc_content_r = 0.15
         self._gc_skew_r = 0.15
 
-    def write_config_file(self, config_outfile: Path) -> Path:
-        """Write circos config file"""
+    def write_config_file(self, config_outfile: Path) -> None:
+        """Write Circos config file
+
+        Args:
+            config_outfile (Path): Circos config file
+        """
         # Circos config
-        self._write_karyotype_conf()
         self._write_ideogram_conf()
         self._write_ticks_conf()
+        # Karyotype txt
+        self._write_karyotype_file()
         # Feature config
         feature_conf = ""
         feature_conf += self._add_feature(
@@ -83,9 +88,9 @@ class CircosConfig:
                 "<<include {0}>>".format(self._ideogram_file),
                 "<<include {0}>>".format(self._ticks_file),
                 "<plots>",
-                feature_conf,
-                gc_content_conf,
-                gc_skew_conf,
+                feature_conf.rstrip("\n"),
+                gc_content_conf.rstrip("\n"),
+                gc_skew_conf.rstrip("\n"),
                 "</plots>",
                 "<image>",
                 "<<include image.conf>>",
@@ -94,16 +99,14 @@ class CircosConfig:
                 "<<include housekeeping.conf>> ",
             ]
         )
-
         with open(config_outfile, "w") as f:
             f.write(config_contents)
-
-        return self._config_file
 
     ###########################################################################
     # Karyotype config
     ###########################################################################
-    def _write_karyotype_conf(self) -> None:
+    def _write_karyotype_file(self) -> None:
+        """Write karyotype txt"""
         genome_length = self.ref_gbk.genome_length
         with open(self._karyotype_file, "w") as f:
             f.write(f"chr - main 1 0 {genome_length} grey")
@@ -112,6 +115,7 @@ class CircosConfig:
     # Ideogram config
     ###########################################################################
     def _write_ideogram_conf(self) -> None:
+        """Write Circos Ideogram config"""
         contents = self._concat_lines(
             [
                 "<ideogram>",
@@ -138,6 +142,7 @@ class CircosConfig:
     # Ticks config
     ###########################################################################
     def _write_ticks_conf(self) -> None:
+        """Write Circos ticks config"""
         contents = self._concat_lines(
             [
                 "show_ticks       = yes",
@@ -176,6 +181,14 @@ class CircosConfig:
         target_strand: Optional[int] = None,
         color: str = "grey",
     ) -> str:
+        """Add Feature track
+
+        Args:
+            feature_file (Path): Feature file to write
+            feature_types (List[str]): Feature types (e.g. 'CDS', 'rRNA', 'tRNA')
+            target_strand (Optional[int]): Strand ('1', '-1', 'None')
+            color (str): Feature color to be drawn
+        """
         self._write_feature_file(feature_file, feature_types, target_strand, color)
         contents = self._concat_lines(
             [
@@ -183,12 +196,12 @@ class CircosConfig:
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(feature_file),
-                "r0               = {0}r".format(self._r_counter - self._feature_r),
-                "r1               = {0}r".format(self._r_counter),
+                "r0               = {0:.3f}r".format(self._r_counter - self._feature_r),
+                "r1               = {0:.3f}r".format(self._r_counter),
                 "orientation      = out",
                 "layers           = 1",
                 "margin           = 0.01u",
-                "thickness        = 50",
+                "thickness        = {0}".format(self._feature_r * 1000),
                 "padding          = 1",
                 "stroke_color     = black",
                 "stroke_thickness = 0",
@@ -206,6 +219,14 @@ class CircosConfig:
         target_strand: Optional[int],
         color: str,
     ) -> None:
+        """Write feature file
+
+        Args:
+            feature_file (Path): Feature file to write
+            feature_types (List[str]): Feature types (e.g. 'CDS', 'rRNA', 'tRNA')
+            target_strand (Optional[int]): Strand ('1', '-1', 'None')
+            color (str): Feature color to be drawn
+        """
         features = self.ref_gbk.extract_all_features(feature_types, target_strand)
         contents = ""
         for f in features:
@@ -216,44 +237,10 @@ class CircosConfig:
             f.write(contents)
 
     ###########################################################################
-    # GC skew config
-    ###########################################################################
-    def _add_gc_skew(self) -> str:
-        self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
-        abs_max_value = self._write_gc_skew_file()
-        contents = self._concat_lines(
-            [
-                "##### GC Skew #####",
-                "<plot>",
-                "type        = line",
-                "file        = {0}".format(self._gc_skew_file),
-                "r0          = {0}r".format(self._r_counter - self._gc_skew_r),
-                "r1          = {0}r".format(self._r_counter),
-                "min         = -{0}".format(abs_max_value),
-                "max         = {0}".format(abs_max_value),
-                "thickness   = 0",
-                "orientation = out",
-                "</plot>",
-            ]
-        )
-        self._r_counter -= self._gc_skew_r
-        return contents
-
-    def _write_gc_skew_file(self) -> float:
-        gc_skew_values = self.ref_gbk.gc_skew(self.window_size, self.step_size)
-        contents = ""
-        for i, value in enumerate(gc_skew_values):
-            pos = i * self.step_size
-            color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
-            contents += f"main {pos} {pos} {value} fill_color={color}\n"
-        with open(self._gc_skew_file, "w") as f:
-            f.write(contents)
-        return max(abs(v) for v in gc_skew_values)
-
-    ###########################################################################
     # GC content config
     ###########################################################################
     def _add_gc_content(self) -> str:
+        """Add GC Content track"""
         self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
         abs_max_value = self._write_gc_content_file()
         contents = self._concat_lines(
@@ -262,10 +249,10 @@ class CircosConfig:
                 "<plot>",
                 "type        = line",
                 "file        = {0}".format(self._gc_content_file),
-                "r0          = {0}r".format(self._r_counter - self._gc_content_r),
-                "r1          = {0}r".format(self._r_counter),
-                "min         = -{0}".format(abs_max_value),
-                "max         = {0}".format(abs_max_value),
+                "r0          = {0:.3f}r".format(self._r_counter - self._gc_content_r),
+                "r1          = {0:.3f}r".format(self._r_counter),
+                "min         = -{0:.3f}".format(abs_max_value),
+                "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
                 "orientation = out",
                 "</plot>",
@@ -275,6 +262,7 @@ class CircosConfig:
         return contents
 
     def _write_gc_content_file(self) -> float:
+        """Write GC Content file"""
         gc_content_values = self.ref_gbk.gc_content(self.window_size, self.step_size)
         gc_content_values = [v - self.ref_gbk.average_gc for v in gc_content_values]
         contents = ""
@@ -286,6 +274,46 @@ class CircosConfig:
             f.write(contents)
         return max(abs(v) for v in gc_content_values)
 
+    ###########################################################################
+    # GC skew config
+    ###########################################################################
+    def _add_gc_skew(self) -> str:
+        """Add GC Skew track"""
+        self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
+        abs_max_value = self._write_gc_skew_file()
+        contents = self._concat_lines(
+            [
+                "##### GC Skew #####",
+                "<plot>",
+                "type        = line",
+                "file        = {0}".format(self._gc_skew_file),
+                "r0          = {0:.3f}r".format(self._r_counter - self._gc_skew_r),
+                "r1          = {0:.3f}r".format(self._r_counter),
+                "min         = -{0:.3f}".format(abs_max_value),
+                "max         = {0:.3f}".format(abs_max_value),
+                "thickness   = 0",
+                "orientation = out",
+                "</plot>",
+            ]
+        )
+        self._r_counter -= self._gc_skew_r
+        return contents
+
+    def _write_gc_skew_file(self) -> float:
+        """Write GC Skew file"""
+        gc_skew_values = self.ref_gbk.gc_skew(self.window_size, self.step_size)
+        contents = ""
+        for i, value in enumerate(gc_skew_values):
+            pos = i * self.step_size
+            color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
+            contents += f"main {pos} {pos} {value} fill_color={color}\n"
+        with open(self._gc_skew_file, "w") as f:
+            f.write(contents)
+        return max(abs(v) for v in gc_skew_values)
+
+    ###########################################################################
+    # Util functions
+    ###########################################################################
     def _concat_lines(self, lines: List[str]) -> str:
         """Concatenate lines
 
