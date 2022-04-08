@@ -177,9 +177,9 @@ class CircosConfig:
                 "radius      = 1r",
                 "color       = black",
                 "thickness   = 2p",
-                "multiplier  = 1e-6",
+                "multiplier  = {0}".format(self.ticks_multiplier),
                 "orientation = out",
-                "format      = %.1f Mb",
+                "format      = {0} {1}".format(self.ticks_format, self.ticks_unit),
                 "<tick>",
                 "spacing      = 1u",
                 "size         = 20p",
@@ -193,7 +193,7 @@ class CircosConfig:
                 "show_label   = yes",
                 "label_size   = 40p",
                 "label_offset = 10p",
-                "format       = %.1f",
+                "format       = {0}".format(self.ticks_format),
                 "</tick>",
                 "</ticks>",
             ]
@@ -355,6 +355,21 @@ class CircosConfig:
     def step_size(self) -> int:
         """Step size for GC content & skew calculation"""
         return int(self.window_size * 0.4)
+
+    @property
+    def ticks_format(self) -> str:
+        """Ticks format"""
+        return "%.1f"
+
+    @property
+    def ticks_multiplier(self) -> float:
+        """Ticks multiplier"""
+        return 1e-6
+
+    @property
+    def ticks_unit(self) -> str:
+        """Ticks unit ('Mb' or 'Kb')"""
+        return "Mb"
 
     ###########################################################################
     # Util functions
