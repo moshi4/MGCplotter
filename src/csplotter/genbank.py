@@ -96,6 +96,9 @@ class Genbank:
                     if f.type in feature_types:
                         features.append(f)
 
+        if "CDS" not in feature_types:
+            return features
+
         result_features = []
         for feature in features:
             # Exclude pseudogene (no translated gene)
