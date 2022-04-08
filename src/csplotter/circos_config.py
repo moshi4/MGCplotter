@@ -13,20 +13,30 @@ class CircosConfig:
         outdir: Path,
         window_size: int = 5000,
         step_size: int = 2000,
-        forward_cds_color: str = "red",
-        reverse_cds_color: str = "blue",
-        rrna_color: str = "green",
-        trna_color: str = "purple",
-        gc_content_p_color: str = "black",
-        gc_content_n_color: str = "grey",
-        gc_skew_p_color: str = "blue",
-        gc_skew_n_color: str = "orange",
+        # Radius
+        ref_feature_r=0.05,
+        conserved_seq_r=0.05,
+        gc_content_r=0.15,
+        gc_skew_r=0.15,
+        # Color
+        forward_cds_color: str = "ff0000",  # red
+        reverse_cds_color: str = "0000ff",  # blue
+        rrna_color: str = "008000",  # green
+        trna_color: str = "800080",  # magenta
+        gc_content_p_color: str = "000000",  # black
+        gc_content_n_color: str = "808080",  # grey
+        gc_skew_p_color: str = "808000",  # olive
+        gc_skew_n_color: str = "800080",  # purple
     ):
         """Constructor"""
         self.ref_gbk = ref_gbk
         self.outdir = outdir
         self.window_size = window_size
         self.step_size = step_size
+        self.ref_feature_r = ref_feature_r
+        self.conserved_seq_r = conserved_seq_r
+        self.gc_content_r = gc_content_r
+        self.gc_skew_r = gc_skew_r
         self.forward_cds_color = forward_cds_color
         self.reverse_cds_color = reverse_cds_color
         self.rrna_color = rrna_color
@@ -40,18 +50,14 @@ class CircosConfig:
         self._ideogram_file = outdir / "ideogram.conf"
         self._ticks_file = outdir / "ticks.conf"
         self._karyotype_file = outdir / "karyotype.txt"
-        self._forward_cds_file = outdir / "forward_cds.txt"
-        self._reverse_cds_file = outdir / "reverse_cds.txt"
-        self._rrna_file = outdir / "rRNA.txt"
-        self._trna_file = outdir / "tRNA.txt"
+        self._forward_cds_file = outdir / "feature_forward_cds.txt"
+        self._reverse_cds_file = outdir / "feature_reverse_cds.txt"
+        self._rrna_file = outdir / "feature_rRNA.txt"
+        self._trna_file = outdir / "feature_tRNA.txt"
         self._gc_skew_file = outdir / "gc_skew.txt"
         self._gc_content_file = outdir / "gc_content.txt"
 
         self._r_counter = 1.0
-        self._feature_r = 0.05
-        self._query_r = 0.05
-        self._gc_content_r = 0.15
-        self._gc_skew_r = 0.15
 
     def write_config_file(self, config_outfile: Path) -> None:
         """Write Circos config file
@@ -59,8 +65,9 @@ class CircosConfig:
         Args:
             config_outfile (Path): Circos config file
         """
-        # Circos config
+        # Ideogram config
         self._write_ideogram_conf()
+        # Ticks config
         self._write_ticks_conf()
         # Karyotype txt
         self._write_karyotype_file()
@@ -78,9 +85,12 @@ class CircosConfig:
         feature_conf += self._add_feature(
             self._trna_file, ["tRNA"], None, self.trna_color
         )
-        # GC content & skew config
+        # GC content config
         gc_content_conf = self._add_gc_content()
+        # GC skew config
         gc_skew_conf = self._add_gc_skew()
+
+        # Circos overall config
         config_contents = self._concat_lines(
             [
                 "karyotype = {0}".format(self._karyotype_file),
@@ -148,21 +158,21 @@ class CircosConfig:
                 "show_ticks       = yes",
                 "show_tick_labels = yes",
                 "<ticks>",
-                "radius     = 1r",
-                "color      = black",
-                "thickness  = 2p",
-                "multiplier = 1e-6",
+                "radius      = 1r",
+                "color       = black",
+                "thickness   = 2p",
+                "multiplier  = 1e-6",
                 "orientation = out",
-                "format     = %.1f Mb",
+                "format      = %.1f Mb",
                 "<tick>",
-                "spacing = 1u",
-                "size    = 20p",
-                "show_label = yes",
-                "label_size = 40p",
+                "spacing      = 1u",
+                "size         = 20p",
+                "show_label   = yes",
+                "label_size   = 40p",
                 "label_offset = 20p",
                 "</tick>",
                 "<tick>",
-                "spacing      = 0.1u",
+                "spacing      = 0.2u",
                 "size         = 10p",
                 "show_label   = yes",
                 "label_size   = 40p",
@@ -200,12 +210,14 @@ class CircosConfig:
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(feature_file),
-                "r0               = {0:.3f}r".format(self._r_counter - self._feature_r),
                 "r1               = {0:.3f}r".format(self._r_counter),
+                "r0               = {0:.3f}r".format(
+                    self._r_counter - self.ref_feature_r
+                ),
                 "orientation      = out",
                 "layers           = 1",
                 "margin           = 0.01u",
-                "thickness        = {0}".format(self._feature_r * 1000),
+                "thickness        = {0}".format(self.ref_feature_r * 1000),
                 "padding          = 1",
                 "stroke_color     = black",
                 "stroke_thickness = 0",
@@ -213,7 +225,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self._feature_r
+        self._r_counter -= self.ref_feature_r
         return contents
 
     def _write_feature_file(
@@ -253,8 +265,8 @@ class CircosConfig:
                 "<plot>",
                 "type        = line",
                 "file        = {0}".format(self._gc_content_file),
-                "r0          = {0:.3f}r".format(self._r_counter - self._gc_content_r),
                 "r1          = {0:.3f}r".format(self._r_counter),
+                "r0          = {0:.3f}r".format(self._r_counter - self.gc_content_r),
                 "min         = -{0:.3f}".format(abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
@@ -262,7 +274,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self._gc_content_r
+        self._r_counter -= self.gc_content_r
         return contents
 
     def _write_gc_content_file(self) -> float:
@@ -291,8 +303,8 @@ class CircosConfig:
                 "<plot>",
                 "type        = line",
                 "file        = {0}".format(self._gc_skew_file),
-                "r0          = {0:.3f}r".format(self._r_counter - self._gc_skew_r),
                 "r1          = {0:.3f}r".format(self._r_counter),
+                "r0          = {0:.3f}r".format(self._r_counter - self.gc_skew_r),
                 "min         = -{0:.3f}".format(abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
@@ -300,7 +312,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self._gc_skew_r
+        self._r_counter -= self.gc_skew_r
         return contents
 
     def _write_gc_skew_file(self) -> float:
