@@ -10,7 +10,8 @@ class CircosConfig:
     def __init__(
         self,
         ref_gbk: Genbank,
-        outdir: Path,
+        config_dir: Path,
+        img_dir: Path,
         window_size: int = 5000,
         step_size: int = 2000,
         # Radius
@@ -30,7 +31,8 @@ class CircosConfig:
     ):
         """Constructor"""
         self.ref_gbk = ref_gbk
-        self.outdir = outdir
+        self.config_dir = config_dir
+        self.img_dir = img_dir
         self.window_size = window_size
         self.step_size = step_size
         self.ref_feature_r = ref_feature_r
@@ -46,16 +48,16 @@ class CircosConfig:
         self.gc_skew_p_color = gc_skew_p_color
         self.gc_skew_n_color = gc_skew_n_color
 
-        self._config_file = outdir / "circos.conf"
-        self._ideogram_file = outdir / "ideogram.conf"
-        self._ticks_file = outdir / "ticks.conf"
-        self._karyotype_file = outdir / "karyotype.txt"
-        self._forward_cds_file = outdir / "feature_forward_cds.txt"
-        self._reverse_cds_file = outdir / "feature_reverse_cds.txt"
-        self._rrna_file = outdir / "feature_rRNA.txt"
-        self._trna_file = outdir / "feature_tRNA.txt"
-        self._gc_skew_file = outdir / "gc_skew.txt"
-        self._gc_content_file = outdir / "gc_content.txt"
+        self._config_file = config_dir / "circos.conf"
+        self._ideogram_file = config_dir / "ideogram.conf"
+        self._ticks_file = config_dir / "ticks.conf"
+        self._karyotype_file = config_dir / "karyotype.txt"
+        self._forward_cds_file = config_dir / "feature_forward_cds.txt"
+        self._reverse_cds_file = config_dir / "feature_reverse_cds.txt"
+        self._rrna_file = config_dir / "feature_rRNA.txt"
+        self._trna_file = config_dir / "feature_tRNA.txt"
+        self._gc_skew_file = config_dir / "gc_skew.txt"
+        self._gc_content_file = config_dir / "gc_content.txt"
 
         self._r_counter = 1.0
 
@@ -74,16 +76,24 @@ class CircosConfig:
         # Feature config
         feature_conf = ""
         feature_conf += self._add_feature(
-            self._forward_cds_file, ["CDS"], 1, self.forward_cds_color
+            self._forward_cds_file,
+            ["CDS"],
+            1,
+            self.forward_cds_color,
+            self.ref_feature_r,
         )
         feature_conf += self._add_feature(
-            self._reverse_cds_file, ["CDS"], -1, self.reverse_cds_color
+            self._reverse_cds_file,
+            ["CDS"],
+            -1,
+            self.reverse_cds_color,
+            self.ref_feature_r,
         )
         feature_conf += self._add_feature(
-            self._rrna_file, ["rRNA"], None, self.rrna_color
+            self._rrna_file, ["rRNA"], None, self.rrna_color, self.ref_feature_r
         )
         feature_conf += self._add_feature(
-            self._trna_file, ["tRNA"], None, self.trna_color
+            self._trna_file, ["tRNA"], None, self.trna_color, self.ref_feature_r
         )
         # GC content config
         gc_content_conf = self._add_gc_content()
@@ -104,6 +114,7 @@ class CircosConfig:
                 "</plots>",
                 "<image>",
                 "<<include image.conf>>",
+                "dir* = {0}".format(self.img_dir),
                 "</image>",
                 "<<include colors_fonts_patterns.conf>> ",
                 "<<include housekeeping.conf>> ",
@@ -194,6 +205,7 @@ class CircosConfig:
         feature_types: List[str],
         target_strand: Optional[int] = None,
         color: str = "grey",
+        feature_r: float = 0.07,
     ) -> str:
         """Add Feature track
 
@@ -202,6 +214,7 @@ class CircosConfig:
             feature_types (List[str]): Feature types (e.g. 'CDS', 'rRNA', 'tRNA')
             target_strand (Optional[int]): Strand ('1', '-1', 'None')
             color (str): Feature color to be drawn
+            feature_r (float): Feature radius size
         """
         self._write_feature_file(feature_file, feature_types, target_strand, color)
         contents = self._concat_lines(
@@ -211,13 +224,11 @@ class CircosConfig:
                 "type             = tile",
                 "file             = {0}".format(feature_file),
                 "r1               = {0:.3f}r".format(self._r_counter),
-                "r0               = {0:.3f}r".format(
-                    self._r_counter - self.ref_feature_r
-                ),
+                "r0               = {0:.3f}r".format(self._r_counter - feature_r),
                 "orientation      = out",
                 "layers           = 1",
                 "margin           = 0.01u",
-                "thickness        = {0}".format(self.ref_feature_r * 1000),
+                "thickness        = {0}".format(feature_r * 1000),
                 "padding          = 1",
                 "stroke_color     = black",
                 "stroke_thickness = 0",
@@ -225,7 +236,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self.ref_feature_r
+        self._r_counter -= feature_r
         return contents
 
     def _write_feature_file(
@@ -267,7 +278,7 @@ class CircosConfig:
                 "file        = {0}".format(self._gc_content_file),
                 "r1          = {0:.3f}r".format(self._r_counter),
                 "r0          = {0:.3f}r".format(self._r_counter - self.gc_content_r),
-                "min         = -{0:.3f}".format(abs_max_value),
+                "min         = {0:.3f}".format(-abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
                 "orientation = out",
@@ -305,7 +316,7 @@ class CircosConfig:
                 "file        = {0}".format(self._gc_skew_file),
                 "r1          = {0:.3f}r".format(self._r_counter),
                 "r0          = {0:.3f}r".format(self._r_counter - self.gc_skew_r),
-                "min         = -{0:.3f}".format(abs_max_value),
+                "min         = {0:.3f}".format(-abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
                 "orientation = out",

@@ -45,8 +45,9 @@ def run(
 
     ref_gbk = Genbank(ref_file)
     circos_config = CircosConfig(
-        ref_gbk,
-        config_dir,
+        ref_gbk=ref_gbk,
+        config_dir=config_dir,
+        img_dir=outdir,
         window_size=5000,
         step_size=2000,
         ref_feature_r=ref_feature_r,
@@ -67,11 +68,6 @@ def run(
     circos_config.write_config_file(config_file)
 
     sp.run(f"circos -conf {config_file}", shell=True)
-
-    circos_png_file, circos_svg_file = "circos.png", "circos.svg"
-    (outdir / circos_png_file).unlink(missing_ok=True)
-    os.rename(circos_png_file, outdir / circos_png_file)
-    os.rename(circos_svg_file, outdir / circos_svg_file)
 
 
 def to_hex(color_like_str: str) -> str:
