@@ -263,7 +263,7 @@ class CircosConfig:
             [
                 "##### GC Content #####",
                 "<plot>",
-                "type        = line",
+                "type        = histogram",
                 "file        = {0}".format(self._gc_content_file),
                 "r1          = {0:.3f}r".format(self._r_counter),
                 "r0          = {0:.3f}r".format(self._r_counter - self.gc_content_r),
@@ -301,7 +301,7 @@ class CircosConfig:
             [
                 "##### GC Skew #####",
                 "<plot>",
-                "type        = line",
+                "type        = histogram",
                 "file        = {0}".format(self._gc_skew_file),
                 "r1          = {0:.3f}r".format(self._r_counter),
                 "r0          = {0:.3f}r".format(self._r_counter - self.gc_skew_r),
