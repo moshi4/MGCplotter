@@ -98,10 +98,17 @@ class Genbank:
 
         result_features = []
         for feature in features:
+            # Exclude pseudogene (no translated gene)
+            qualifiers = feature.qualifiers
+            translation = qualifiers.get("translation", [None])[0]
+            if translation is None:
+                continue
+            # Exclude straddle start position gene
             start = feature.location.parts[0].start
-            end = feature.location.parts[0].end
+            end = feature.location.parts[-1].end
             if start > end:
                 continue
+            # Select target strand
             if target_strand is None or target_strand == feature.strand:
                 result_features.append(feature)
         return result_features
