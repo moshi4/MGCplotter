@@ -24,10 +24,15 @@ def run(
     outdir: Path,
     thread_num: int,
     evalue: float,
-    ref_feature_r: float = 0.05,
+    # Radius
+    forward_cds_r: float = 0.07,
+    reverse_cds_r: float = 0.07,
+    rrna_r: float = 0.07,
+    trna_r: float = 0.07,
     conserved_seq_r: float = 0.05,
     gc_content_r: float = 0.15,
     gc_skew_r: float = 0.15,
+    # Color
     forward_cds_color: str = "red",
     reverse_cds_color: str = "blue",
     rrna_color: str = "green",
@@ -37,23 +42,29 @@ def run(
     gc_skew_p_color: str = "olive",
     gc_skew_n_color: str = "purple",
 ):
-    """Run CSplotter workflow"""
-    outdir.mkdir(exist_ok=True)
-
+    """Run CCSplotter workflow"""
+    # Setup directory
     config_dir = outdir / "circos_config"
+    outdir.mkdir(exist_ok=True)
     config_dir.mkdir(exist_ok=True)
 
+    # TODO: Search conserved sequence
+
+    # Setup Circos config
     ref_gbk = Genbank(ref_file)
     circos_config = CircosConfig(
         ref_gbk=ref_gbk,
         config_dir=config_dir,
         img_dir=outdir,
-        window_size=5000,
-        step_size=2000,
-        ref_feature_r=ref_feature_r,
+        # Radius
+        forward_cds_r=forward_cds_r,
+        reverse_cds_r=reverse_cds_r,
+        rrna_r=rrna_r,
+        trna_r=trna_r,
         conserved_seq_r=conserved_seq_r,
         gc_content_r=gc_content_r,
         gc_skew_r=gc_skew_r,
+        # Color
         forward_cds_color=to_hex(forward_cds_color),
         reverse_cds_color=to_hex(reverse_cds_color),
         rrna_color=to_hex(rrna_color),
@@ -64,9 +75,11 @@ def run(
         gc_skew_n_color=to_hex(gc_skew_n_color),
     )
 
+    # TODO: Run COGclassifier and rewrite CDS color to be drawn
+
+    # Run Circos
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
-
     sp.run(f"circos -conf {config_file}", shell=True)
 
 

@@ -11,7 +11,10 @@ class Arg:
 
 
 radius_args_dict = {
-    "ref_feature_r": Arg(0.07, "Reference species feature track radius size"),
+    "forward_cds_r": Arg(0.07, "Forward CDS radius size"),
+    "reverse_cds_r": Arg(0.07, "Reverse CDS radius size"),
+    "rrna_r": Arg(0.07, "rRNA radius size"),
+    "trna_r": Arg(0.07, "tRNA radius size"),
     "conserved_seq_r": Arg(0.05, "Conserved seq track radius size"),
     "gc_content_r": Arg(0.15, "GC content track radius size"),
     "gc_skew_r": Arg(0.15, "GC skew track radius size"),

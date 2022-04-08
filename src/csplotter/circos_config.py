@@ -12,10 +12,11 @@ class CircosConfig:
         ref_gbk: Genbank,
         config_dir: Path,
         img_dir: Path,
-        window_size: int = 5000,
-        step_size: int = 2000,
         # Radius
-        ref_feature_r=0.05,
+        forward_cds_r=0.07,
+        reverse_cds_r=0.07,
+        rrna_r=0.07,
+        trna_r=0.07,
         conserved_seq_r=0.05,
         gc_content_r=0.15,
         gc_skew_r=0.15,
@@ -33,12 +34,15 @@ class CircosConfig:
         self.ref_gbk = ref_gbk
         self.config_dir = config_dir
         self.img_dir = img_dir
-        self.window_size = window_size
-        self.step_size = step_size
-        self.ref_feature_r = ref_feature_r
+        # Radius
+        self.forward_cds_r = forward_cds_r
+        self.reverse_cds_r = reverse_cds_r
+        self.rrna_r = rrna_r
+        self.trna_r = trna_r
         self.conserved_seq_r = conserved_seq_r
         self.gc_content_r = gc_content_r
         self.gc_skew_r = gc_skew_r
+        # Color
         self.forward_cds_color = forward_cds_color
         self.reverse_cds_color = reverse_cds_color
         self.rrna_color = rrna_color
@@ -48,6 +52,7 @@ class CircosConfig:
         self.gc_skew_p_color = gc_skew_p_color
         self.gc_skew_n_color = gc_skew_n_color
 
+        # Circos config file
         self._config_file = config_dir / "circos.conf"
         self._ideogram_file = config_dir / "ideogram.conf"
         self._ticks_file = config_dir / "ticks.conf"
@@ -80,20 +85,20 @@ class CircosConfig:
             ["CDS"],
             1,
             self.forward_cds_color,
-            self.ref_feature_r,
+            self.forward_cds_r,
         )
         feature_conf += self._add_feature(
             self._reverse_cds_file,
             ["CDS"],
             -1,
             self.reverse_cds_color,
-            self.ref_feature_r,
+            self.reverse_cds_r,
         )
         feature_conf += self._add_feature(
-            self._rrna_file, ["rRNA"], None, self.rrna_color, self.ref_feature_r
+            self._rrna_file, ["rRNA"], None, self.rrna_color, self.rrna_r
         )
         feature_conf += self._add_feature(
-            self._trna_file, ["tRNA"], None, self.trna_color, self.ref_feature_r
+            self._trna_file, ["tRNA"], None, self.trna_color, self.trna_r
         )
         # GC content config
         gc_content_conf = self._add_gc_content()
@@ -337,6 +342,19 @@ class CircosConfig:
         with open(self._gc_skew_file, "w") as f:
             f.write(contents)
         return max(abs(v) for v in gc_skew_values)
+
+    ###########################################################################
+    # Properties
+    ###########################################################################
+    @property
+    def window_size(self) -> int:
+        """Window size for GC content & skew calculation"""
+        return int(self.ref_gbk.genome_length / 1000)
+
+    @property
+    def step_size(self) -> int:
+        """Step size for GC content & skew calculation"""
+        return int(self.window_size * 0.4)
 
     ###########################################################################
     # Util functions
