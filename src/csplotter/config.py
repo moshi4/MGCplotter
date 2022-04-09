@@ -64,10 +64,29 @@ cog_letter2color = {
     "-": "#B8B8B8",  # No COG classified
 }
 
+
+def change_luminance(hexcolor: str, value: float) -> str:
+    """Change color luminance
+
+    Args:
+        hexcolor (str): Hexcolor code
+        value (float): Change value for luminance
+
+    Returns:
+        str: Changed hexcolor
+    """
+    rgb = colors.to_rgb(hexcolor)
+    hls = colorsys.rgb_to_hls(*rgb)
+    hue, luminance, saturation = hls
+    new_luminance = luminance + value
+    if new_luminance > 1:
+        new_luminance = 1.0
+    elif new_luminance < 0:
+        new_luminance = 0.0
+    new_hls = [hue, new_luminance, saturation]
+    new_rgb = colorsys.hls_to_rgb(*new_hls)
+    return colors.to_hex(new_rgb)
+
+
 for letter, color in cog_letter2color.items():
-    original_rgb = colors.to_rgb(color)
-    original_hls = colorsys.rgb_to_hls(*original_rgb)
-    converted_hls = [original_hls[0], original_hls[1] - 0.3, original_hls[2]]
-    converted_rgb = colorsys.hls_to_rgb(*converted_hls)
-    converted_hex = colors.to_hex(converted_rgb)
-    cog_letter2color[letter] = converted_hex
+    cog_letter2color[letter] = change_luminance(color, -0.3)
