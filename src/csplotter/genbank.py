@@ -116,13 +116,13 @@ class Genbank:
                 result_features.append(feature)
         return result_features
 
-    def write_cds_protein_features_fasta(
+    def write_cds_fasta(
         self,
         fasta_outfile: Union[str, Path],
         only_first_record: bool = False,
     ):
         """Write CDS protein features fasta"""
-        features = self.extract_all_features(["CDS"], only_first_record)
+        features = self.extract_all_features(["CDS"], None, only_first_record)
         cds_seq_records: List[SeqRecord] = []
         for idx, feature in enumerate(features, 1):
             qualifiers = feature.qualifiers
@@ -130,15 +130,23 @@ class Genbank:
             product = qualifiers.get("product", [""])[0]
             translation = qualifiers.get("translation", [None])[0]
 
-            if translation is None:
+            start = feature.location.parts[0].start
+            end = feature.location.parts[-1].end
+            strand = "+" if feature.strand == 1 else "-"
+            if not isinstance(start, int) or not isinstance(end, int):
                 continue
+            if translation is None or start > end:
+                continue
+
+            location_id = f"|{start}_{end}_{strand}|"
+            if protein_id is None:
+                seq_id = f"GENE{idx:06d}{location_id}"
             else:
-                cds_seq = Seq(translation)
+                seq_id = f"GENE{idx:06d}_{protein_id}{location_id}"
 
-            seq_id = f"GENE{idx:06d}"
-            seq_id = seq_id if protein_id is None else protein_id
-
-            cds_seq_record = SeqRecord(seq=cds_seq, id=seq_id, description=product)
+            cds_seq_record = SeqRecord(
+                seq=Seq(translation), id=seq_id, description=product
+            )
             cds_seq_records.append(cds_seq_record)
 
         SeqIO.write(cds_seq_records, fasta_outfile, "fasta-2line")

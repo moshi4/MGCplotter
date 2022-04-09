@@ -2,8 +2,11 @@
 import argparse
 import os
 import subprocess as sp
+from collections import defaultdict
 from pathlib import Path
 
+import pandas as pd
+from cogclassifier import cogclassifier
 from matplotlib import colors
 
 from csplotter import config
@@ -42,7 +45,7 @@ def run(
     gc_skew_p_color: str = "olive",
     gc_skew_n_color: str = "purple",
 ):
-    """Run CCSplotter workflow"""
+    """Run MGCplotter workflow"""
     # Setup directory
     config_dir = outdir / "circos_config"
     outdir.mkdir(exist_ok=True)
@@ -75,11 +78,40 @@ def run(
         gc_skew_n_color=to_hex(gc_skew_n_color),
     )
 
-    # TODO: Run COGclassifier and rewrite CDS color to be drawn
-
     # Run Circos
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
+
+    # TODO: Run COGclassifier and rewrite CDS color to be drawn
+    ref_cds_fasta_file = outdir / "reference_cds.faa"
+    cog_outdir = outdir / "cogclassifier"
+    cog_dl_outdir = cog_outdir / "cog_download"
+    cog_classifier_result_file = cog_outdir / "classifier_result.tsv"
+    ref_gbk.write_cds_fasta(ref_cds_fasta_file)
+    if not cog_classifier_result_file.exists():
+        cogclassifier.run(
+            ref_cds_fasta_file, cog_outdir, cog_dl_outdir, thread_num, 1e-2
+        )
+
+    df = pd.read_csv(cog_classifier_result_file, delimiter="\t")
+    location_id2color = defaultdict(str)
+    for query_id, cog_letter in zip(df["QUERY_ID"], df["COG_LETTER"]):
+        location_id = query_id.split("|")[1].replace("_", " ")
+        location_id2color[location_id] = config.cog_letter2color[cog_letter]
+
+    contents = ""
+    with open(circos_config._forward_cds_file) as f:
+        for line in f.read().splitlines():
+            location_id = " ".join(line.split(" ")[1:4])
+            color = location_id2color.get(location_id, None)
+            if color is None:
+                color = config.cog_letter2color["-"]
+                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+            else:
+                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+    with open(circos_config._forward_cds_file, "w") as f:
+        f.write(contents)
+
     sp.run(f"circos -conf {config_file}", shell=True)
 
 

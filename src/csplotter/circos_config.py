@@ -109,7 +109,7 @@ class CircosConfig:
         config_contents = self._concat_lines(
             [
                 "karyotype = {0}".format(self._karyotype_file),
-                "chromosomes_units = 1000000",
+                "chromosomes_units = {0}".format(self.chromosome_units),
                 "<<include {0}>>".format(self._ideogram_file),
                 "<<include {0}>>".format(self._ticks_file),
                 "<plots>",
@@ -182,18 +182,23 @@ class CircosConfig:
                 "format      = {0} {1}".format(self.ticks_format, self.ticks_unit),
                 "<tick>",
                 "spacing      = 1u",
-                "size         = 20p",
+                "size         = 30p",
                 "show_label   = yes",
                 "label_size   = 40p",
                 "label_offset = 20p",
                 "</tick>",
                 "<tick>",
-                "spacing      = 0.2u",
-                "size         = 10p",
+                "spacing      = 0.5u",
+                "size         = 25p",
                 "show_label   = yes",
                 "label_size   = 40p",
                 "label_offset = 10p",
                 "format       = {0}".format(self.ticks_format),
+                "</tick>",
+                "<tick>",
+                "spacing      = 0.1u",
+                "size         = 20p",
+                "show_label   = no",
                 "</tick>",
                 "</ticks>",
             ]
@@ -357,6 +362,12 @@ class CircosConfig:
         return int(self.window_size * 0.4)
 
     @property
+    def chromosome_units(self) -> int:
+        """Chromosome units"""
+        # return 1000000
+        return 10 ** (len(str(self.ref_gbk.genome_length)) - 1)
+
+    @property
     def ticks_format(self) -> str:
         """Ticks format"""
         return "%.1f"
@@ -364,7 +375,8 @@ class CircosConfig:
     @property
     def ticks_multiplier(self) -> float:
         """Ticks multiplier"""
-        return 1e-6
+        # return 1e-6
+        return 1 / self.chromosome_units
 
     @property
     def ticks_unit(self) -> str:
