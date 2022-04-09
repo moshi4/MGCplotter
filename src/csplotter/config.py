@@ -1,3 +1,4 @@
+import colorsys
 from dataclasses import dataclass
 from typing import Union
 
@@ -65,8 +66,8 @@ cog_letter2color = {
 
 for letter, color in cog_letter2color.items():
     original_rgb = colors.to_rgb(color)
-    original_hsv = colors.rgb_to_hsv(original_rgb)
-    converted_hsv = [original_hsv[0], original_hsv[1] + 0.5, original_hsv[2]]
-    converted_rgb = colors.hsv_to_rgb(converted_hsv)
+    original_hls = colorsys.rgb_to_hls(*original_rgb)
+    converted_hls = [original_hls[0], original_hls[1] - 0.3, original_hls[2]]
+    converted_rgb = colorsys.hls_to_rgb(*converted_hls)
     converted_hex = colors.to_hex(converted_rgb)
     cog_letter2color[letter] = converted_hex
