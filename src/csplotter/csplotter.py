@@ -4,6 +4,7 @@ import os
 import subprocess as sp
 from collections import defaultdict
 from pathlib import Path
+from typing import Dict
 
 import pandas as pd
 from cogclassifier import cogclassifier
@@ -77,41 +78,26 @@ def run(
         gc_skew_p_color=to_hex(gc_skew_p_color),
         gc_skew_n_color=to_hex(gc_skew_n_color),
     )
-
-    # Run Circos
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
-    # TODO: Run COGclassifier and rewrite CDS color to be drawn
+    # Run COGclassifier
     ref_cds_fasta_file = outdir / "reference_cds.faa"
-    cog_outdir = outdir / "cogclassifier"
-    cog_dl_outdir = cog_outdir / "cog_download"
-    cog_classifier_result_file = cog_outdir / "classifier_result.tsv"
+    cog_dir = outdir / "cogclassifier"
+    cog_dl_dir = cog_dir / "cog_download"
+    cog_classifier_result_file = cog_dir / "classifier_result.tsv"
     ref_gbk.write_cds_fasta(ref_cds_fasta_file)
     if not cog_classifier_result_file.exists():
-        cogclassifier.run(
-            ref_cds_fasta_file, cog_outdir, cog_dl_outdir, thread_num, 1e-2
-        )
+        cogclassifier.run(ref_cds_fasta_file, cog_dir, cog_dl_dir, thread_num, 1e-2)
 
-    df = pd.read_csv(cog_classifier_result_file, delimiter="\t")
-    location_id2color = defaultdict(str)
-    for query_id, cog_letter in zip(df["QUERY_ID"], df["COG_LETTER"]):
-        location_id = query_id.split("|")[1].replace("_", " ")
-        location_id2color[location_id] = config.cog_letter2color[cog_letter]
+    # Assign COG color to reference CDS
+    location_id2color = get_location_id2color(
+        cog_classifier_result_file, config.cog_letter2color
+    )
+    rewrite_circos_cds_color(circos_config._forward_cds_file, location_id2color)
+    rewrite_circos_cds_color(circos_config._reverse_cds_file, location_id2color)
 
-    contents = ""
-    with open(circos_config._forward_cds_file) as f:
-        for line in f.read().splitlines():
-            location_id = " ".join(line.split(" ")[1:4])
-            color = location_id2color.get(location_id, None)
-            if color is None:
-                color = config.cog_letter2color["-"]
-                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
-            else:
-                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
-    with open(circos_config._forward_cds_file, "w") as f:
-        f.write(contents)
-
+    # Run Circos
     sp.run(f"circos -conf {config_file}", shell=True)
 
 
@@ -125,6 +111,53 @@ def to_hex(color_like_str: str) -> str:
         str: hexcolor code
     """
     return colors.to_hex(color_like_str).lstrip("#")
+
+
+def get_location_id2color(
+    cog_classifier_result_file: Path,
+    cog_letter2color: Dict[str, str],
+) -> Dict[str, str]:
+    """Get CDS location ID & Color dict
+
+    Args:
+        cog_classifier_result_file (Path): COGclassifier result file
+        cog_letter2color (Dict[str, str]): COG letter & Color dict
+
+    Returns:
+        Dict[str, str]: CDS location ID & COG Color dict
+
+    Notes:
+        CDS location ID = "start end strand" (e.g. "300 1000 +")
+    """
+    df = pd.read_csv(cog_classifier_result_file, delimiter="\t")
+    location_id2color = defaultdict(str)
+    for query_id, cog_letter in zip(df["QUERY_ID"], df["COG_LETTER"]):
+        location_id = query_id.split("|")[1].replace("_", " ")
+        location_id2color[location_id] = cog_letter2color[cog_letter]
+    return location_id2color
+
+
+def rewrite_circos_cds_color(
+    circos_cds_file: Path, location_id2color: Dict[str, str]
+) -> None:
+    """Rewrite Circos CDS color to COG classification color
+
+    Args:
+        circos_cds_file (Path): Circos CDS file
+        location_id2color (Dict[str, str]): CDS location ID & COG Color dict
+    """
+    contents = ""
+    with open(circos_cds_file) as f:
+        for line in f.read().splitlines():
+            location_id = " ".join(line.split(" ")[1:4])
+            color = location_id2color.get(location_id, None)
+            if color is None:
+                color = config.cog_letter2color["-"]
+                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+            else:
+                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+    with open(circos_cds_file, "w") as f:
+        f.write(contents)
 
 
 def get_args() -> argparse.Namespace:
