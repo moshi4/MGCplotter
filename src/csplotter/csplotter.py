@@ -28,6 +28,7 @@ def run(
     outdir: Path,
     thread_num: int,
     evalue: float,
+    force: bool,
     # Radius
     forward_cds_r: float = 0.07,
     reverse_cds_r: float = 0.07,
@@ -84,11 +85,12 @@ def run(
     # Run COGclassifier
     ref_cds_fasta_file = outdir / "reference_cds.faa"
     cog_dir = outdir / "cogclassifier"
-    cog_dl_dir = cog_dir / "cog_download"
+    cache_dir = Path.home() / ".cache" / "mgcplotter" / "cog_download"
+    os.makedirs(cache_dir, exist_ok=True)
     cog_classifier_result_file = cog_dir / "classifier_result.tsv"
     ref_gbk.write_cds_fasta(ref_cds_fasta_file)
-    if not cog_classifier_result_file.exists():
-        cogclassifier.run(ref_cds_fasta_file, cog_dir, cog_dl_dir, thread_num, 1e-2)
+    if force or not cog_classifier_result_file.exists():
+        cogclassifier.run(ref_cds_fasta_file, cog_dir, cache_dir, thread_num, 1e-2)
 
     # Assign COG color to reference CDS
     location_id2color = get_location_id2color(
@@ -203,6 +205,12 @@ def get_args() -> argparse.Namespace:
         help=f"MMseqs e-value parameter (Default: {default_evalue})",
         default=default_evalue,
         metavar="",
+    )
+    parser.add_argument(
+        "-f",
+        "--force",
+        help="Forcely overwrite previous result (Default: OFF)",
+        action="store_true",
     )
     # Track radius control arguments
     for k, v in config.radius_args_dict.items():
