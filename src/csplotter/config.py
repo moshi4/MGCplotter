@@ -4,6 +4,9 @@ from typing import Union
 
 from matplotlib import colors
 
+fasta_suffixs = (".fa", ".faa", ".fasta")
+gbk_suffixs = (".gb", ".gbk", ".gbff")
+
 
 @dataclass
 class Arg:

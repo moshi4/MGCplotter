@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import List, Optional
 
+import pandas as pd
+
 from csplotter.genbank import Genbank
 
 
@@ -63,6 +65,7 @@ class CircosConfig:
         self._trna_file = config_dir / "feature_tRNA.txt"
         self._gc_skew_file = config_dir / "gc_skew.txt"
         self._gc_content_file = config_dir / "gc_content.txt"
+        self._rbh_config_files: List[Path] = []
 
         self._r_counter = 1.0
 
@@ -80,30 +83,34 @@ class CircosConfig:
         self._write_karyotype_file()
         # Feature config
         feature_conf = ""
-        feature_conf += self._add_feature(
+        feature_conf += self._add_feature_track(
             self._forward_cds_file,
             ["CDS"],
             1,
             self.forward_cds_color,
             self.forward_cds_r,
         )
-        feature_conf += self._add_feature(
+        feature_conf += self._add_feature_track(
             self._reverse_cds_file,
             ["CDS"],
             -1,
             self.reverse_cds_color,
             self.reverse_cds_r,
         )
-        feature_conf += self._add_feature(
+        feature_conf += self._add_feature_track(
             self._rrna_file, ["rRNA"], None, self.rrna_color, self.rrna_r
         )
-        feature_conf += self._add_feature(
+        feature_conf += self._add_feature_track(
             self._trna_file, ["tRNA"], None, self.trna_color, self.trna_r
         )
+        # RBH config
+        rbh_conf = ""
+        for rbh_config_file in self._rbh_config_files:
+            rbh_conf += self._add_rbh_track(rbh_config_file)
         # GC content config
-        gc_content_conf = self._add_gc_content()
+        gc_content_conf = self._add_gc_content_track()
         # GC skew config
-        gc_skew_conf = self._add_gc_skew()
+        gc_skew_conf = self._add_gc_skew_track()
 
         # Circos overall config
         config_contents = self._concat_lines(
@@ -114,6 +121,7 @@ class CircosConfig:
                 "<<include {0}>>".format(self._ticks_file),
                 "<plots>",
                 feature_conf.rstrip("\n"),
+                rbh_conf.rstrip("\n"),
                 gc_content_conf.rstrip("\n"),
                 gc_skew_conf.rstrip("\n"),
                 "</plots>",
@@ -207,9 +215,9 @@ class CircosConfig:
             f.write(contents)
 
     ###########################################################################
-    # Feature(CDS, rRNA, tRNA) config
+    # Add Feature(CDS, rRNA, tRNA) track
     ###########################################################################
-    def _add_feature(
+    def _add_feature_track(
         self,
         feature_file: Path,
         feature_types: List[str],
@@ -274,9 +282,38 @@ class CircosConfig:
             f.write(contents)
 
     ###########################################################################
-    # GC content config
+    # Add RBH track
     ###########################################################################
-    def _add_gc_content(self) -> str:
+    def _add_rbh_track(self, rbh_config_file: Path) -> str:
+        """Add RBH track"""
+        contents = self._concat_lines(
+            [
+                "##### RBH #####",
+                "<plot>",
+                "type             = tile",
+                "file             = {0}".format(rbh_config_file),
+                "r1               = {0:.3f}r".format(self._r_counter),
+                "r0               = {0:.3f}r".format(
+                    self._r_counter - self.conserved_seq_r
+                ),
+                "orientation      = out",
+                "layers           = 1",
+                "margin           = 0.01u",
+                "thickness        = {0}".format(self.conserved_seq_r * 1000),
+                "padding          = 1",
+                "stroke_color     = black",
+                "stroke_thickness = 0",
+                "layers_overflow  = collapse",
+                "</plot>",
+            ]
+        )
+        self._r_counter -= self.conserved_seq_r
+        return contents
+
+    ###########################################################################
+    # Add GC content track
+    ###########################################################################
+    def _add_gc_content_track(self) -> str:
         """Add GC Content track"""
         self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
         abs_max_value = self._write_gc_content_file()
@@ -312,9 +349,9 @@ class CircosConfig:
         return max(abs(v) for v in gc_content_values)
 
     ###########################################################################
-    # GC skew config
+    # Add GC skew track
     ###########################################################################
-    def _add_gc_skew(self) -> str:
+    def _add_gc_skew_track(self) -> str:
         """Add GC Skew track"""
         self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
         abs_max_value = self._write_gc_skew_file()
@@ -394,6 +431,28 @@ class CircosConfig:
             return "Mb"
         else:
             return "Kb"
+
+    ###########################################################################
+    # Add RBH config function
+    ###########################################################################
+    def add_rbh_config(self, rbh_result_file: Path, rbh_config_file: Path) -> None:
+        """Add RBH result to circos track"""
+        df = self._load_rbh_result(rbh_result_file)
+        contents = ""
+        for query, ident in zip(df["QUERY"], df["FIDENT"]):
+            start, end, strand = str(query).split("|")[1].split("_")
+            # TODO: Interpolate color based on Identity
+            contents += f"main {start} {end} {strand} color=blue\n"
+        with open(rbh_config_file, "w") as f:
+            f.write(contents)
+        self._rbh_config_files.append(rbh_config_file)
+
+    def _load_rbh_result(self, rbh_result_file: Path) -> pd.DataFrame:
+        header_names = (
+            "QUERY,TARGET,FIDENT,ALNLEN,MISMATCH,GAPOPEN,"
+            + "QSTART,QEND,TSTART,TEND,EVALUE,BITS"
+        ).split(",")
+        return pd.read_table(rbh_result_file, header=None, names=header_names)
 
     ###########################################################################
     # Util functions

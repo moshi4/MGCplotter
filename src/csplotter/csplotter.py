@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import shutil
 import subprocess as sp
+import tempfile
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from cogclassifier import cogclassifier
@@ -26,6 +28,7 @@ def main():
 def run(
     ref_file: Path,
     outdir: Path,
+    query_list: List[Path],
     thread_num: int,
     evalue: float,
     force: bool,
@@ -50,13 +53,31 @@ def run(
     """Run MGCplotter workflow"""
     # Setup directory
     config_dir = outdir / "circos_config"
+    rbh_dir = outdir / "rbh_search"
     outdir.mkdir(exist_ok=True)
     config_dir.mkdir(exist_ok=True)
+    rbh_dir.mkdir(exist_ok=True)
 
     # TODO: Search conserved sequence
+    rbh_result_files: List[Path] = []
+    ref_gbk = Genbank(ref_file)
+    ref_fasta_file = outdir / "reference_cds.faa"
+    ref_gbk.write_cds_fasta(ref_fasta_file)
+    for query_file in query_list:
+        query_fasta_file = rbh_dir / query_file.with_suffix(".faa").name
+        if query_file.suffix in config.fasta_suffixs:
+            shutil.copy(query_file, query_fasta_file)
+        elif query_file.suffix in config.gbk_suffixs:
+            Genbank(query_file).write_cds_fasta(query_fasta_file)
+        else:
+            continue
+        rbh_result_file = rbh_dir / query_file.with_suffix(".tsv").name
+        run_mmseqs_rbh(
+            ref_fasta_file, query_fasta_file, rbh_result_file, evalue, thread_num
+        )
+        rbh_result_files.append(rbh_result_file)
 
     # Setup Circos config
-    ref_gbk = Genbank(ref_file)
     circos_config = CircosConfig(
         ref_gbk=ref_gbk,
         config_dir=config_dir,
@@ -79,18 +100,19 @@ def run(
         gc_skew_p_color=to_hex(gc_skew_p_color),
         gc_skew_n_color=to_hex(gc_skew_n_color),
     )
+    for rbh_result_file in rbh_result_files:
+        rbh_config_file = config_dir / rbh_result_file.with_suffix(".txt").name
+        circos_config.add_rbh_config(rbh_result_file, rbh_config_file)
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
     # Run COGclassifier
-    ref_cds_fasta_file = outdir / "reference_cds.faa"
     cog_dir = outdir / "cogclassifier"
     cache_dir = Path.home() / ".cache" / "mgcplotter" / "cog_download"
     os.makedirs(cache_dir, exist_ok=True)
     cog_classifier_result_file = cog_dir / "classifier_result.tsv"
-    ref_gbk.write_cds_fasta(ref_cds_fasta_file)
     if force or not cog_classifier_result_file.exists():
-        cogclassifier.run(ref_cds_fasta_file, cog_dir, cache_dir, thread_num, 1e-2)
+        cogclassifier.run(ref_fasta_file, cog_dir, cache_dir, thread_num, 1e-2)
 
     # Assign COG color to reference CDS
     location_id2color = get_location_id2color(
@@ -101,6 +123,22 @@ def run(
 
     # Run Circos
     sp.run(f"circos -conf {config_file}", shell=True)
+
+
+def run_mmseqs_rbh(
+    ref_fasta_file: Path,
+    query_fasta_file: Path,
+    rbh_result_file: Path,
+    evalue: float = 1e-3,
+    thread_num: int = 1,
+):
+    """Run MMseqs rbh search"""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = (
+            f"mmseqs easy-rbh {ref_fasta_file} {query_fasta_file} "
+            + f"{rbh_result_file} {tmpdir} -e {evalue} --threads {thread_num}"
+        )
+        sp.run(cmd, shell=True)
 
 
 def to_hex(color_like_str: str) -> str:
@@ -186,6 +224,14 @@ def get_args() -> argparse.Namespace:
         type=Path,
         help="Output directory",
         metavar="O",
+    )
+    parser.add_argument(
+        "--query_list",
+        nargs="+",
+        type=Path,
+        help="Query fasta or genbank files (*.fa|*.faa|*.fasta, *.gb|*.gbk|*.gbff)",
+        default=[],
+        metavar="",
     )
     cpu_num = os.cpu_count()
     default_thread_num = 1 if cpu_num is None or cpu_num == 1 else cpu_num - 1
