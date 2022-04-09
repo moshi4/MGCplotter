@@ -148,8 +148,8 @@ class CircosConfig:
                 "<spacing>",
                 "default = 0.005r",
                 "</spacing>",
-                "radius           = 0.85r",
-                "thickness        = 10p",
+                "radius           = 0.80r",
+                "thickness        = 15p",
                 "fill             = yes",
                 "stroke_color     = dgrey",
                 "stroke_thickness = 2p",
@@ -182,23 +182,23 @@ class CircosConfig:
                 "format      = {0} {1}".format(self.ticks_format, self.ticks_unit),
                 "<tick>",
                 "spacing      = 1u",
-                "size         = 30p",
                 "show_label   = yes",
-                "label_size   = 40p",
+                "label_size   = 50p",
                 "label_offset = 20p",
+                "size         = 30p",
                 "</tick>",
                 "<tick>",
                 "spacing      = 0.5u",
-                "size         = 25p",
                 "show_label   = yes",
-                "label_size   = 40p",
+                "label_size   = 45p",
                 "label_offset = 10p",
+                "size         = 25p",
                 "format       = {0}".format(self.ticks_format),
                 "</tick>",
                 "<tick>",
                 "spacing      = 0.1u",
-                "size         = 20p",
                 "show_label   = no",
+                "size         = 25p",
                 "</tick>",
                 "</ticks>",
             ]
@@ -370,18 +370,30 @@ class CircosConfig:
     @property
     def ticks_format(self) -> str:
         """Ticks format"""
-        return "%.1f"
+        # return "%.1f"
+        if self.ref_gbk.genome_length >= 10**6:
+            return "%.1f"
+        else:
+            return "%d"
 
     @property
     def ticks_multiplier(self) -> float:
         """Ticks multiplier"""
         # return 1e-6
-        return 1 / self.chromosome_units
+        # return 1 / self.chromosome_units
+        if self.ref_gbk.genome_length >= 10**6:
+            return 1 / 10**6
+        else:
+            return 1 / 10**3
 
     @property
     def ticks_unit(self) -> str:
         """Ticks unit ('Mb' or 'Kb')"""
-        return "Mb"
+        # return "Mb"
+        if self.ref_gbk.genome_length >= 10**6:
+            return "Mb"
+        else:
+            return "Kb"
 
     ###########################################################################
     # Util functions
