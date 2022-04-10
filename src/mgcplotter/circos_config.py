@@ -44,6 +44,7 @@ class CircosConfig:
         self.conserved_seq_r = conserved_seq_r
         self.gc_content_r = gc_content_r
         self.gc_skew_r = gc_skew_r
+        self.separate_r = 0.005
         # Color
         self.f_cds_color = forward_cds_color
         self.r_cds_color = reverse_cds_color
@@ -53,6 +54,7 @@ class CircosConfig:
         self.gc_content_n_color = gc_content_n_color
         self.gc_skew_p_color = gc_skew_p_color
         self.gc_skew_n_color = gc_skew_n_color
+        self.separate_color = "grey"
 
         # Circos config file
         self._config_file = config_dir / "circos.conf"
@@ -69,6 +71,8 @@ class CircosConfig:
         # GC content & GC skew config file
         self._gc_content_file = config_dir / "gc_content.txt"
         self._gc_skew_file = config_dir / "gc_skew.txt"
+        # Separate config files
+        self._separate_file = config_dir / "separate.txt"
         # RBH config files
         self._rbh_config_files: List[Path] = []
 
@@ -96,8 +100,12 @@ class CircosConfig:
         self._add_feature_track(
             self._trna_file, ["tRNA"], None, self.trna_color, self.trna_r
         )
-        for rbh_config_file in self._rbh_config_files:
-            self._add_rbh_track(rbh_config_file)
+        if len(self._rbh_config_files) != 0:
+            self._r -= 0.01
+            self._add_separate_track()
+            for rbh_config_file in self._rbh_config_files:
+                self._add_rbh_track(rbh_config_file)
+            self._add_separate_track()
         self._add_gc_content_track()
         self._add_gc_skew_track()
 
@@ -259,19 +267,50 @@ class CircosConfig:
             f.write(contents)
 
     ###########################################################################
-    # Add RBH track
+    # Add Separate track
+    ###########################################################################
+    def _add_separate_track(self) -> None:
+        """Add separate track"""
+        self._write_separate_file()
+        self._track_config += self._concat_lines(
+            [
+                "##### Separate Track #####",
+                "<plot>",
+                "type             = tile",
+                "file             = {0}".format(self._separate_file),
+                "r1               = {0:.3f}r".format(self._r),
+                "r0               = {0:.3f}r".format(self._r - self.separate_r),
+                "orientation      = center",
+                "layers           = 1",
+                "margin           = 0.01u",
+                "thickness        = {0}".format(self.separate_r * 1000),
+                "padding          = 1",
+                "layers_overflow  = collapse",
+                "</plot>",
+            ]
+        )
+        self._r -= self.separate_r
+
+    def _write_separate_file(self) -> None:
+        with open(self._separate_file, "w") as f:
+            f.write(
+                f"main 0 {self.ref_gbk.genome_length} + color={self.separate_color}"
+            )
+
+    ###########################################################################
+    # Add RBH(Conserved Sequence) track
     ###########################################################################
     def _add_rbh_track(self, rbh_config_file: Path) -> None:
         """Add RBH track"""
         self._track_config += self._concat_lines(
             [
-                "##### RBH Track #####",
+                "##### RBH(Conserved Sequence) Track #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(rbh_config_file),
                 "r1               = {0:.3f}r".format(self._r),
                 "r0               = {0:.3f}r".format(self._r - self.conserved_seq_r),
-                "orientation      = out",
+                "orientation      = center",
                 "layers           = 1",
                 "margin           = 0.01u",
                 "thickness        = {0}".format(self.conserved_seq_r * 1000),
