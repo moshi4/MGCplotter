@@ -189,12 +189,8 @@ def rewrite_circos_cds_color(
     with open(circos_cds_file) as f:
         for line in f.read().splitlines():
             location_id = " ".join(line.split(" ")[1:4])
-            color = location_id2color.get(location_id, None)
-            if color is None:
-                color = config.cog_letter2color["-"]
-                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
-            else:
-                contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+            color = location_id2color.get(location_id, config.cog_letter2color["-"])
+            contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
     with open(circos_cds_file, "w") as f:
         f.write(contents)
 
