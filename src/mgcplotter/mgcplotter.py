@@ -266,7 +266,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "-f",
         "--force",
-        help="Forcely overwrite previous result (Default: OFF)",
+        help="Forcibly overwrite previous result (Default: OFF)",
         action="store_true",
     )
     # Track radius control arguments
