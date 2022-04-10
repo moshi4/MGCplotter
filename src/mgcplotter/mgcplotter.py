@@ -8,9 +8,9 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List
 
+import matplotlib as mpl
 import pandas as pd
 from cogclassifier import cogclassifier
-from matplotlib import colors
 
 from mgcplotter import config
 from mgcplotter.circos_config import CircosConfig
@@ -163,7 +163,7 @@ def to_hex(color_like_str: str) -> str:
     Returns:
         str: hexcolor code
     """
-    return colors.to_hex(color_like_str).lstrip("#")
+    return mpl.colors.to_hex(color_like_str).lstrip("#")
 
 
 def get_location_id2color(
@@ -292,7 +292,21 @@ def get_args() -> argparse.Namespace:
         version=f"v{__version__}",
         help="Print version information",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+
+    # Argument value validation
+    err_info = ""
+    for k, v in args.__dict__.items():
+        if k in config.color_args_dict.keys():
+            if not mpl.colors.is_color_like(v):
+                err_info += f"'--{k} {v}' is invalid. Not color like string.\n"
+        elif k in config.radius_args_dict.keys():
+            if not 0 <= v <= 1:
+                err_info += f"'--{k} {v}' is invalid. Value must be 0 <= value <= 1.\n"
+    if err_info != "":
+        parser.error("\n" + err_info)
+
+    return args
 
 
 if __name__ == "__main__":
