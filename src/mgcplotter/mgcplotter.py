@@ -123,11 +123,9 @@ def run(
 
     # Run COGclassifier
     cog_dir = outdir / "cogclassifier"
-    cache_dir = Path.home() / ".cache" / "mgcplotter" / "cog_download"
-    os.makedirs(cache_dir, exist_ok=True)
     cog_classifier_result_file = cog_dir / "classifier_result.tsv"
     if force or not cog_classifier_result_file.exists():
-        cogclassifier.run(ref_fasta_file, cog_dir, cache_dir, thread_num, 1e-2)
+        cogclassifier.run(ref_fasta_file, cog_dir, thread_num=thread_num, evalue=1e-2)
 
     # Assign COG color to reference CDS
     location_id2color = get_location_id2color(
