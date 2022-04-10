@@ -1,3 +1,3 @@
-# CSplotter: Conserved Sequence Plotter
+# MGCplotter: Microbial Genome Circular plotter
 
-Circos plot tool for CS(Conserved Sequences) between reference species and closely related species
+MGCplotter is easy-to-use circular plot tool for microbial genomes.
