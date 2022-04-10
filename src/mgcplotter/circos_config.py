@@ -19,7 +19,7 @@ class CircosConfig:
         reverse_cds_r=0.07,
         rrna_r=0.07,
         trna_r=0.07,
-        conserved_seq_r=0.05,
+        conserved_seq_r=0.04,
         gc_content_r=0.15,
         gc_skew_r=0.15,
         # Color
@@ -137,7 +137,7 @@ class CircosConfig:
                 "<spacing>",
                 "default = 0.005r",
                 "</spacing>",
-                "radius           = 0.80r",
+                "radius           = 0.85r",
                 "thickness        = 15p",
                 "fill             = yes",
                 "stroke_color     = dgrey",

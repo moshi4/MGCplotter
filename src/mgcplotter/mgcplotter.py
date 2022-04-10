@@ -36,7 +36,7 @@ def run(
     reverse_cds_r: float = 0.07,
     rrna_r: float = 0.07,
     trna_r: float = 0.07,
-    conserved_seq_r: float = 0.05,
+    conserved_seq_r: float = 0.04,
     gc_content_r: float = 0.15,
     gc_skew_r: float = 0.15,
     # Color

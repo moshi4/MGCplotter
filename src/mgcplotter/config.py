@@ -21,7 +21,7 @@ radius_args_dict = {
     "reverse_cds_r": Arg(0.07, "Reverse CDS track radius size"),
     "rrna_r": Arg(0.07, "rRNA track radius size"),
     "trna_r": Arg(0.07, "tRNA track radius size"),
-    "conserved_seq_r": Arg(0.05, "Conserved seq track radius size"),
+    "conserved_seq_r": Arg(0.04, "Conserved seq track radius size"),
     "gc_content_r": Arg(0.15, "GC content track radius size"),
     "gc_skew_r": Arg(0.15, "GC skew track radius size"),
 }
