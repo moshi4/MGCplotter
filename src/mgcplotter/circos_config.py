@@ -100,7 +100,7 @@ class CircosConfig:
         config_contents = self._concat_lines(
             [
                 "karyotype = {0}".format(self._karyotype_file),
-                "chromosomes_units = {0}".format(self.chromosome_units),
+                "chromosomes_units = {0}".format(self._chromosome_units),
                 "<<include {0}>>".format(self._ideogram_file),
                 "<<include {0}>>".format(self._ticks_file),
                 "<plots>",
@@ -166,20 +166,20 @@ class CircosConfig:
                 "radius      = 1r",
                 "color       = black",
                 "thickness   = 2p",
-                "multiplier  = {0}".format(self.ticks_multiplier),
+                "multiplier  = {0}".format(self._ticks_multiplier),
                 "orientation = out",
-                "format      = {0} {1}".format(self.ticks_format, self.ticks_unit),
+                "format      = {0} {1}".format(self._ticks_format, self._ticks_unit),
                 "<tick>",
-                "spacing      = 0.1u",
+                "spacing      = {0:.2f}u".format(self._largeticks_spacing),
                 "show_label   = yes",
                 "label_size   = 35p",
                 "label_offset = 10p",
                 "size         = 25p",
                 "</tick>",
                 "<tick>",
-                "spacing      = 0.01u",
+                "spacing      = {0:.2f}u".format(self._smallticks_spacing),
                 "show_label   = no",
-                "size         = 10p",
+                "size         = 15p",
                 "</tick>",
                 "</ticks>",
             ]
@@ -284,7 +284,7 @@ class CircosConfig:
     ###########################################################################
     def _add_gc_content_track(self) -> None:
         """Add GC Content track"""
-        self._r = self.boundary if self._r > self.boundary else self._r
+        self._r = self._boundary if self._r > self._boundary else self._r
         abs_max_value = self._write_gc_content_file()
         self._track_config += self._concat_lines(
             [
@@ -305,11 +305,11 @@ class CircosConfig:
 
     def _write_gc_content_file(self) -> float:
         """Write GC Content file"""
-        gc_content_values = self.ref_gbk.gc_content(self.window_size, self.step_size)
+        gc_content_values = self.ref_gbk.gc_content(self._window_size, self._step_size)
         gc_content_values = [v - self.ref_gbk.average_gc for v in gc_content_values]
         contents = ""
         for i, value in enumerate(gc_content_values):
-            pos = i * self.step_size
+            pos = i * self._step_size
             color = self.gc_content_p_color if value > 0 else self.gc_content_n_color
             contents += f"main {pos} {pos} {value} fill_color={color}\n"
         with open(self._gc_content_file, "w") as f:
@@ -321,7 +321,7 @@ class CircosConfig:
     ###########################################################################
     def _add_gc_skew_track(self) -> None:
         """Add GC Skew track"""
-        self._r = self.boundary if self._r > self.boundary else self._r
+        self._r = self._boundary if self._r > self._boundary else self._r
         abs_max_value = self._write_gc_skew_file()
         self._track_config += self._concat_lines(
             [
@@ -342,10 +342,10 @@ class CircosConfig:
 
     def _write_gc_skew_file(self) -> float:
         """Write GC Skew file"""
-        gc_skew_values = self.ref_gbk.gc_skew(self.window_size, self.step_size)
+        gc_skew_values = self.ref_gbk.gc_skew(self._window_size, self._step_size)
         contents = ""
         for i, value in enumerate(gc_skew_values):
-            pos = i * self.step_size
+            pos = i * self._step_size
             color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
             contents += f"main {pos} {pos} {value} fill_color={color}\n"
         with open(self._gc_skew_file, "w") as f:
@@ -356,37 +356,53 @@ class CircosConfig:
     # Properties
     ###########################################################################
     @property
-    def window_size(self) -> int:
+    def _window_size(self) -> int:
         """Window size for GC content & GC skew calculation"""
         return int(self.ref_gbk.genome_length / 1000)
 
     @property
-    def step_size(self) -> int:
+    def _step_size(self) -> int:
         """Step size for GC content & GC skew calculation"""
-        return int(self.window_size * 0.4)
+        return int(self._window_size * 0.4)
 
     @property
-    def chromosome_units(self) -> int:
+    def _chromosome_units(self) -> int:
         """Chromosome units"""
         return 10 ** (len(str(self.ref_gbk.genome_length)) - 1)
 
     @property
-    def ticks_format(self) -> str:
+    def _ticks_format(self) -> str:
         """Ticks format"""
         return "%d"
 
     @property
-    def ticks_multiplier(self) -> float:
+    def _ticks_multiplier(self) -> float:
         """Ticks multiplier"""
         return 1e-3
 
     @property
-    def ticks_unit(self) -> str:
+    def _ticks_unit(self) -> str:
         """Ticks unit"""
         return "Kb"
 
     @property
-    def boundary(self) -> float:
+    def _largeticks_spacing(self) -> float:
+        """Largeticks spacing"""
+        if self.ref_gbk.genome_length / self._chromosome_units >= 2:
+            return 0.5
+        else:
+            return 0.1
+
+    @property
+    def _smallticks_spacing(self) -> float:
+        """Smallticks spacing"""
+        if self.ref_gbk.genome_length / self._chromosome_units >= 2:
+            return 0.1
+        else:
+            return 0.01
+
+    @property
+    def _boundary(self) -> float:
         """Boundary radius for GC content & GC skew track"""
         return 0.7
 
