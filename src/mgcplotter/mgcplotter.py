@@ -21,7 +21,15 @@ __version__ = "0.1.0"
 
 def main():
     """MGCplotter main function for entrypoint"""
+    # Copy circos 'etc' config directory to current directory
+    # Required if Circos is installed in unusual location
+    circos_etc_dir = Path(__file__).parent / "etc"
+    shutil.copytree(circos_etc_dir, "etc", dirs_exist_ok=True)
+
     run(**get_args().__dict__)
+
+    # Delete 'etc' config directory after run
+    shutil.rmtree("etc", ignore_errors=True)
 
 
 def run(
