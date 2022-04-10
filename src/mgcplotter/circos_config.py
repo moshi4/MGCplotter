@@ -170,24 +170,16 @@ class CircosConfig:
                 "orientation = out",
                 "format      = {0} {1}".format(self.ticks_format, self.ticks_unit),
                 "<tick>",
-                "spacing      = 1u",
+                "spacing      = 0.1u",
                 "show_label   = yes",
-                "label_size   = 50p",
-                "label_offset = 20p",
-                "size         = 30p",
-                "</tick>",
-                "<tick>",
-                "spacing      = 0.5u",
-                "show_label   = yes",
-                "label_size   = 45p",
+                "label_size   = 35p",
                 "label_offset = 10p",
                 "size         = 25p",
-                "format       = {0}".format(self.ticks_format),
                 "</tick>",
                 "<tick>",
-                "spacing      = 0.1u",
+                "spacing      = 0.01u",
                 "show_label   = no",
-                "size         = 25p",
+                "size         = 10p",
                 "</tick>",
                 "</ticks>",
             ]
@@ -218,7 +210,7 @@ class CircosConfig:
         self._write_feature_file(feature_file, feature_types, target_strand, color)
         self._track_config += self._concat_lines(
             [
-                f"##### {'-'.join(feature_types)} Features #####",
+                f"##### {'-'.join(feature_types)} Feature Track #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(feature_file),
@@ -268,7 +260,7 @@ class CircosConfig:
         """Add RBH track"""
         self._track_config += self._concat_lines(
             [
-                "##### RBH #####",
+                "##### RBH Track #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(rbh_config_file),
@@ -292,7 +284,7 @@ class CircosConfig:
     ###########################################################################
     def _add_gc_content_track(self) -> None:
         """Add GC Content track"""
-        self._r = 0.6 if self._r > 0.6 else self._r
+        self._r = self.boundary if self._r > self.boundary else self._r
         abs_max_value = self._write_gc_content_file()
         self._track_config += self._concat_lines(
             [
@@ -329,7 +321,7 @@ class CircosConfig:
     ###########################################################################
     def _add_gc_skew_track(self) -> None:
         """Add GC Skew track"""
-        self._r = 0.6 if self._r > 0.6 else self._r
+        self._r = self.boundary if self._r > self.boundary else self._r
         abs_max_value = self._write_gc_skew_file()
         self._track_config += self._concat_lines(
             [
@@ -365,56 +357,52 @@ class CircosConfig:
     ###########################################################################
     @property
     def window_size(self) -> int:
-        """Window size for GC content & skew calculation"""
+        """Window size for GC content & GC skew calculation"""
         return int(self.ref_gbk.genome_length / 1000)
 
     @property
     def step_size(self) -> int:
-        """Step size for GC content & skew calculation"""
+        """Step size for GC content & GC skew calculation"""
         return int(self.window_size * 0.4)
 
     @property
     def chromosome_units(self) -> int:
         """Chromosome units"""
-        # return 1000000
         return 10 ** (len(str(self.ref_gbk.genome_length)) - 1)
 
     @property
     def ticks_format(self) -> str:
         """Ticks format"""
-        # return "%.1f"
-        if self.ref_gbk.genome_length >= 10**6:
-            return "%.1f"
-        else:
-            return "%d"
+        return "%d"
 
     @property
     def ticks_multiplier(self) -> float:
         """Ticks multiplier"""
-        # return 1e-6
-        # return 1 / self.chromosome_units
-        if self.ref_gbk.genome_length >= 10**6:
-            return 1 / 10**6
-        else:
-            return 1 / 10**3
+        return 1e-3
 
     @property
     def ticks_unit(self) -> str:
-        """Ticks unit ('Mb' or 'Kb')"""
-        # return "Mb"
-        if self.ref_gbk.genome_length >= 10**6:
-            return "Mb"
-        else:
-            return "Kb"
+        """Ticks unit"""
+        return "Kb"
+
+    @property
+    def boundary(self) -> float:
+        """Boundary radius for GC content & GC skew track"""
+        return 0.7
 
     ###########################################################################
     # Add RBH config function
     ###########################################################################
     def add_rbh_config(self, rbh_result_file: Path, rbh_config_file: Path) -> None:
-        """Add RBH result to circos track"""
+        """ADD RBH config
+
+        Args:
+            rbh_result_file (Path): MMseqs RBH result file
+            rbh_config_file (Path): RBH config outfile
+        """
         df = self._load_rbh_result(rbh_result_file)
         contents = ""
-        for query, ident in zip(df["QUERY"], df["FIDENT"]):
+        for query, ident in zip(df["TARGET"], df["FIDENT"]):
             start, end, strand = str(query).split("|")[1].split("_")
             # TODO: Interpolate color based on Identity
             contents += f"main {start} {end} {strand} color=blue\n"
