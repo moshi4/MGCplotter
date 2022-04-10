@@ -12,15 +12,15 @@ import pandas as pd
 from cogclassifier import cogclassifier
 from matplotlib import colors
 
-from csplotter import config
-from csplotter.circos_config import CircosConfig
-from csplotter.genbank import Genbank
+from mgcplotter import config
+from mgcplotter.circos_config import CircosConfig
+from mgcplotter.genbank import Genbank
 
 __version__ = "0.1.0"
 
 
 def main():
-    """CSplotter main function for entrypoint"""
+    """MGCplotter main function for entrypoint"""
     # Get argument values
     run(**get_args().__dict__)
 
@@ -206,7 +206,7 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Argument values
     """
-    desc = "Circos plot tool for CS(Conserved Sequence)"
+    desc = "Microbial Genome Circular plotter"
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument(

@@ -3,7 +3,7 @@ from typing import List, Optional
 
 import pandas as pd
 
-from csplotter.genbank import Genbank
+from mgcplotter.genbank import Genbank
 
 
 class CircosConfig:
