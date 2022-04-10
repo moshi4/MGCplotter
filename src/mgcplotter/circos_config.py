@@ -110,6 +110,7 @@ class CircosConfig:
             for rbh_config_file in self._rbh_config_files:
                 self._add_rbh_track(rbh_config_file)
             self._add_separate_track()
+            self._r -= 0.01
         self._add_gc_content_track()
         self._add_gc_skew_track()
 
@@ -421,17 +422,26 @@ class CircosConfig:
     @property
     def _ticks_format(self) -> str:
         """Ticks format"""
-        return "%d"
+        if self._chromosome_units >= 10**6:
+            return "%.1f"
+        else:
+            return "%d"
 
     @property
     def _ticks_multiplier(self) -> float:
         """Ticks multiplier"""
-        return 1e-3
+        if self._chromosome_units >= 10**6:
+            return 1e-6
+        else:
+            return 1e-3
 
     @property
     def _ticks_unit(self) -> str:
         """Ticks unit"""
-        return "Kb"
+        if self._chromosome_units >= 10**6:
+            return "Mb"
+        else:
+            return "Kb"
 
     @property
     def _largeticks_spacing(self) -> float:
