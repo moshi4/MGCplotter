@@ -104,8 +104,8 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cogclassifier"
-version = "1.0.3"
-description = "Classify prokaryote protein sequences into COG functional category"
+version = "1.0.4"
+description = "A tool for classifying prokaryote protein sequences into COG functional category"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
@@ -678,8 +678,8 @@ click = [
     {file = "click-8.1.2.tar.gz", hash = "sha256:479707fe14d9ec9a0757618b7a100a0ae4c4e236fac5b7f80ca68028141a1a72"},
 ]
 cogclassifier = [
-    {file = "cogclassifier-1.0.3-py3-none-any.whl", hash = "sha256:a62e35e161b064d587308e483306792b7863793b0f21dc4f996d3b24323cd2fd"},
-    {file = "cogclassifier-1.0.3.tar.gz", hash = "sha256:4d02003a8f036715dcb18c00f13b73ac899aba83424a1d346784c4a6310f3f3d"},
+    {file = "cogclassifier-1.0.4-py3-none-any.whl", hash = "sha256:d0edac2ca509418cb8dfcc12ca225c7de69bed0976e6f1696698f00f1acef4c7"},
+    {file = "cogclassifier-1.0.4.tar.gz", hash = "sha256:f0645a17ecb2b73395064d0699618d7dcde398b6669cba9d28fc5707343e2b95"},
 ]
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},

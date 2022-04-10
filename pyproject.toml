@@ -24,7 +24,7 @@ include = ["tests"]
 python = "^3.8"
 biopython = "^1.79"
 matplotlib = "^3.5.1"
-cogclassifier = "^1.0.3"
+cogclassifier = "^1.0.4"
 pandas = "^1.4.2"
 
 [tool.poetry.dev-dependencies]
