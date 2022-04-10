@@ -31,8 +31,12 @@ color_args_dict = {
     "reverse_cds_color": Arg("blue", "Reverse CDS color"),
     "rrna_color": Arg("green", "rRNA color"),
     "trna_color": Arg("magenta", "tRNA color"),
-    "gc_content_p_color": Arg("black", "GC content color for plus value from average"),
-    "gc_content_n_color": Arg("grey", "GC content color for minus value from average"),
+    "gc_content_p_color": Arg(
+        "black", "GC content color for positive value from average"
+    ),
+    "gc_content_n_color": Arg(
+        "grey", "GC content color for negative value from average"
+    ),
     "gc_skew_p_color": Arg("olive", "GC skew color for positive value"),
     "gc_skew_n_color": Arg("purple", "GC skew color for negative value"),
 }
