@@ -37,16 +37,16 @@ class CircosConfig:
         self.config_dir = config_dir
         self.img_dir = img_dir
         # Radius
-        self.forward_cds_r = forward_cds_r
-        self.reverse_cds_r = reverse_cds_r
+        self.f_cds_r = forward_cds_r
+        self.r_cds_r = reverse_cds_r
         self.rrna_r = rrna_r
         self.trna_r = trna_r
         self.conserved_seq_r = conserved_seq_r
         self.gc_content_r = gc_content_r
         self.gc_skew_r = gc_skew_r
         # Color
-        self.forward_cds_color = forward_cds_color
-        self.reverse_cds_color = reverse_cds_color
+        self.f_cds_color = forward_cds_color
+        self.r_cds_color = reverse_cds_color
         self.rrna_color = rrna_color
         self.trna_color = trna_color
         self.gc_content_p_color = gc_content_p_color
@@ -59,15 +59,16 @@ class CircosConfig:
         self._ideogram_file = config_dir / "ideogram.conf"
         self._ticks_file = config_dir / "ticks.conf"
         self._karyotype_file = config_dir / "karyotype.txt"
-        self._forward_cds_file = config_dir / "feature_forward_cds.txt"
-        self._reverse_cds_file = config_dir / "feature_reverse_cds.txt"
+        self._f_cds_file = config_dir / "feature_forward_cds.txt"
+        self._r_cds_file = config_dir / "feature_reverse_cds.txt"
         self._rrna_file = config_dir / "feature_rRNA.txt"
         self._trna_file = config_dir / "feature_tRNA.txt"
         self._gc_skew_file = config_dir / "gc_skew.txt"
         self._gc_content_file = config_dir / "gc_content.txt"
         self._rbh_config_files: List[Path] = []
 
-        self._r_counter = 1.0
+        self._r = 1.0
+        self._track_config = ""
 
     def write_config_file(self, config_outfile: Path) -> None:
         """Write Circos config file
@@ -75,42 +76,25 @@ class CircosConfig:
         Args:
             config_outfile (Path): Circos config file
         """
-        # Ideogram config
         self._write_ideogram_conf()
-        # Ticks config
         self._write_ticks_conf()
-        # Karyotype txt
         self._write_karyotype_file()
-        # Feature config
-        feature_conf = ""
-        feature_conf += self._add_feature_track(
-            self._forward_cds_file,
-            ["CDS"],
-            1,
-            self.forward_cds_color,
-            self.forward_cds_r,
+        self._add_feature_track(
+            self._f_cds_file, ["CDS"], 1, self.f_cds_color, self.f_cds_r
         )
-        feature_conf += self._add_feature_track(
-            self._reverse_cds_file,
-            ["CDS"],
-            -1,
-            self.reverse_cds_color,
-            self.reverse_cds_r,
+        self._add_feature_track(
+            self._r_cds_file, ["CDS"], -1, self.r_cds_color, self.r_cds_r
         )
-        feature_conf += self._add_feature_track(
+        self._add_feature_track(
             self._rrna_file, ["rRNA"], None, self.rrna_color, self.rrna_r
         )
-        feature_conf += self._add_feature_track(
+        self._add_feature_track(
             self._trna_file, ["tRNA"], None, self.trna_color, self.trna_r
         )
-        # RBH config
-        rbh_conf = ""
         for rbh_config_file in self._rbh_config_files:
-            rbh_conf += self._add_rbh_track(rbh_config_file)
-        # GC content config
-        gc_content_conf = self._add_gc_content_track()
-        # GC skew config
-        gc_skew_conf = self._add_gc_skew_track()
+            self._add_rbh_track(rbh_config_file)
+        self._add_gc_content_track()
+        self._add_gc_skew_track()
 
         # Circos overall config
         config_contents = self._concat_lines(
@@ -120,10 +104,7 @@ class CircosConfig:
                 "<<include {0}>>".format(self._ideogram_file),
                 "<<include {0}>>".format(self._ticks_file),
                 "<plots>",
-                feature_conf.rstrip("\n"),
-                rbh_conf.rstrip("\n"),
-                gc_content_conf.rstrip("\n"),
-                gc_skew_conf.rstrip("\n"),
+                self._track_config.rstrip("\n"),
                 "</plots>",
                 "<image>",
                 "<<include image.conf>>",
@@ -224,7 +205,7 @@ class CircosConfig:
         target_strand: Optional[int] = None,
         color: str = "grey",
         feature_r: float = 0.07,
-    ) -> str:
+    ) -> None:
         """Add Feature track
 
         Args:
@@ -235,14 +216,14 @@ class CircosConfig:
             feature_r (float): Feature radius size
         """
         self._write_feature_file(feature_file, feature_types, target_strand, color)
-        contents = self._concat_lines(
+        self._track_config += self._concat_lines(
             [
                 f"##### {'-'.join(feature_types)} Features #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(feature_file),
-                "r1               = {0:.3f}r".format(self._r_counter),
-                "r0               = {0:.3f}r".format(self._r_counter - feature_r),
+                "r1               = {0:.3f}r".format(self._r),
+                "r0               = {0:.3f}r".format(self._r - feature_r),
                 "orientation      = out",
                 "layers           = 1",
                 "margin           = 0.01u",
@@ -254,8 +235,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= feature_r
-        return contents
+        self._r -= feature_r
 
     def _write_feature_file(
         self,
@@ -284,18 +264,16 @@ class CircosConfig:
     ###########################################################################
     # Add RBH track
     ###########################################################################
-    def _add_rbh_track(self, rbh_config_file: Path) -> str:
+    def _add_rbh_track(self, rbh_config_file: Path) -> None:
         """Add RBH track"""
-        contents = self._concat_lines(
+        self._track_config += self._concat_lines(
             [
                 "##### RBH #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(rbh_config_file),
-                "r1               = {0:.3f}r".format(self._r_counter),
-                "r0               = {0:.3f}r".format(
-                    self._r_counter - self.conserved_seq_r
-                ),
+                "r1               = {0:.3f}r".format(self._r),
+                "r0               = {0:.3f}r".format(self._r - self.conserved_seq_r),
                 "orientation      = out",
                 "layers           = 1",
                 "margin           = 0.01u",
@@ -307,24 +285,23 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self.conserved_seq_r
-        return contents
+        self._r -= self.conserved_seq_r
 
     ###########################################################################
     # Add GC content track
     ###########################################################################
-    def _add_gc_content_track(self) -> str:
+    def _add_gc_content_track(self) -> None:
         """Add GC Content track"""
-        self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
+        self._r = 0.6 if self._r > 0.6 else self._r
         abs_max_value = self._write_gc_content_file()
-        contents = self._concat_lines(
+        self._track_config += self._concat_lines(
             [
-                "##### GC Content #####",
+                "##### GC Content Track #####",
                 "<plot>",
                 "type        = histogram",
                 "file        = {0}".format(self._gc_content_file),
-                "r1          = {0:.3f}r".format(self._r_counter),
-                "r0          = {0:.3f}r".format(self._r_counter - self.gc_content_r),
+                "r1          = {0:.3f}r".format(self._r),
+                "r0          = {0:.3f}r".format(self._r - self.gc_content_r),
                 "min         = {0:.3f}".format(-abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
@@ -332,8 +309,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self.gc_content_r
-        return contents
+        self._r -= self.gc_content_r
 
     def _write_gc_content_file(self) -> float:
         """Write GC Content file"""
@@ -351,18 +327,18 @@ class CircosConfig:
     ###########################################################################
     # Add GC skew track
     ###########################################################################
-    def _add_gc_skew_track(self) -> str:
+    def _add_gc_skew_track(self) -> None:
         """Add GC Skew track"""
-        self._r_counter = 0.6 if self._r_counter > 0.6 else self._r_counter
+        self._r = 0.6 if self._r > 0.6 else self._r
         abs_max_value = self._write_gc_skew_file()
-        contents = self._concat_lines(
+        self._track_config += self._concat_lines(
             [
-                "##### GC Skew #####",
+                "##### GC Skew Track #####",
                 "<plot>",
                 "type        = histogram",
                 "file        = {0}".format(self._gc_skew_file),
-                "r1          = {0:.3f}r".format(self._r_counter),
-                "r0          = {0:.3f}r".format(self._r_counter - self.gc_skew_r),
+                "r1          = {0:.3f}r".format(self._r),
+                "r0          = {0:.3f}r".format(self._r - self.gc_skew_r),
                 "min         = {0:.3f}".format(-abs_max_value),
                 "max         = {0:.3f}".format(abs_max_value),
                 "thickness   = 0",
@@ -370,8 +346,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r_counter -= self.gc_skew_r
-        return contents
+        self._r -= self.gc_skew_r
 
     def _write_gc_skew_file(self) -> float:
         """Write GC Skew file"""

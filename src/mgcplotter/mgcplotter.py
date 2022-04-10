@@ -21,7 +21,6 @@ __version__ = "0.1.0"
 
 def main():
     """MGCplotter main function for entrypoint"""
-    # Get argument values
     run(**get_args().__dict__)
 
 
@@ -118,8 +117,8 @@ def run(
     location_id2color = get_location_id2color(
         cog_classifier_result_file, config.cog_letter2color
     )
-    rewrite_circos_cds_color(circos_config._forward_cds_file, location_id2color)
-    rewrite_circos_cds_color(circos_config._reverse_cds_file, location_id2color)
+    rewrite_circos_cds_color(circos_config._f_cds_file, location_id2color)
+    rewrite_circos_cds_color(circos_config._r_cds_file, location_id2color)
 
     # Run Circos
     sp.run(f"circos -conf {config_file}", shell=True)
