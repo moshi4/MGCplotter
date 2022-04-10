@@ -2,7 +2,7 @@ import colorsys
 from dataclasses import dataclass
 from typing import Union
 
-from matplotlib import colors
+import matplotlib as mpl
 
 fasta_suffixs = (".fa", ".faa", ".fasta")
 gbk_suffixs = (".gb", ".gbk", ".gbff")
@@ -31,6 +31,7 @@ color_args_dict = {
     "reverse_cds_color": Arg("blue", "Reverse CDS color"),
     "rrna_color": Arg("green", "rRNA color"),
     "trna_color": Arg("magenta", "tRNA color"),
+    "conserved_seq_color": Arg("chocolate", "Conserved sequence color"),
     "gc_content_p_color": Arg(
         "black", "GC content color for positive value from average"
     ),
@@ -82,7 +83,7 @@ def change_luminance(hexcolor: str, value: float) -> str:
     Returns:
         str: Changed hexcolor
     """
-    rgb = colors.to_rgb(hexcolor)
+    rgb = mpl.colors.to_rgb(hexcolor)
     hls = colorsys.rgb_to_hls(*rgb)
     hue, luminance, saturation = hls
     new_luminance = luminance + value
@@ -92,7 +93,7 @@ def change_luminance(hexcolor: str, value: float) -> str:
         new_luminance = 0.0
     new_hls = [hue, new_luminance, saturation]
     new_rgb = colorsys.hls_to_rgb(*new_hls)
-    return colors.to_hex(new_rgb)
+    return mpl.colors.to_hex(new_rgb)
 
 
 for letter, color in cog_letter2color.items():

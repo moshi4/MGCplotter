@@ -1,6 +1,8 @@
+import colorsys
 from pathlib import Path
 from typing import List, Optional
 
+import matplotlib as mpl
 import pandas as pd
 
 from mgcplotter.genbank import Genbank
@@ -27,6 +29,7 @@ class CircosConfig:
         reverse_cds_color: str = "0000ff",  # blue
         rrna_color: str = "008000",  # green
         trna_color: str = "800080",  # magenta
+        conserved_seq_color: str = "d2691e",  # chocolate
         gc_content_p_color: str = "000000",  # black
         gc_content_n_color: str = "808080",  # grey
         gc_skew_p_color: str = "808000",  # olive
@@ -50,6 +53,7 @@ class CircosConfig:
         self.r_cds_color = reverse_cds_color
         self.rrna_color = rrna_color
         self.trna_color = trna_color
+        self.conserved_seq_color = conserved_seq_color
         self.gc_content_p_color = gc_content_p_color
         self.gc_content_n_color = gc_content_n_color
         self.gc_skew_p_color = gc_skew_p_color
@@ -454,7 +458,7 @@ class CircosConfig:
     # Add RBH config function
     ###########################################################################
     def add_rbh_config(self, rbh_result_file: Path, rbh_config_file: Path) -> None:
-        """ADD RBH config
+        """Add RBH config
 
         Args:
             rbh_result_file (Path): MMseqs RBH result file
@@ -464,8 +468,8 @@ class CircosConfig:
         contents = ""
         for query, ident in zip(df["TARGET"], df["FIDENT"]):
             start, end, strand = str(query).split("|")[1].split("_")
-            # TODO: Interpolate color based on Identity
-            contents += f"main {start} {end} {strand} color=blue\n"
+            color = self._get_interpolated_color(self.conserved_seq_color, ident)
+            contents += f"main {start} {end} {strand} color={color}\n"
         with open(rbh_config_file, "w") as f:
             f.write(contents)
         self._rbh_config_files.append(rbh_config_file)
@@ -476,6 +480,24 @@ class CircosConfig:
             + "QSTART,QEND,TSTART,TEND,EVALUE,BITS"
         ).split(",")
         return pd.read_table(rbh_result_file, header=None, names=header_names)
+
+    def _get_interpolated_color(self, hexcolor: str, interpolate_value: float) -> str:
+        """Get interpolate color from float value (Interpolate: Target color -> white)
+
+        Args:
+            hexcolor (str): Target hexcolor
+            interpolate_value (float): Interpolate float value (0.0 - 1.0)
+
+        Returns:
+            str: Interpolated color
+        """
+        hexcolor = hexcolor if hexcolor.startswith("#") else f"#{hexcolor}"
+        rgb = mpl.colors.to_rgb(hexcolor)
+        hls = colorsys.rgb_to_hls(*rgb)
+        hue, luminance, saturation = hls
+        new_luminance = luminance + (1 - luminance) * (1 - interpolate_value)
+        rgb = colorsys.hls_to_rgb(hue, new_luminance, saturation)
+        return mpl.colors.to_hex(rgb).lstrip("#")
 
     ###########################################################################
     # Util functions
