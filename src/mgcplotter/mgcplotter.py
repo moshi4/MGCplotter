@@ -48,7 +48,7 @@ def run(
     gc_content_n_color: str = "grey",
     gc_skew_p_color: str = "olive",
     gc_skew_n_color: str = "purple",
-):
+) -> None:
     """Run MGCplotter workflow"""
     # Setup directory
     config_dir = outdir / "circos_config"
@@ -70,10 +70,14 @@ def run(
             Genbank(query_file).write_cds_fasta(query_fasta_file)
         else:
             continue
-        rbh_result_file = rbh_dir / query_file.with_suffix(".tsv").name
-        run_mmseqs_rbh(
-            ref_fasta_file, query_fasta_file, rbh_result_file, evalue, thread_num
+        ref_name = ref_file.with_suffix("").name
+        rbh_result_file = rbh_dir / (
+            ref_name + "_vs_" + query_file.with_suffix(".tsv").name
         )
+        if force or not rbh_result_file.exists():
+            run_mmseqs_rbh_search(
+                query_fasta_file, ref_fasta_file, rbh_result_file, evalue, thread_num
+            )
         rbh_result_files.append(rbh_result_file)
 
     # Setup Circos config
@@ -124,17 +128,17 @@ def run(
     sp.run(f"circos -conf {config_file}", shell=True)
 
 
-def run_mmseqs_rbh(
-    ref_fasta_file: Path,
+def run_mmseqs_rbh_search(
     query_fasta_file: Path,
+    ref_fasta_file: Path,
     rbh_result_file: Path,
     evalue: float = 1e-3,
     thread_num: int = 1,
-):
+) -> None:
     """Run MMseqs rbh search"""
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = (
-            f"mmseqs easy-rbh {ref_fasta_file} {query_fasta_file} "
+            f"mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} "
             + f"{rbh_result_file} {tmpdir} -e {evalue} --threads {thread_num}"
         )
         sp.run(cmd, shell=True)
@@ -224,7 +228,7 @@ def get_args() -> argparse.Namespace:
         "--query_list",
         nargs="+",
         type=Path,
-        help="Query fasta or genbank files (*.fa|*.faa|*.fasta, *.gb|*.gbk|*.gbff)",
+        help="Query fasta or genbank files (*.fa|*.faa|*.fasta|*.gb|*.gbk|*.gbff)",
         default=[],
         metavar="",
     )
