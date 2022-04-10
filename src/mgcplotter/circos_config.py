@@ -59,12 +59,17 @@ class CircosConfig:
         self._ideogram_file = config_dir / "ideogram.conf"
         self._ticks_file = config_dir / "ticks.conf"
         self._karyotype_file = config_dir / "karyotype.txt"
-        self._f_cds_file = config_dir / "feature_forward_cds.txt"
-        self._r_cds_file = config_dir / "feature_reverse_cds.txt"
-        self._rrna_file = config_dir / "feature_rRNA.txt"
-        self._trna_file = config_dir / "feature_tRNA.txt"
-        self._gc_skew_file = config_dir / "gc_skew.txt"
+        # Features config files
+        self._ref_features_dir = config_dir / "reference_features"
+        self._ref_features_dir.mkdir(exist_ok=True)
+        self._f_cds_file = self._ref_features_dir / "forward_cds.txt"
+        self._r_cds_file = self._ref_features_dir / "reverse_cds.txt"
+        self._rrna_file = self._ref_features_dir / "rRNA.txt"
+        self._trna_file = self._ref_features_dir / "tRNA.txt"
+        # GC content & GC skew config file
         self._gc_content_file = config_dir / "gc_content.txt"
+        self._gc_skew_file = config_dir / "gc_skew.txt"
+        # RBH config files
         self._rbh_config_files: List[Path] = []
 
         self._r = 1.0

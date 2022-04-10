@@ -52,12 +52,14 @@ def run(
     """Run MGCplotter workflow"""
     # Setup directory
     config_dir = outdir / "circos_config"
+    config_rbh_dir = config_dir / "rbh_results"
     rbh_dir = outdir / "rbh_search"
     outdir.mkdir(exist_ok=True)
     config_dir.mkdir(exist_ok=True)
     rbh_dir.mkdir(exist_ok=True)
+    config_rbh_dir.mkdir(exist_ok=True)
 
-    # TODO: Search conserved sequence
+    # Search conserved sequence by MMseqs RBH method
     rbh_result_files: List[Path] = []
     ref_gbk = Genbank(ref_file)
     ref_fasta_file = outdir / "reference_cds.faa"
@@ -104,7 +106,7 @@ def run(
         gc_skew_n_color=to_hex(gc_skew_n_color),
     )
     for rbh_result_file in rbh_result_files:
-        rbh_config_file = config_dir / rbh_result_file.with_suffix(".txt").name
+        rbh_config_file = config_rbh_dir / rbh_result_file.with_suffix(".txt").name
         circos_config.add_rbh_config(rbh_result_file, rbh_config_file)
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
