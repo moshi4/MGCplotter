@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mgcplotter"
 version = "0.1.0"
-description = "Microbial Genome Circular plot tool using Circos"
+description = "Microbial Genome Circular plotting tool using Circos"
 authors = ["moshi"]
 license = "GPL-3.0-only"
 homepage = "https://github.com/moshi4/MGCplotter/"

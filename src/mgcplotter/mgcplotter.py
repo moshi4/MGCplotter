@@ -215,7 +215,7 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Argument values
     """
-    desc = "Microbial Genome Circular plotter"
+    desc = "Microbial Genome Circular plotting tool"
     parser = argparse.ArgumentParser(description=desc)
 
     parser.add_argument(
