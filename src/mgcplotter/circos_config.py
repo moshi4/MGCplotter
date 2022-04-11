@@ -15,6 +15,7 @@ class CircosConfig:
         ref_gbk: Genbank,
         config_dir: Path,
         img_dir: Path,
+        ticks_labelsize=35,
         # Radius
         forward_cds_r=0.07,
         reverse_cds_r=0.07,
@@ -38,6 +39,7 @@ class CircosConfig:
         self.ref_gbk = ref_gbk
         self.config_dir = config_dir
         self.img_dir = img_dir
+        self.ticks_labelsize = ticks_labelsize
         # Radius
         self.f_cds_r = forward_cds_r
         self.r_cds_r = reverse_cds_r
@@ -154,7 +156,7 @@ class CircosConfig:
                 "<spacing>",
                 "default = 0.005r",
                 "</spacing>",
-                "radius           = 0.85r",
+                "radius           = 0.80r",
                 "thickness        = 15p",
                 "fill             = yes",
                 "stroke_color     = dgrey",
@@ -189,7 +191,7 @@ class CircosConfig:
                 "<tick>",
                 "spacing      = {0:.2f}u".format(self._largeticks_spacing),
                 "show_label   = yes",
-                "label_size   = 35p",
+                "label_size   = {0}p".format(self.ticks_labelsize),
                 "label_offset = 10p",
                 "size         = 25p",
                 "</tick>",

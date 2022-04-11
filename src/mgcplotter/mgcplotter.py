@@ -39,6 +39,7 @@ def run(
     thread_num: int,
     evalue: float,
     force: bool,
+    ticks_labelsize: int = 35,
     # Radius
     forward_cds_r: float = 0.07,
     reverse_cds_r: float = 0.07,
@@ -96,6 +97,7 @@ def run(
         ref_gbk=ref_gbk,
         config_dir=config_dir,
         img_dir=outdir,
+        ticks_labelsize=ticks_labelsize,
         # Radius
         forward_cds_r=forward_cds_r,
         reverse_cds_r=reverse_cds_r,
@@ -266,6 +268,14 @@ def get_args() -> argparse.Namespace:
         "--force",
         help="Forcibly overwrite previous result (Default: OFF)",
         action="store_true",
+    )
+    default_ticks_labelsize = 35
+    parser.add_argument(
+        "--ticks_labelsize",
+        type=float,
+        help=f"Ticks label size (Default: {default_ticks_labelsize})",
+        default=default_ticks_labelsize,
+        metavar="",
     )
     # Track radius control arguments
     for k, v in config.radius_args_dict.items():
