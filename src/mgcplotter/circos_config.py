@@ -1,4 +1,3 @@
-import colorsys
 from pathlib import Path
 from typing import List, Optional
 
@@ -491,23 +490,24 @@ class CircosConfig:
         ).split(",")
         return pd.read_table(rbh_result_file, header=None, names=header_names)
 
-    def _get_interpolated_color(self, hexcolor: str, interpolate_value: float) -> str:
+    def _get_interpolated_color(
+        self, hexcolor: str, interpolate_value: float, vmin: float = 0.0
+    ) -> str:
         """Get interpolate color from float value (Interpolate: Target color -> white)
 
         Args:
             hexcolor (str): Target hexcolor
             interpolate_value (float): Interpolate float value (0.0 - 1.0)
+            vmin (float): Minimum under value for interpolation
 
         Returns:
             str: Interpolated color
         """
         hexcolor = hexcolor if hexcolor.startswith("#") else f"#{hexcolor}"
-        rgb = mpl.colors.to_rgb(hexcolor)
-        hls = colorsys.rgb_to_hls(*rgb)
-        hue, luminance, saturation = hls
-        new_luminance = luminance + (1 - luminance) * (1 - interpolate_value)
-        rgb = colorsys.hls_to_rgb(hue, new_luminance, saturation)
-        return mpl.colors.to_hex(rgb).lstrip("#")
+        cmap = mpl.colors.LinearSegmentedColormap.from_list("cmap", ("white", hexcolor))
+        norm = mpl.colors.Normalize(vmin=vmin, vmax=1.0)
+        norm_value = norm(interpolate_value)
+        return mpl.colors.to_hex(cmap(norm_value)).lstrip("#")
 
     ###########################################################################
     # Util functions
