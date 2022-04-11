@@ -357,9 +357,10 @@ class CircosConfig:
         gc_content_values = [v - self.ref_gbk.average_gc for v in gc_content_values]
         contents = ""
         for i, value in enumerate(gc_content_values):
-            pos = i * self._step_size
+            start = i * self._step_size
+            end = start + self._step_size
             color = self.gc_content_p_color if value > 0 else self.gc_content_n_color
-            contents += f"main {pos} {pos} {value} fill_color={color}\n"
+            contents += f"main {start} {end} {value} fill_color={color}\n"
         with open(self._gc_content_file, "w") as f:
             f.write(contents)
         return max(abs(v) for v in gc_content_values)
@@ -393,9 +394,10 @@ class CircosConfig:
         gc_skew_values = self.ref_gbk.gc_skew(self._window_size, self._step_size)
         contents = ""
         for i, value in enumerate(gc_skew_values):
-            pos = i * self._step_size
+            start = i * self._step_size
+            end = start + self._step_size
             color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
-            contents += f"main {pos} {pos} {value} fill_color={color}\n"
+            contents += f"main {start} {end} {value} fill_color={color}\n"
         with open(self._gc_skew_file, "w") as f:
             f.write(contents)
         return max(abs(v) for v in gc_skew_values)
