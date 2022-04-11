@@ -37,7 +37,8 @@ def run(
     outdir: Path,
     query_list: List[Path],
     thread_num: int,
-    evalue: float,
+    mmseqs_evalue: float,
+    cog_evalue: float,
     force: bool,
     ticks_labelsize: int = 35,
     # Radius
@@ -49,6 +50,7 @@ def run(
     gc_content_r: float = 0.15,
     gc_skew_r: float = 0.15,
     # Color
+    assign_cog_color: bool = False,
     forward_cds_color: str = "red",
     reverse_cds_color: str = "blue",
     rrna_color: str = "green",
@@ -61,34 +63,32 @@ def run(
 ) -> None:
     """Run MGCplotter workflow"""
     # Setup directory
-    config_dir = outdir / "circos_config"
-    config_rbh_dir = config_dir / "rbh_results"
-    rbh_dir = outdir / "rbh_search"
     outdir.mkdir(exist_ok=True)
+    config_dir = outdir / "circos_config"
     config_dir.mkdir(exist_ok=True)
-    rbh_dir.mkdir(exist_ok=True)
+    config_rbh_dir = config_dir / "rbh_results"
     config_rbh_dir.mkdir(exist_ok=True)
+    rbh_dir = outdir / "rbh_search"
+    rbh_dir.mkdir(exist_ok=True)
 
     # Search conserved sequence by MMseqs RBH method
-    rbh_result_files: List[Path] = []
     ref_gbk = Genbank(ref_file)
-    ref_fasta_file = outdir / "reference_cds.faa"
-    ref_gbk.write_cds_fasta(ref_fasta_file)
+    ref_faa_file = outdir / "reference_cds.faa"
+    ref_gbk.write_cds_fasta(ref_faa_file)
+    rbh_result_files: List[Path] = []
     for query_file in query_list:
-        query_fasta_file = rbh_dir / query_file.with_suffix(".faa").name
+        # Setup query CDS faa file
+        query_faa_file = rbh_dir / query_file.with_suffix(".faa").name
         if query_file.suffix in config.fasta_suffixs:
-            shutil.copy(query_file, query_fasta_file)
-        elif query_file.suffix in config.gbk_suffixs:
-            Genbank(query_file).write_cds_fasta(query_fasta_file)
-        else:
-            continue
-        ref_name = ref_file.with_suffix("").name
-        rbh_result_file = rbh_dir / (
-            ref_name + "_vs_" + query_file.with_suffix(".tsv").name
-        )
+            shutil.copy(query_file, query_faa_file)
+        elif query_file.suffix in config.gbk_suffixs and not query_faa_file.exists():
+            Genbank(query_file).write_cds_fasta(query_faa_file)
+        # Run MMseqs RBH search
+        query_name = query_file.with_suffix("").name
+        rbh_result_file = rbh_dir / f"{query_name}_vs_reference_rbh.tsv"
         if force or not rbh_result_file.exists():
             run_mmseqs_rbh_search(
-                query_fasta_file, ref_fasta_file, rbh_result_file, evalue, thread_num
+                query_faa_file, ref_faa_file, rbh_result_file, mmseqs_evalue, thread_num
             )
         rbh_result_files.append(rbh_result_file)
 
@@ -123,18 +123,21 @@ def run(
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
-    # Run COGclassifier
-    cog_dir = outdir / "cogclassifier"
-    cog_classifier_result_file = cog_dir / "classifier_result.tsv"
-    if force or not cog_classifier_result_file.exists():
-        cogclassifier.run(ref_fasta_file, cog_dir, thread_num=thread_num, evalue=1e-2)
+    # Run COGclassifier for assigning COG classification color to CDS
+    if assign_cog_color:
+        cog_dir = outdir / "cogclassifier"
+        cog_classifier_result_file = cog_dir / "classifier_result.tsv"
+        if force or not cog_classifier_result_file.exists():
+            cogclassifier.run(
+                ref_faa_file, cog_dir, thread_num=thread_num, evalue=cog_evalue
+            )
 
-    # Assign COG color to reference CDS
-    location_id2color = get_location_id2color(
-        cog_classifier_result_file, config.cog_letter2color
-    )
-    rewrite_circos_cds_color(circos_config._f_cds_file, location_id2color)
-    rewrite_circos_cds_color(circos_config._r_cds_file, location_id2color)
+        # Assign COG color to reference CDS
+        location_id2color = get_location_id2color(
+            cog_classifier_result_file, config.cog_letter2color
+        )
+        rewrite_circos_cds_color(circos_config._f_cds_file, location_id2color)
+        rewrite_circos_cds_color(circos_config._r_cds_file, location_id2color)
 
     # Run Circos
     sp.run(f"circos -conf {config_file}", shell=True)
@@ -236,11 +239,12 @@ def get_args() -> argparse.Namespace:
         help="Output directory",
         metavar="O",
     )
+    accepted_suffixs = config.fasta_suffixs + config.gbk_suffixs
     parser.add_argument(
         "--query_list",
         nargs="+",
         type=Path,
-        help="Query fasta or genbank files (*.fa|*.faa|*.fasta|*.gb|*.gbk|*.gbff)",
+        help=f"Query fasta or genbank files ({'|'.join(accepted_suffixs)})",
         default=[],
         metavar="",
     )
@@ -254,19 +258,26 @@ def get_args() -> argparse.Namespace:
         default=default_thread_num,
         metavar="",
     )
-    default_evalue = 1e-2
+    default_mmseqs_evalue = 1e-5
     parser.add_argument(
-        "-e",
-        "--evalue",
+        "--mmseqs_evalue",
         type=float,
-        help=f"MMseqs e-value parameter (Default: {default_evalue})",
-        default=default_evalue,
+        help=f"MMseqs e-value parameter (Default: {default_mmseqs_evalue})",
+        default=default_mmseqs_evalue,
+        metavar="",
+    )
+    default_cog_evalue = 1e-2
+    parser.add_argument(
+        "--cog_evalue",
+        type=float,
+        help=f"COGclassifier e-value parameter (Default: {default_cog_evalue})",
+        default=default_cog_evalue,
         metavar="",
     )
     parser.add_argument(
         "-f",
         "--force",
-        help="Forcibly overwrite previous result (Default: OFF)",
+        help="Forcibly overwrite previous calculation result (Default: OFF)",
         action="store_true",
     )
     default_ticks_labelsize = 35
@@ -286,6 +297,11 @@ def get_args() -> argparse.Namespace:
             default=v.default,
             metavar="",
         )
+    parser.add_argument(
+        "--assign_cog_color",
+        help="Assign COG classification color to CDS (Default: OFF)",
+        action="store_true",
+    )
     # Color control arguments
     for k, v in config.color_args_dict.items():
         parser.add_argument(
@@ -306,13 +322,16 @@ def get_args() -> argparse.Namespace:
 
     # Argument value validation
     err_info = ""
+    for f in args.query_list:
+        if f.suffix not in accepted_suffixs:
+            err_info += f"'{f.suffix}' is invalid file suffix ({f}).\n"
     for k, v in args.__dict__.items():
         if k in config.color_args_dict.keys():
             if not mpl.colors.is_color_like(v):
-                err_info += f"'--{k} {v}' is invalid. Not color like string.\n"
+                err_info += f"'--{k} {v}' is invalid color like string.\n"
         elif k in config.radius_args_dict.keys():
-            if not 0 <= v <= 1:
-                err_info += f"'--{k} {v}' is invalid. Value must be 0 <= value <= 1.\n"
+            if not 0 <= v <= 0.3:
+                err_info += f"'--{k} {v}' is invalid value range (0 <= value <= 0.3).\n"
     if err_info != "":
         parser.error("\n" + err_info)
 
