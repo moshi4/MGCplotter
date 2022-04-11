@@ -76,7 +76,10 @@ def run(
     ref_faa_file = outdir / "reference_cds.faa"
     ref_gbk.write_cds_fasta(ref_faa_file)
     rbh_result_files: List[Path] = []
-    for query_file in query_list:
+    for idx, query_file in enumerate(query_list, 1):
+        query_num = len(query_list)
+        if idx == 1:
+            em_print(f"Search Conserved Sequence ({query_num} Query vs Reference)")
         # Setup query CDS faa file
         query_faa_file = rbh_dir / query_file.with_suffix(".faa").name
         if query_file.suffix in config.fasta_suffixs:
@@ -85,11 +88,16 @@ def run(
             Genbank(query_file).write_cds_fasta(query_faa_file)
         # Run MMseqs RBH search
         query_name = query_file.with_suffix("").name
+        ref_name = ref_file.with_suffix("").name
+        target_info = f"{query_name} vs {ref_name}[reference]"
         rbh_result_file = rbh_dir / f"{query_name}_vs_reference_rbh.tsv"
         if force or not rbh_result_file.exists():
+            print(f"# Run MMseqs RBH search ({target_info})")
             run_mmseqs_rbh_search(
                 query_faa_file, ref_faa_file, rbh_result_file, mmseqs_evalue, thread_num
             )
+        else:
+            print(f"# Reuse previous MMseqs RBH search result ({target_info})")
         rbh_result_files.append(rbh_result_file)
 
     # Setup Circos config
@@ -123,14 +131,17 @@ def run(
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 
-    # Run COGclassifier for assigning COG classification color to CDS
+    # Run COGclassifier for Functional Classification of Reference CDSs
     if assign_cog_color:
         cog_dir = outdir / "cogclassifier"
         cog_classifier_result_file = cog_dir / "classifier_result.tsv"
+        em_print("Run COGclassifier for Functional Classification of Reference CDSs")
         if force or not cog_classifier_result_file.exists():
             cogclassifier.run(
                 ref_faa_file, cog_dir, thread_num=thread_num, evalue=cog_evalue
             )
+        else:
+            print("# Reuse previous COGclassifier result")
 
         # Assign COG color to reference CDS
         location_id2color = get_location_id2color(
@@ -140,7 +151,10 @@ def run(
         rewrite_circos_cds_color(circos_config._r_cds_file, location_id2color)
 
     # Run Circos
-    sp.run(f"circos -conf {config_file}", shell=True)
+    em_print("Run Circos")
+    cmd = f"circos -conf {config_file}"
+    print(f"$ {cmd}\n")
+    sp.run(cmd, shell=True)
 
 
 def run_mmseqs_rbh_search(
@@ -153,9 +167,10 @@ def run_mmseqs_rbh_search(
     """Run MMseqs rbh search"""
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = (
-            f"mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} "
-            + f"{rbh_result_file} {tmpdir} -e {evalue} --threads {thread_num}"
+            f"mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} {rbh_result_file} "
+            + f"{tmpdir} -e {evalue} --threads {thread_num} > /dev/null"
         )
+        print(f"$ {cmd}\n")
         sp.run(cmd, shell=True)
 
 
@@ -201,6 +216,15 @@ def rewrite_circos_cds_color(
             contents += " ".join(line.split(" ")[0:4]) + f" color={hexcolor}\n"
     with open(circos_cds_file, "w") as f:
         f.write(contents)
+
+
+def em_print(content: str) -> None:
+    """Emphasis print content
+
+    Args:
+        content (str): Print content
+    """
+    print(f"\n{'*' * 80}\n* {content}\n{'*'* 80}\n")
 
 
 def get_args() -> argparse.Namespace:
