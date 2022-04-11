@@ -141,9 +141,8 @@ class CircosConfig:
     ###########################################################################
     def _write_karyotype_file(self) -> None:
         """Write karyotype txt"""
-        genome_length = self.ref_gbk.genome_length
         with open(self._karyotype_file, "w") as f:
-            f.write(f"chr - main 1 0 {genome_length} grey")
+            f.write(f"chr - main 1 0 {self._genome_length} grey")
 
     ###########################################################################
     # Ideogram config
@@ -299,9 +298,7 @@ class CircosConfig:
 
     def _write_separate_file(self) -> None:
         with open(self._separate_file, "w") as f:
-            f.write(
-                f"main 0 {self.ref_gbk.genome_length} + color={self.separate_color}"
-            )
+            f.write(f"main 0 {self._genome_length} + color={self.separate_color}")
 
     ###########################################################################
     # Add RBH(Conserved Sequence) track
@@ -361,6 +358,7 @@ class CircosConfig:
         for i, value in enumerate(gc_content_values):
             start = i * self._step_size
             end = start + self._step_size
+            end = self._genome_length if end > self._genome_length else end
             color = self.gc_content_p_color if value > 0 else self.gc_content_n_color
             contents += f"main {start} {end} {value} fill_color={color}\n"
         with open(self._gc_content_file, "w") as f:
@@ -398,6 +396,7 @@ class CircosConfig:
         for i, value in enumerate(gc_skew_values):
             start = i * self._step_size
             end = start + self._step_size
+            end = self._genome_length if end > self._genome_length else end
             color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
             contents += f"main {start} {end} {value} fill_color={color}\n"
         with open(self._gc_skew_file, "w") as f:
@@ -408,9 +407,14 @@ class CircosConfig:
     # Properties
     ###########################################################################
     @property
+    def _genome_length(self) -> int:
+        """Genome length"""
+        return self.ref_gbk.genome_length
+
+    @property
     def _window_size(self) -> int:
         """Window size for GC content & GC skew calculation"""
-        return int(self.ref_gbk.genome_length / 1000)
+        return int(self._genome_length / 1000)
 
     @property
     def _step_size(self) -> int:
@@ -420,7 +424,7 @@ class CircosConfig:
     @property
     def _chromosome_units(self) -> int:
         """Chromosome units"""
-        return 10 ** (len(str(self.ref_gbk.genome_length)) - 1)
+        return 10 ** (len(str(self._genome_length)) - 1)
 
     @property
     def _ticks_format(self) -> str:
@@ -449,7 +453,7 @@ class CircosConfig:
     @property
     def _largeticks_spacing(self) -> float:
         """Largeticks spacing"""
-        if self.ref_gbk.genome_length / self._chromosome_units >= 2:
+        if self._genome_length / self._chromosome_units >= 2:
             return 0.5
         else:
             return 0.1
@@ -457,7 +461,7 @@ class CircosConfig:
     @property
     def _smallticks_spacing(self) -> float:
         """Smallticks spacing"""
-        if self.ref_gbk.genome_length / self._chromosome_units >= 2:
+        if self._genome_length / self._chromosome_units >= 2:
             return 0.1
         else:
             return 0.01
