@@ -107,15 +107,15 @@ def run(
         gc_content_r=gc_content_r,
         gc_skew_r=gc_skew_r,
         # Color
-        forward_cds_color=to_hex(forward_cds_color),
-        reverse_cds_color=to_hex(reverse_cds_color),
-        rrna_color=to_hex(rrna_color),
-        trna_color=to_hex(trna_color),
-        conserved_seq_color=to_hex(conserved_seq_color),
-        gc_content_p_color=to_hex(gc_content_p_color),
-        gc_content_n_color=to_hex(gc_content_n_color),
-        gc_skew_p_color=to_hex(gc_skew_p_color),
-        gc_skew_n_color=to_hex(gc_skew_n_color),
+        forward_cds_color=forward_cds_color,
+        reverse_cds_color=reverse_cds_color,
+        rrna_color=rrna_color,
+        trna_color=trna_color,
+        conserved_seq_color=conserved_seq_color,
+        gc_content_p_color=gc_content_p_color,
+        gc_content_n_color=gc_content_n_color,
+        gc_skew_p_color=gc_skew_p_color,
+        gc_skew_n_color=gc_skew_n_color,
     )
     for rbh_result_file in rbh_result_files:
         rbh_config_file = config_rbh_dir / rbh_result_file.with_suffix(".txt").name
@@ -159,18 +159,6 @@ def run_mmseqs_rbh_search(
         sp.run(cmd, shell=True)
 
 
-def to_hex(color_like_str: str) -> str:
-    """Convert color like string to hexcolor code
-
-    Args:
-        color_like_str (str): Color like string
-
-    Returns:
-        str: hexcolor code
-    """
-    return mpl.colors.to_hex(color_like_str).lstrip("#")
-
-
 def get_location_id2color(
     cog_classifier_result_file: Path,
     cog_letter2color: Dict[str, str],
@@ -209,7 +197,8 @@ def rewrite_circos_cds_color(
         for line in f.read().splitlines():
             location_id = " ".join(line.split(" ")[1:4])
             color = location_id2color.get(location_id, config.cog_letter2color["-"])
-            contents += " ".join(line.split(" ")[0:4]) + f" color={to_hex(color)}\n"
+            hexcolor = mpl.colors.to_hex(color).lstrip("#")
+            contents += " ".join(line.split(" ")[0:4]) + f" color={hexcolor}\n"
     with open(circos_cds_file, "w") as f:
         f.write(contents)
 

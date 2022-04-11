@@ -25,15 +25,15 @@ class CircosConfig:
         gc_content_r=0.15,
         gc_skew_r=0.15,
         # Color
-        forward_cds_color: str = "ff0000",  # red
-        reverse_cds_color: str = "0000ff",  # blue
-        rrna_color: str = "008000",  # green
-        trna_color: str = "800080",  # magenta
-        conserved_seq_color: str = "d2691e",  # chocolate
-        gc_content_p_color: str = "000000",  # black
-        gc_content_n_color: str = "808080",  # grey
-        gc_skew_p_color: str = "808000",  # olive
-        gc_skew_n_color: str = "800080",  # purple
+        forward_cds_color: str = "red",
+        reverse_cds_color: str = "blue",
+        rrna_color: str = "green",
+        trna_color: str = "magenta",
+        conserved_seq_color: str = "chocolate",
+        gc_content_p_color: str = "black",
+        gc_content_n_color: str = "grey",
+        gc_skew_p_color: str = "olive",
+        gc_skew_n_color: str = "purple",
     ):
         """Constructor"""
         self.ref_gbk = ref_gbk
@@ -50,16 +50,16 @@ class CircosConfig:
         self.gc_skew_r = gc_skew_r
         self.separate_r = 0.005
         # Color
-        self.f_cds_color = forward_cds_color
-        self.r_cds_color = reverse_cds_color
-        self.rrna_color = rrna_color
-        self.trna_color = trna_color
-        self.conserved_seq_color = conserved_seq_color
-        self.gc_content_p_color = gc_content_p_color
-        self.gc_content_n_color = gc_content_n_color
-        self.gc_skew_p_color = gc_skew_p_color
-        self.gc_skew_n_color = gc_skew_n_color
-        self.separate_color = "grey"
+        self.f_cds_color = self._to_hex(forward_cds_color)
+        self.r_cds_color = self._to_hex(reverse_cds_color)
+        self.rrna_color = self._to_hex(rrna_color)
+        self.trna_color = self._to_hex(trna_color)
+        self.conserved_seq_color = self._to_hex(conserved_seq_color)
+        self.gc_content_p_color = self._to_hex(gc_content_p_color)
+        self.gc_content_n_color = self._to_hex(gc_content_n_color)
+        self.gc_skew_p_color = self._to_hex(gc_skew_p_color)
+        self.gc_skew_n_color = self._to_hex(gc_skew_n_color)
+        self.separate_color = self._to_hex("grey")
 
         # Circos config file
         self._config_file = config_dir / "circos.conf"
@@ -526,3 +526,17 @@ class CircosConfig:
             str: Concatenated lines string
         """
         return "\n".join(lines) + "\n"
+
+    def _to_hex(self, color_like_str: str) -> str:
+        """Convert color like string to hexcolor code
+
+        Args:
+            color_like_str (str): Color like string
+
+        Returns:
+            str: hexcolor code
+
+        Notes:
+            Circos cannot accept '#' character in hexcolor code
+        """
+        return mpl.colors.to_hex(color_like_str).lstrip("#")
