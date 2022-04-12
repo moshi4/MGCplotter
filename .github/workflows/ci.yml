@@ -30,7 +30,7 @@ jobs:
       - name: Install requirements on Ubuntu
         run: |
           sudo apt update -y
-          sudo apt install -y circos
+          sudo apt install -y circos liblist-moreutils-perl
         if: ${{ matrix.os=='ubuntu-latest' }}
 
       - name: Install requirements on MacOS
