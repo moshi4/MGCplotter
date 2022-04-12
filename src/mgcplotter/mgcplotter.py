@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import platform
 import shutil
 import subprocess as sp
 import tempfile
@@ -72,6 +73,7 @@ def run(
     config_rbh_dir.mkdir(exist_ok=True)
     rbh_dir = outdir / "rbh_search"
     rbh_dir.mkdir(exist_ok=True)
+    add_bin_path()
 
     # Search conserved sequence by MMseqs RBH method
     ref_gbk = Genbank(ref_file)
@@ -162,6 +164,15 @@ def run(
     sp.run(cmd, shell=True)
 
 
+def add_bin_path() -> None:
+    """Add executable binary path to PATH"""
+    os_name = platform.system()  # 'Windows' or 'Darwin' or 'Linux'
+    bin_path = Path(__file__).parent / "bin" / os_name
+    sep = ";" if os_name == "Windows" else ":"
+    env_path = f"{os.environ['PATH']}{sep}{bin_path}"
+    os.environ["PATH"] = env_path
+
+
 def run_mmseqs_rbh_search(
     query_fasta_file: Path,
     ref_fasta_file: Path,
@@ -173,7 +184,7 @@ def run_mmseqs_rbh_search(
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = (
             f"mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} {rbh_result_file} "
-            + f"{tmpdir} -e {evalue} --threads {thread_num} > /dev/null"
+            + f"{tmpdir} -e {evalue} --threads {thread_num} -v 0"
         )
         print(f"$ {cmd}\n")
         sp.run(cmd, shell=True)
