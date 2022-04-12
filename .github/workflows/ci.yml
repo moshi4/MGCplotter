@@ -33,10 +33,17 @@ jobs:
           sudo apt install -y circos liblist-moreutils-perl
         if: ${{ matrix.os=='ubuntu-latest' }}
 
+      # http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/
       - name: Install requirements on MacOS
         run: |
           brew update
           brew tap brewsci/bio
+          brew remove gd
+          brew install gd --with-freetype
+          brew install cpanminus
+          sudo chown "$USER":admin /Library/Perl/5.16 # on Mac OS
+          cpanm Config::General Font::TTF::Font Math::Bezier Math::VecStat Readonly Set::IntSpan Text::Format
+          cpanm --force GD::Polyline
           brew install circos
         if: ${{ matrix.os=='macos-latest' }}
 
