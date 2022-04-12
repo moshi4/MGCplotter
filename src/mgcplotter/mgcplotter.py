@@ -36,7 +36,7 @@ def main():
 def run(
     ref_file: Path,
     outdir: Path,
-    query_list: List[Path],
+    query_files: List[Path],
     mmseqs_evalue: float,
     cog_evalue: float,
     thread_num: int,
@@ -78,8 +78,8 @@ def run(
     ref_faa_file = outdir / "reference_cds.faa"
     ref_gbk.write_cds_fasta(ref_faa_file)
     rbh_result_files: List[Path] = []
-    for idx, query_file in enumerate(query_list, 1):
-        query_num = len(query_list)
+    for idx, query_file in enumerate(query_files, 1):
+        query_num = len(query_files)
         if idx == 1:
             em_print(f"Search Conserved Sequence ({query_num} Query vs Reference)")
         # Setup query CDS faa file
@@ -246,8 +246,15 @@ def get_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Argument values
     """
+
+    class CustomHelpFormatter(argparse.HelpFormatter):
+        def __init__(self, prog, indent_increment=2, max_help_position=30, width=None):
+            super().__init__(prog, indent_increment, max_help_position, width)
+
     desc = "Microbial Genome Circular plotting tool"
-    parser = argparse.ArgumentParser(description=desc, add_help=False)
+    parser = argparse.ArgumentParser(
+        description=desc, add_help=False, formatter_class=CustomHelpFormatter
+    )
 
     # General Options
     general_opts = parser.add_argument_group("General Options")
@@ -269,7 +276,7 @@ def get_args() -> argparse.Namespace:
     )
     valid_query_suffixs = [f"*{s}" for s in config.valid_query_suffixs]
     general_opts.add_argument(
-        "--query_list",
+        "--query_files",
         nargs="+",
         type=Path,
         help=f"Query fasta or genbank files ({'|'.join(valid_query_suffixs)})",
@@ -369,7 +376,7 @@ def get_args() -> argparse.Namespace:
 
     # Argument value validation check
     err_info = ""
-    for f in args.query_list:
+    for f in args.query_files:
         if f.suffix not in config.valid_query_suffixs:
             err_info += f"'{f.suffix}' is invalid file suffix ({f}).\n"
     for k, v in args.__dict__.items():
