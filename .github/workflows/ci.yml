@@ -57,7 +57,7 @@ jobs:
         run: poetry run flake8 src --max-line-length=88 --ignore=E203,W503,W504
 
       - name: Run pytest
-        run: poetry run pytest tests --tb=line --cov=src --cov-report=xml --cov-report=term
+        run: poetry run pytest tests --tb=long --cov=src --cov-report=xml --cov-report=term
 
       # - name: Upload coverage to Codecov
       #   if: ${{ matrix.python-version==3.8 }} && ${{ matrix.os=='ubuntu-latest' }}
