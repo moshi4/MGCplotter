@@ -36,6 +36,7 @@ pytest-cov = "^3.0.0"
 
 [tool.poetry.scripts]
 MGCplotter = "mgcplotter.mgcplotter:main"
+generate_cog_color_template = "mgcplotter.mgcplotter:generate_cog_color_template"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

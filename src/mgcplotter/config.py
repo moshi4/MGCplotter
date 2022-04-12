@@ -6,6 +6,7 @@ import matplotlib as mpl
 
 fasta_suffixs = (".fa", ".faa", ".fasta")
 gbk_suffixs = (".gb", ".gbk", ".gbff")
+valid_query_suffixs = fasta_suffixs + gbk_suffixs
 
 
 @dataclass

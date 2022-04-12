@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 import argparse
+import json
 import os
 import shutil
 import subprocess as sp
 import tempfile
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import matplotlib as mpl
 import pandas as pd
@@ -51,6 +52,7 @@ def run(
     gc_skew_r: float = 0.15,
     # Color
     assign_cog_color: bool = False,
+    cog_color_json: Optional[Path] = None,
     forward_cds_color: str = "red",
     reverse_cds_color: str = "blue",
     rrna_color: str = "green",
@@ -144,6 +146,9 @@ def run(
             print("# Reuse previous COGclassifier result")
 
         # Assign COG color to reference CDS
+        if cog_color_json is not None:
+            with open(cog_color_json) as f:
+                config.cog_letter2color = json.load(f)
         location_id2color = get_location_id2color(
             cog_classifier_result_file, config.cog_letter2color
         )
@@ -227,6 +232,14 @@ def em_print(content: str) -> None:
     print(f"\n{'*' * 80}\n* {content}\n{'*'* 80}\n")
 
 
+def generate_cog_color_template() -> None:
+    """Generate COG color template json file"""
+    color_template_json_file = "cog_color_template.json"
+    with open(color_template_json_file, "w") as f:
+        json.dump(config.cog_letter2color, f, indent=2)
+    print(f"Generate COG color template json file ('{color_template_json_file}')")
+
+
 def get_args() -> argparse.Namespace:
     """Get arguments
 
@@ -252,12 +265,11 @@ def get_args() -> argparse.Namespace:
         help="Output directory",
         metavar="O",
     )
-    accepted_suffixs = config.fasta_suffixs + config.gbk_suffixs
     parser.add_argument(
         "--query_list",
         nargs="+",
         type=Path,
-        help=f"Query fasta or genbank files ({'|'.join(accepted_suffixs)})",
+        help=f"Query fasta or genbank files ({'|'.join(config.valid_query_suffixs)})",
         default=[],
         metavar="",
     )
@@ -315,6 +327,13 @@ def get_args() -> argparse.Namespace:
         help="Assign COG classification color to CDS (Default: OFF)",
         action="store_true",
     )
+    parser.add_argument(
+        "--cog_color_json",
+        type=Path,
+        help="User-defined COG classification color json file",
+        default=None,
+        metavar="",
+    )
     # Color control arguments
     for k, v in config.color_args_dict.items():
         parser.add_argument(
@@ -333,10 +352,10 @@ def get_args() -> argparse.Namespace:
     )
     args = parser.parse_args()
 
-    # Argument value validation
+    # Argument value validation check
     err_info = ""
     for f in args.query_list:
-        if f.suffix not in accepted_suffixs:
+        if f.suffix not in config.valid_query_suffixs:
             err_info += f"'{f.suffix}' is invalid file suffix ({f}).\n"
     for k, v in args.__dict__.items():
         if k in config.color_args_dict.keys():
@@ -345,6 +364,19 @@ def get_args() -> argparse.Namespace:
         elif k in config.radius_args_dict.keys():
             if not 0 <= v <= 0.3:
                 err_info += f"'--{k} {v}' is invalid value range (0 <= value <= 0.3).\n"
+
+    if args.cog_color_json is not None:
+        if not args.cog_color_json.exists():
+            err_info += f"--cog_color_json: File not found '{args.cog_color_json}'.\n"
+        else:
+            with open(args.cog_color_json) as f:
+                cog_color_json_dict: Dict[str, str] = json.load(f)
+            for k, v in cog_color_json_dict.items():
+                if k not in config.cog_letter2color:
+                    err_info += f"--cog_color_json: '{k}' is not COG letter.\n"
+                if not mpl.colors.is_color_like(v):
+                    err_info += f"--cog_color_json: '{v}' is not color like string.\n"
+
     if err_info != "":
         parser.error("\n" + err_info)
 
