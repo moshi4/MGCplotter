@@ -12,7 +12,7 @@ def test_minimal_option_run(
     res = sp.run(cmd, shell=True, capture_output=True)
 
     assert res.returncode == 0
-    assert len(list(tmp_path.glob("*.png"))) == 1
+    assert list(tmp_path.glob("*")) == []
     assert (tmp_path / "circos.png").exists()
 
 
