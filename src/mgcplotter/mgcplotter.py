@@ -161,7 +161,9 @@ def run(
     em_print("Run Circos")
     cmd = f"circos -conf {config_file}"
     print(f"$ {cmd}\n")
-    sp.run(cmd, shell=True)
+    res = sp.run(cmd, shell=True, capture_output=True)
+    if res.returncode != 0:
+        raise SystemError(res.stderr)
 
 
 def add_bin_path() -> None:
