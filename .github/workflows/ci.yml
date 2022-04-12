@@ -16,7 +16,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        # os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
         python-version: [3.7, 3.8, 3.9]
     steps:
       - name: Checkout
@@ -34,13 +35,13 @@ jobs:
         if: ${{ matrix.os=='ubuntu-latest' }}
 
       # http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/
-      - name: Install requirements on MacOS
-        run: |
-          brew update
-          brew tap brewsci/bio
-          brew install circos pkg-config libgd cpanminus
-          cpanm GD
-        if: ${{ matrix.os=='macos-latest' }}
+      # - name: Install requirements on MacOS
+      #   run: |
+      #     brew update
+      #     brew tap brewsci/bio
+      #     brew install circos pkg-config libgd cpanminus
+      #     cpanm GD
+      #   if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install Poetry
         run: |
