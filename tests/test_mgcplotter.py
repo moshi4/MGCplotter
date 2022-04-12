@@ -3,6 +3,12 @@ import subprocess as sp
 from pathlib import Path
 
 
+def test_circos_installation():
+    """Test Circos installation"""
+    res = sp.run("circos -modules", shell=True, capture_output=True)
+    assert b"ng " not in res.stdout
+
+
 def test_minimal_option_run(
     reference_file: Path,
     tmp_path: Path,
