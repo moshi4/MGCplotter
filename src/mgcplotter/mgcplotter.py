@@ -37,9 +37,9 @@ def run(
     ref_file: Path,
     outdir: Path,
     query_list: List[Path],
-    thread_num: int,
     mmseqs_evalue: float,
     cog_evalue: float,
+    thread_num: int,
     force: bool,
     ticks_labelsize: int = 35,
     # Radius
@@ -247,9 +247,11 @@ def get_args() -> argparse.Namespace:
         argparse.Namespace: Argument values
     """
     desc = "Microbial Genome Circular plotting tool"
-    parser = argparse.ArgumentParser(description=desc)
+    parser = argparse.ArgumentParser(description=desc, add_help=False)
 
-    parser.add_argument(
+    # General Options
+    general_opts = parser.add_argument_group("General Options")
+    general_opts.add_argument(
         "-r",
         "--ref_file",
         required=True,
@@ -257,7 +259,7 @@ def get_args() -> argparse.Namespace:
         help="Reference genbank file (*.gb|*.gbk|*.gbff)",
         metavar="R",
     )
-    parser.add_argument(
+    general_opts.add_argument(
         "-o",
         "--outdir",
         required=True,
@@ -265,26 +267,17 @@ def get_args() -> argparse.Namespace:
         help="Output directory",
         metavar="O",
     )
-    parser.add_argument(
+    valid_query_suffixs = [f"*{s}" for s in config.valid_query_suffixs]
+    general_opts.add_argument(
         "--query_list",
         nargs="+",
         type=Path,
-        help=f"Query fasta or genbank files ({'|'.join(config.valid_query_suffixs)})",
+        help=f"Query fasta or genbank files ({'|'.join(valid_query_suffixs)})",
         default=[],
         metavar="",
     )
-    cpu_num = os.cpu_count()
-    default_thread_num = 1 if cpu_num is None or cpu_num == 1 else cpu_num - 1
-    parser.add_argument(
-        "-t",
-        "--thread_num",
-        type=int,
-        help=f"Threads number parameter (Default: {default_thread_num})",
-        default=default_thread_num,
-        metavar="",
-    )
     default_mmseqs_evalue = 1e-5
-    parser.add_argument(
+    general_opts.add_argument(
         "--mmseqs_evalue",
         type=float,
         help=f"MMseqs e-value parameter (Default: {default_mmseqs_evalue})",
@@ -292,64 +285,86 @@ def get_args() -> argparse.Namespace:
         metavar="",
     )
     default_cog_evalue = 1e-2
-    parser.add_argument(
+    general_opts.add_argument(
         "--cog_evalue",
         type=float,
-        help=f"COGclassifier e-value parameter (Default: {default_cog_evalue})",
+        help=f"COGclassifier e-value parameter (Default: {default_cog_evalue:.0e})",
         default=default_cog_evalue,
         metavar="",
     )
-    parser.add_argument(
+    cpu_num = os.cpu_count()
+    default_thread_num = 1 if cpu_num is None or cpu_num == 1 else cpu_num - 1
+    general_opts.add_argument(
+        "-t",
+        "--thread_num",
+        type=int,
+        help=f"Threads number parameter (Default: {default_thread_num})",
+        default=default_thread_num,
+        metavar="",
+    )
+    general_opts.add_argument(
         "-f",
         "--force",
         help="Forcibly overwrite previous calculation result (Default: OFF)",
         action="store_true",
     )
+    general_opts.add_argument(
+        "-v",
+        "--version",
+        version=f"v{__version__}",
+        help="Print version information",
+        action="version",
+    )
+    general_opts.add_argument(
+        "-h",
+        "--help",
+        help="show this help message and exit",
+        action="help",
+    )
+
+    # Graph Size Options
+    size_opts = parser.add_argument_group("Graph Size Options")
     default_ticks_labelsize = 35
-    parser.add_argument(
+    size_opts.add_argument(
         "--ticks_labelsize",
         type=float,
         help=f"Ticks label size (Default: {default_ticks_labelsize})",
         default=default_ticks_labelsize,
         metavar="",
     )
-    # Track radius control arguments
     for k, v in config.radius_args_dict.items():
-        parser.add_argument(
+        # Track radius control arguments
+        size_opts.add_argument(
             f"--{k}",
             type=float,
             help=f"{v.desc} (Default: {v.default})",
             default=v.default,
             metavar="",
         )
-    parser.add_argument(
+
+    # Graph Color Options
+    color_opts = parser.add_argument_group("Graph Color Options")
+    color_opts.add_argument(
         "--assign_cog_color",
-        help="Assign COG classification color to CDS (Default: OFF)",
+        help="Assign COG classification color to reference CDSs (Default: OFF)",
         action="store_true",
     )
-    parser.add_argument(
+    color_opts.add_argument(
         "--cog_color_json",
         type=Path,
         help="User-defined COG classification color json file",
         default=None,
         metavar="",
     )
-    # Color control arguments
     for k, v in config.color_args_dict.items():
-        parser.add_argument(
+        # Color control arguments
+        color_opts.add_argument(
             f"--{k}",
             type=str,
             help=f"{v.desc} (Default: '{v.default}')",
             default=v.default,
             metavar="",
         )
-    parser.add_argument(
-        "-v",
-        "--version",
-        action="version",
-        version=f"v{__version__}",
-        help="Print version information",
-    )
     args = parser.parse_args()
 
     # Argument value validation check
