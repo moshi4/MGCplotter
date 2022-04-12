@@ -5,8 +5,9 @@ from pathlib import Path
 
 def test_circos_installation():
     """Test Circos installation"""
-    res = sp.run("circos -modules", shell=True, capture_output=True)
-    assert b"ng " not in res.stdout
+    res = sp.run("circos -modules", shell=True, capture_output=True, text=True)
+    for line in res.stdout.split("\n"):
+        assert not line.startswith("ng")
 
 
 def test_minimal_option_run(
