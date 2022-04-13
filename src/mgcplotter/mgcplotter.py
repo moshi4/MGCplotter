@@ -388,28 +388,30 @@ def get_args() -> argparse.Namespace:
 
     # Argument value validation check
     err_info = ""
+    if not args.ref_file.exists():
+        err_info += f"-r/--ref_file: File not found '{args.ref_file}'\n"
     for f in args.query_files:
         if f.suffix not in config.valid_query_suffixs:
-            err_info += f"'{f.suffix}' is invalid file suffix ({f.name}).\n"
+            err_info += f"'{f.suffix}' is invalid file suffix ({f.name})\n"
     for k, v in args.__dict__.items():
         if k in config.color_args_dict.keys():
             if not mpl.colors.is_color_like(v):
-                err_info += f"'--{k} {v}' is invalid color like string.\n"
+                err_info += f"--{k}: '{v}' is invalid color like string\n"
         elif k in config.radius_args_dict.keys():
             if not 0 <= v <= 0.3:
-                err_info += f"'--{k} {v}' is invalid value range (0 <= value <= 0.3).\n"
+                err_info += f"--{k}: '{v}' is invalid value range (0 <= value <= 0.3)\n"
 
     if args.cog_color_json is not None:
         if not args.cog_color_json.exists():
-            err_info += f"--cog_color_json: File not found '{args.cog_color_json}'.\n"
+            err_info += f"--cog_color_json: File not found '{args.cog_color_json}'\n"
         else:
             with open(args.cog_color_json) as f:
                 cog_color_json_dict: Dict[str, str] = json.load(f)
             for k, v in cog_color_json_dict.items():
                 if k not in config.cog_letter2color:
-                    err_info += f"--cog_color_json: '{k}' is not COG letter.\n"
+                    err_info += f"--cog_color_json: '{k}' is not COG letter\n"
                 if not mpl.colors.is_color_like(v):
-                    err_info += f"--cog_color_json: '{v}' is not color like string.\n"
+                    err_info += f"--cog_color_json: '{v}' is not color like string\n"
 
     if err_info != "":
         parser.error("\n" + err_info)
