@@ -40,8 +40,21 @@ class Genbank:
         """Contig sequences"""
         return [str(r.seq) for r in self._records]
 
+    @cached_property
+    def average_gc(self) -> float:
+        """Average GC content"""
+        return SeqUtils.GC(self.genome_seq)
+
     def gc_skew(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
-        """GC Skew"""
+        """Calculate GC skew in sliding window
+
+        Args:
+            window_size (int, optional): Window size
+            step_size (int, optional): Step size
+
+        Returns:
+            List[float]: GC skew values in sliding window
+        """
         gc_skew_values = []
         seq = self.genome_seq
         for i in range(0, len(seq), step_size):
@@ -61,7 +74,15 @@ class Genbank:
         return gc_skew_values
 
     def gc_content(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
-        """GC Content"""
+        """Calculate GC content in sliding window
+
+        Args:
+            window_size (int, optional): Window size
+            step_size (int, optional): Step size
+
+        Returns:
+            List[float]: GC content values in sliding window
+        """
         gc_content_values = []
         seq = self.genome_seq
         for i in range(0, len(seq), step_size):
@@ -73,11 +94,6 @@ class Genbank:
             subseq = seq[start_pos:end_pos]
             gc_content_values.append(SeqUtils.GC(subseq))
         return gc_content_values
-
-    @cached_property
-    def average_gc(self) -> float:
-        """Average GC content"""
-        return SeqUtils.GC(self.genome_seq)
 
     def extract_all_features(
         self,
@@ -126,7 +142,11 @@ class Genbank:
         self,
         fasta_outfile: Union[str, Path],
     ):
-        """Write CDS protein features fasta"""
+        """Write CDS protein features fasta file
+
+        Args:
+            fasta_outfile (Union[str, Path]): _description_
+        """
         features = self.extract_all_features("CDS", None)
         cds_seq_records: List[SeqRecord] = []
         for idx, feature in enumerate(features, 1):

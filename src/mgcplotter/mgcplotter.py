@@ -180,7 +180,15 @@ def run_mmseqs_rbh_search(
     evalue: float = 1e-3,
     thread_num: int = 1,
 ) -> None:
-    """Run MMseqs rbh search"""
+    """Run MMseqs rbh search
+
+    Args:
+        query_fasta_file (Path): Query fasta file
+        ref_fasta_file (Path): Reference fasta file
+        rbh_result_file (Path): RBH result file
+        evalue (float, optional): E-value
+        thread_num (int, optional): Thread number
+    """
     with tempfile.TemporaryDirectory() as tmpdir:
         cmd = (
             f"mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} {rbh_result_file} "
