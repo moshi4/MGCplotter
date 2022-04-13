@@ -94,16 +94,16 @@ class CircosConfig:
         self._write_ticks_conf()
         self._write_karyotype_file()
         self._add_feature_track(
-            self._f_cds_file, ["CDS"], 1, self.f_cds_color, self.f_cds_r
+            self._f_cds_file, "CDS", 1, self.f_cds_color, self.f_cds_r
         )
         self._add_feature_track(
-            self._r_cds_file, ["CDS"], -1, self.r_cds_color, self.r_cds_r
+            self._r_cds_file, "CDS", -1, self.r_cds_color, self.r_cds_r
         )
         self._add_feature_track(
-            self._rrna_file, ["rRNA"], None, self.rrna_color, self.rrna_r
+            self._rrna_file, "rRNA", None, self.rrna_color, self.rrna_r
         )
         self._add_feature_track(
-            self._trna_file, ["tRNA"], None, self.trna_color, self.trna_r
+            self._trna_file, "tRNA", None, self.trna_color, self.trna_r
         )
         if len(self._rbh_config_files) != 0:
             self._r -= 0.01
@@ -141,8 +141,15 @@ class CircosConfig:
     ###########################################################################
     def _write_karyotype_file(self) -> None:
         """Write karyotype txt"""
+        contents = f"chr - main 1 0 {self._genome_length} grey\n"
+        colors = ["lgrey", "dgrey"]
+        base_len = 0
+        for idx, contig_seq in enumerate(self.ref_gbk.contig_seqs):
+            start, end, color = base_len, base_len + len(contig_seq), colors[idx % 2]
+            contents += f"band main band{idx+1} band{idx+1} {start} {end} {color}\n"
+            base_len += len(contig_seq)
         with open(self._karyotype_file, "w") as f:
-            f.write(f"chr - main 1 0 {self._genome_length} grey")
+            f.write(contents)
 
     ###########################################################################
     # Ideogram config
@@ -159,6 +166,8 @@ class CircosConfig:
                 "thickness        = 15p",
                 "fill             = yes",
                 "stroke_color     = dgrey",
+                "show_bands       = yes",
+                "fill_bands       = yes",
                 "stroke_thickness = 2p",
                 "show_label       = no",
                 "label_font       = default",
@@ -211,7 +220,7 @@ class CircosConfig:
     def _add_feature_track(
         self,
         feature_file: Path,
-        feature_types: List[str],
+        feature_type: str,
         target_strand: Optional[int] = None,
         color: str = "grey",
         feature_r: float = 0.07,
@@ -220,15 +229,15 @@ class CircosConfig:
 
         Args:
             feature_file (Path): Feature file to write
-            feature_types (List[str]): Feature types (e.g. 'CDS', 'rRNA', 'tRNA')
+            feature_type (str): Feature type (e.g. 'CDS', 'rRNA', 'tRNA')
             target_strand (Optional[int]): Strand ('1', '-1', 'None')
             color (str): Feature color to be drawn
             feature_r (float): Feature radius size
         """
-        self._write_feature_file(feature_file, feature_types, target_strand, color)
+        self._write_feature_file(feature_file, feature_type, target_strand, color)
         self._track_config += self._concat_lines(
             [
-                f"##### {'-'.join(feature_types)} Feature Track #####",
+                f"##### {feature_type} Feature Track #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(feature_file),
@@ -250,7 +259,7 @@ class CircosConfig:
     def _write_feature_file(
         self,
         feature_file: Path,
-        feature_types: List[str],
+        feature_type: str,
         target_strand: Optional[int],
         color: str,
     ) -> None:
@@ -258,11 +267,11 @@ class CircosConfig:
 
         Args:
             feature_file (Path): Feature file to write
-            feature_types (List[str]): Feature types (e.g. 'CDS', 'rRNA', 'tRNA')
+            feature_type (str): Feature type (e.g. 'CDS', 'rRNA', 'tRNA')
             target_strand (Optional[int]): Strand ('1', '-1', 'None')
             color (str): Feature color to be drawn
         """
-        features = self.ref_gbk.extract_all_features(feature_types, target_strand)
+        features = self.ref_gbk.extract_all_features(feature_type, target_strand)
         contents = ""
         for f in features:
             start, end, strand = f.location.start, f.location.end, f.strand

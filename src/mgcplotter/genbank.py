@@ -1,9 +1,9 @@
 from functools import cached_property
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Any, List, Optional, Union
 
 from Bio import SeqIO, SeqUtils
-from Bio.SeqFeature import Seq, SeqFeature
+from Bio.SeqFeature import FeatureLocation, Seq, SeqFeature
 from Bio.SeqRecord import SeqRecord
 
 
@@ -24,17 +24,26 @@ class Genbank:
         self.gbk_file: Path = Path(gbk_file)
         self.name: str = name if name != "" else self.gbk_file.with_suffix("").name
         self._records: List[SeqRecord] = list(SeqIO.parse(gbk_file, "genbank"))
-        self._first_record: SeqRecord = self._records[0]
 
     @property
     def genome_length(self) -> int:
-        """Genome sequence length of Genbank first record"""
-        return len(self._first_record.seq)
+        """Genome sequence length"""
+        return len(self.genome_seq)
+
+    @property
+    def genome_seq(self) -> str:
+        """Genome sequence (join all contig sequences)"""
+        return "".join(self.contig_seqs)
+
+    @property
+    def contig_seqs(self) -> List[str]:
+        """Contig sequences"""
+        return [str(r.seq) for r in self._records]
 
     def gc_skew(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
         """GC Skew"""
         gc_skew_values = []
-        seq = self._first_record.seq
+        seq = self.genome_seq
         for i in range(0, len(seq), step_size):
             start_pos = i - int(window_size / 2)
             start_pos = 0 if start_pos < 0 else start_pos
@@ -54,7 +63,7 @@ class Genbank:
     def gc_content(self, window_size: int = 5000, step_size: int = 2000) -> List[float]:
         """GC Content"""
         gc_content_values = []
-        seq = self._first_record.seq
+        seq = self.genome_seq
         for i in range(0, len(seq), step_size):
             start_pos = i - int(window_size / 2)
             start_pos = 0 if start_pos < 0 else start_pos
@@ -68,61 +77,57 @@ class Genbank:
     @cached_property
     def average_gc(self) -> float:
         """Average GC content"""
-        return SeqUtils.GC(self._first_record.seq)
+        return SeqUtils.GC(self.genome_seq)
 
     def extract_all_features(
         self,
-        feature_types: List[str] = ["CDS"],
+        feature_type: str = "CDS",
         target_strand: Optional[int] = None,
-        only_first_record: bool = False,
     ) -> List[SeqFeature]:
         """Extract all features
 
         Args:
-            feature_types (List[str]): Feature types to extract
+            feature_type (str): Feature type to extract
             target_strand (Optional[int]): Target starnd to extract
-            only_first_record (bool): Exatract from only first record or not
         Returns:
             List[SeqFeature]: All features
         """
-        features = []
-        if only_first_record:
-            features = [
-                f for f in self._first_record.features if f.type in feature_types
-            ]
-        else:
-            for record in self._records:
-                for f in record.features:
-                    if f.type in feature_types:
-                        features.append(f)
+        extract_features = []
+        base_len = 0
+        for record in self._records:
+            features = [f for f in record.features if f.type == feature_type]
+            for f in features:
+                if feature_type == "CDS":
+                    # Exclude pseudogene (no translated gene)
+                    translation = f.qualifiers.get("translation", [None])[0]
+                    if translation is None:
+                        continue
+                start = self._to_int(f.location.parts[0].start) + base_len
+                end = self._to_int(f.location.parts[-1].end) + base_len
+                # Exclude feature that straddle start position
+                if start > end:
+                    continue
+                # Extract only target strand feature
+                if target_strand is not None and f.strand != target_strand:
+                    continue
 
-        if "CDS" not in feature_types:
-            return features
+                extract_features.append(
+                    SeqFeature(
+                        location=FeatureLocation(start, end, f.strand),
+                        type=f.type,
+                        qualifiers=f.qualifiers,
+                    ),
+                )
+            base_len += len(record.seq)
 
-        result_features = []
-        for feature in features:
-            # Exclude pseudogene (no translated gene)
-            qualifiers = feature.qualifiers
-            translation = qualifiers.get("translation", [None])[0]
-            if translation is None:
-                continue
-            # Exclude straddle start position gene
-            start = feature.location.parts[0].start
-            end = feature.location.parts[-1].end
-            if start > end:
-                continue
-            # Select target strand
-            if target_strand is None or target_strand == feature.strand:
-                result_features.append(feature)
-        return result_features
+        return extract_features
 
     def write_cds_fasta(
         self,
         fasta_outfile: Union[str, Path],
-        only_first_record: bool = False,
     ):
         """Write CDS protein features fasta"""
-        features = self.extract_all_features(["CDS"], None, only_first_record)
+        features = self.extract_all_features("CDS", None)
         cds_seq_records: List[SeqRecord] = []
         for idx, feature in enumerate(features, 1):
             qualifiers = feature.qualifiers
@@ -130,13 +135,9 @@ class Genbank:
             product = qualifiers.get("product", [""])[0]
             translation = qualifiers.get("translation", [None])[0]
 
-            start = feature.location.parts[0].start
-            end = feature.location.parts[-1].end
+            start = self._to_int(feature.location.start)
+            end = self._to_int(feature.location.end)
             strand = "+" if feature.strand == 1 else "-"
-            if not isinstance(start, int) or not isinstance(end, int):
-                continue
-            if translation is None or start > end:
-                continue
 
             location_id = f"|{start}_{end}_{strand}|"
             if protein_id is None:
@@ -160,6 +161,10 @@ class Genbank:
         Args:
             outfile (Union[str, Path]): Output genome fasta file
         """
-        write_seq = self._first_record.seq
+        write_seq = self.genome_seq
         with open(outfile, "w") as f:
             f.write(f">{self.name}\n{write_seq}\n")
+
+    def _to_int(self, value: Any) -> int:
+        """Convert to int (Required for AbstractPostion|ExactPostion)"""
+        return int(str(value).replace("<", "").replace(">", ""))
