@@ -161,9 +161,7 @@ def run(
     em_print("Run Circos")
     cmd = f"circos -conf {config_file}"
     print(f"$ {cmd}\n")
-    res = sp.run(cmd, shell=True, capture_output=True)
-    if res.returncode != 0:
-        raise SystemError(res.stderr)
+    sp.run(cmd, shell=True)
 
 
 def add_bin_path() -> None:
@@ -261,6 +259,7 @@ def get_args() -> argparse.Namespace:
     """
 
     class CustomHelpFormatter(argparse.HelpFormatter):
+        # Change default 'max_help_position' (24 -> 30)
         def __init__(self, prog, indent_increment=2, max_help_position=30, width=None):
             super().__init__(prog, indent_increment, max_help_position, width)
 
@@ -391,7 +390,7 @@ def get_args() -> argparse.Namespace:
     err_info = ""
     for f in args.query_files:
         if f.suffix not in config.valid_query_suffixs:
-            err_info += f"'{f.suffix}' is invalid file suffix ({f}).\n"
+            err_info += f"'{f.suffix}' is invalid file suffix ({f.name}).\n"
     for k, v in args.__dict__.items():
         if k in config.color_args_dict.keys():
             if not mpl.colors.is_color_like(v):
