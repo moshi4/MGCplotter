@@ -14,7 +14,7 @@ import matplotlib as mpl
 import pandas as pd
 from cogclassifier import cogclassifier
 
-from mgcplotter import config
+from mgcplotter import config, legend
 from mgcplotter.circos_config import CircosConfig
 from mgcplotter.genbank import Genbank
 
@@ -162,6 +162,16 @@ def run(
     cmd = f"circos -conf {config_file}"
     print(f"$ {cmd}\n")
     sp.run(cmd, shell=True)
+
+    # Plot legend for Circos result
+    track_legend_png_file = outdir / "circos_track_legend.png"
+    legend.plot_track_legend(circos_config, track_legend_png_file)
+
+    if assign_cog_color:
+        cog_legend_png_file = outdir / "cog_definition_legend.png"
+        legend.plot_cog_legend(
+            config.cog_letter2color, config.cog_letter2desc, cog_legend_png_file
+        )
 
 
 def add_bin_path() -> None:
