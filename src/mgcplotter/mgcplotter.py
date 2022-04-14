@@ -168,9 +168,13 @@ def run(
     legend.plot_track_legend(circos_config, track_legend_png_file)
 
     if assign_cog_color:
-        cog_legend_png_file = outdir / "cog_definition_legend.png"
-        legend.plot_cog_legend(
-            config.cog_letter2color, config.cog_letter2desc, cog_legend_png_file
+        cog_short_legend_png_file = outdir / "cog_letter_legend.png"
+        legend.plot_cog_letter_legend(
+            config.cog_letter2color, cog_short_legend_png_file
+        )
+        cog_def_legend_png_file = outdir / "cog_definition_legend.png"
+        legend.plot_cog_def_legend(
+            config.cog_letter2color, config.cog_letter2desc, cog_def_legend_png_file
         )
 
 
