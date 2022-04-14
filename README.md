@@ -11,15 +11,15 @@
 
 ## Overview
 
-MGCplotter is easy-to-use circular layout plotting command-line tool for microbial genome.
+MGCplotter is easy-to-use command line tool for plotting microbial genome in circular layout using Circos.
 MGCplotter requires Genbank format genome file and implements following 3 main functions for plotting figure.
 
-1. **`Plot microbial genome basic features`**  
-  Basic Features = *Forward/Reverse CDS*, *rRNA*, *tRNA*, *GC content*, *GC skew*.
-  MGCplotter can fully control plot result of feature's color/size/visibility by command options.  
+1. **`Plot basic features of microbial genome`**  
+  Basic Features = *Forward/Reverse CDS*, *rRNA*, *tRNA*, *GC content*, *GC skew*.  
+  MGCplotter can control plot result of feature's color/size/visibility by command options.  
 
-2. **`Assign & Plot COG functional classification of reference genome CDS`**  
-  Assign COG functional classification to reference species genome CDS using [COGclassifier](https://github.com/moshi4/COGclassifier).
+2. **`Assign & Plot COG functional classification result`**  
+  Assign COG functional classification to reference genome CDS using [COGclassifier](https://github.com/moshi4/COGclassifier).
   COG functional classification colors are used in plot result of forward/reverse CDS.
 
     <details>
@@ -31,15 +31,15 @@ MGCplotter requires Genbank format genome file and implements following 3 main f
 
 3. **`Search & Plot conserved CDS between reference and query species`**  
   Conserved CDS of query genome relative to reference genome is searched by [MMseqs2](https://github.com/moshi4/COGclassifier) RBH method.
-  Each query conserved CDS is plotted with gradient color based on RBH identity.
+  Each query conserved CDS is plotted with gradient color based on identity of RBH result.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/02_mycoplasma.png?raw=true)  
 **Fig.1: Plot result of Mycoplasma Gallisepticum genome**  
 Outer to inner tracks mean (1) Forward CDS (2) Reverse CDS (3) rRNA (4) tRNA (5) GC content (6) GC skew, respectively.
-COG functional classification color is assigned to Forward/Reverse CDSs.
+COG functional classification color is assigned to Forward/Reverse CDS.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/03_mycoplasma.png?raw=true)  
-**Fig.2: Add 3 query species conserved CDS track from Fig.1**  
+**Fig.2: Add 3 query closely related species conserved CDS track from Fig.1**  
 Conserved CDS of query genomes relative to reference genome is shown.
 
 ## Installation
@@ -50,7 +50,7 @@ MGCplotter is implemented in Python3.
 
     conda install -c bioconda -c conda-forge mgcplotter
 
-**Install PyPI stablepakcage:**
+**Install PyPI stable pakcage:**
 
     pip install mgcplotter
 
@@ -68,6 +68,10 @@ MGCplotter is implemented in Python3.
   Ultra fast and sensitive sequence search and clustering suite
 
 ## Usage
+
+### Basic Command
+
+    MGCplotter -r [genome genbank file] -o [output directory] --assign_cog_color
 
 ### Options
 
@@ -106,6 +110,8 @@ MGCplotter is implemented in Python3.
       --gc_skew_n_color       GC skew color for negative value (Default: 'purple')
 
 > :warning: If graph size option is set 0 value, target is not shown in figure.
+
+### Example Command
 
 ## Output Contents
 
