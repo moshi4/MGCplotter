@@ -22,7 +22,7 @@ radius_args_dict = {
     "reverse_cds_r": Arg(0.07, "Reverse CDS track radius size"),
     "rrna_r": Arg(0.07, "rRNA track radius size"),
     "trna_r": Arg(0.07, "tRNA track radius size"),
-    "conserved_seq_r": Arg(0.04, "Conserved seq track radius size"),
+    "conserved_cds_r": Arg(0.04, "Conserved CDS track radius size"),
     "gc_content_r": Arg(0.15, "GC content track radius size"),
     "gc_skew_r": Arg(0.15, "GC skew track radius size"),
 }
@@ -32,7 +32,7 @@ color_args_dict = {
     "reverse_cds_color": Arg("blue", "Reverse CDS color"),
     "rrna_color": Arg("green", "rRNA color"),
     "trna_color": Arg("magenta", "tRNA color"),
-    "conserved_seq_color": Arg("chocolate", "Conserved sequence color"),
+    "conserved_cds_color": Arg("chocolate", "Conserved CDS color"),
     "gc_content_p_color": Arg(
         "black", "GC content color for positive value from average"
     ),

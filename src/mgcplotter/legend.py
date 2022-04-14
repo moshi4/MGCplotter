@@ -75,8 +75,8 @@ def plot_track_legend(circos_config: CircosConfig, legend_outfile: Path) -> None
         legends.append(Legend(f"#{cc.rrna_color}", "rRNA", "s"))
     if cc.trna_r != 0:
         legends.append(Legend(f"#{cc.trna_color}", "tRNA", "s"))
-    if cc.conserved_seq_r != 0 and len(cc._rbh_config_files) != 0:
-        legends.append(Legend(f"#{cc.conserved_seq_color}", "Conserved Sequence", "s"))
+    if cc.conserved_cds_r != 0 and len(cc._rbh_config_files) != 0:
+        legends.append(Legend(f"#{cc.conserved_cds_color}", "Conserved CDS", "s"))
     if cc.gc_content_r != 0:
         legends.append(Legend(f"#{cc.gc_content_p_color}", "GC Content (+)", "^"))
         legends.append(Legend(f"#{cc.gc_content_n_color}", "GC Content (-)", "v"))

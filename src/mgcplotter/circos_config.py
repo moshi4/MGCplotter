@@ -21,7 +21,7 @@ class CircosConfig:
         reverse_cds_r=0.07,
         rrna_r=0.07,
         trna_r=0.07,
-        conserved_seq_r=0.04,
+        conserved_cds_r=0.04,
         gc_content_r=0.15,
         gc_skew_r=0.15,
         # Color
@@ -29,7 +29,7 @@ class CircosConfig:
         reverse_cds_color: str = "blue",
         rrna_color: str = "green",
         trna_color: str = "magenta",
-        conserved_seq_color: str = "chocolate",
+        conserved_cds_color: str = "chocolate",
         gc_content_p_color: str = "black",
         gc_content_n_color: str = "grey",
         gc_skew_p_color: str = "olive",
@@ -45,7 +45,7 @@ class CircosConfig:
         self.r_cds_r = reverse_cds_r
         self.rrna_r = rrna_r
         self.trna_r = trna_r
-        self.conserved_seq_r = conserved_seq_r
+        self.conserved_cds_r = conserved_cds_r
         self.gc_content_r = gc_content_r
         self.gc_skew_r = gc_skew_r
         self.separate_r = 0.005
@@ -54,7 +54,7 @@ class CircosConfig:
         self.r_cds_color = self._to_hex(reverse_cds_color)
         self.rrna_color = self._to_hex(rrna_color)
         self.trna_color = self._to_hex(trna_color)
-        self.conserved_seq_color = self._to_hex(conserved_seq_color)
+        self.conserved_cds_color = self._to_hex(conserved_cds_color)
         self.gc_content_p_color = self._to_hex(gc_content_p_color)
         self.gc_content_n_color = self._to_hex(gc_content_n_color)
         self.gc_skew_p_color = self._to_hex(gc_skew_p_color)
@@ -310,22 +310,22 @@ class CircosConfig:
             f.write(f"main 0 {self._genome_length} + color={self.separate_color}")
 
     ###########################################################################
-    # Add RBH(Conserved Sequence) track
+    # Add RBH(Conserved CDS) track
     ###########################################################################
     def _add_rbh_track(self, rbh_config_file: Path) -> None:
         """Add RBH track"""
         self._track_config += self._concat_lines(
             [
-                "##### RBH(Conserved Sequence) Track #####",
+                "##### RBH(Conserved CDS) Track #####",
                 "<plot>",
                 "type             = tile",
                 "file             = {0}".format(rbh_config_file),
                 "r1               = {0:.3f}r".format(self._r),
-                "r0               = {0:.3f}r".format(self._r - self.conserved_seq_r),
+                "r0               = {0:.3f}r".format(self._r - self.conserved_cds_r),
                 "orientation      = center",
                 "layers           = 1",
                 "margin           = 0.01u",
-                "thickness        = {0}".format(self.conserved_seq_r * 1000),
+                "thickness        = {0}".format(self.conserved_cds_r * 1000),
                 "padding          = 1",
                 "stroke_color     = black",
                 "stroke_thickness = 0",
@@ -333,7 +333,7 @@ class CircosConfig:
                 "</plot>",
             ]
         )
-        self._r -= self.conserved_seq_r
+        self._r -= self.conserved_cds_r
 
     ###########################################################################
     # Add GC content track
@@ -494,7 +494,7 @@ class CircosConfig:
         contents = ""
         for query, ident in zip(df["TARGET"], df["FIDENT"]):
             start, end, strand = str(query).split("|")[1].split("_")
-            color = self._get_interpolated_color(self.conserved_seq_color, ident)
+            color = self._get_interpolated_color(self.conserved_cds_color, ident)
             contents += f"main {start} {end} {strand} color={color}\n"
         with open(rbh_config_file, "w") as f:
             f.write(contents)

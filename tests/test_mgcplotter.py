@@ -53,9 +53,9 @@ def test_full_option_run(
         + f"--assign_cog_color --thread_num {use_thread_num} -o {tmp_path} "
         + "--mmseqs_evalue 1e-10 --cog_evalue 1e-5 --ticks_labelsize 40 "
         + "--forward_cds_r 0.06 --reverse_cds_r 0.06 --rrna_r 0.06 --trna_r 0.06 "
-        + "--conserved_seq_r 0.03 --gc_content_r 0.20 --gc_skew_r 0.20 "
+        + "--conserved_cds_r 0.03 --gc_content_r 0.20 --gc_skew_r 0.20 "
         + "--forward_cds_color blue --reverse_cds_color red --rrna_color magenta "
-        + "--trna_color green --conserved_seq_color crimson --gc_content_p_color grey "
+        + "--trna_color green --conserved_cds_color crimson --gc_content_p_color grey "
         + "--gc_content_n_color black --gc_skew_p_color purple --gc_skew_n_color olive "
         + f"--cog_color_json {cog_color_json_file}"
     )

@@ -92,7 +92,7 @@ MGCplotter is implemented in Python3.
       --reverse_cds_r         Reverse CDS track radius size (Default: 0.07)
       --rrna_r                rRNA track radius size (Default: 0.07)
       --trna_r                tRNA track radius size (Default: 0.07)
-      --conserved_seq_r       Conserved seq track radius size (Default: 0.04)
+      --conserved_cds_r       Conserved CDS track radius size (Default: 0.04)
       --gc_content_r          GC content track radius size (Default: 0.15)
       --gc_skew_r             GC skew track radius size (Default: 0.15)
 
@@ -103,7 +103,7 @@ MGCplotter is implemented in Python3.
       --reverse_cds_color     Reverse CDS color (Default: 'blue')
       --rrna_color            rRNA color (Default: 'green')
       --trna_color            tRNA color (Default: 'magenta')
-      --conserved_seq_color   Conserved sequence color (Default: 'chocolate')
+      --conserved_cds_color   Conserved CDS color (Default: 'chocolate')
       --gc_content_p_color    GC content color for positive value from average (Default: 'black')
       --gc_content_n_color    GC content color for negative value from average (Default: 'grey')
       --gc_skew_p_color       GC skew color for positive value (Default: 'olive')

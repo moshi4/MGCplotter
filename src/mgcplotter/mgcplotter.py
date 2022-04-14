@@ -48,7 +48,7 @@ def run(
     reverse_cds_r: float = 0.07,
     rrna_r: float = 0.07,
     trna_r: float = 0.07,
-    conserved_seq_r: float = 0.04,
+    conserved_cds_r: float = 0.04,
     gc_content_r: float = 0.15,
     gc_skew_r: float = 0.15,
     # Color
@@ -58,7 +58,7 @@ def run(
     reverse_cds_color: str = "blue",
     rrna_color: str = "green",
     trna_color: str = "magenta",
-    conserved_seq_color: str = "chocolate",
+    conserved_cds_color: str = "chocolate",
     gc_content_p_color: str = "black",
     gc_content_n_color: str = "grey",
     gc_skew_p_color: str = "olive",
@@ -75,7 +75,7 @@ def run(
     rbh_dir.mkdir(exist_ok=True)
     add_bin_path()
 
-    # Search conserved sequence by MMseqs RBH method
+    # Search conserved CDS by MMseqs RBH method
     ref_gbk = Genbank(ref_file)
     ref_faa_file = outdir / "reference_cds.faa"
     ref_gbk.write_cds_fasta(ref_faa_file)
@@ -83,7 +83,7 @@ def run(
     for idx, query_file in enumerate(query_files, 1):
         query_num = len(query_files)
         if idx == 1:
-            em_print(f"Search Conserved Sequence ({query_num} Query vs Reference)")
+            em_print(f"Search Conserved CDS ({query_num} Query vs Reference)")
         # Setup query CDS faa file
         query_faa_file = rbh_dir / query_file.with_suffix(".faa").name
         if query_file.suffix in config.fasta_suffixs:
@@ -115,7 +115,7 @@ def run(
         reverse_cds_r=reverse_cds_r,
         rrna_r=rrna_r,
         trna_r=trna_r,
-        conserved_seq_r=conserved_seq_r,
+        conserved_cds_r=conserved_cds_r,
         gc_content_r=gc_content_r,
         gc_skew_r=gc_skew_r,
         # Color
@@ -123,7 +123,7 @@ def run(
         reverse_cds_color=reverse_cds_color,
         rrna_color=rrna_color,
         trna_color=trna_color,
-        conserved_seq_color=conserved_seq_color,
+        conserved_cds_color=conserved_cds_color,
         gc_content_p_color=gc_content_p_color,
         gc_content_n_color=gc_content_n_color,
         gc_skew_p_color=gc_skew_p_color,
