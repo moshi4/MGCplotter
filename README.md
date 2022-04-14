@@ -11,8 +11,8 @@
 
 ## Overview
 
-MGCplotter is easy-to-use circular layout plotting tool for microbial genome.
-MGCplotter requires Genbank format genome file and implements following three main functions.
+MGCplotter is easy-to-use circular layout plotting command-line tool for microbial genome.
+MGCplotter requires Genbank format genome file and implements following 3 main functions for plotting figure.
 
 1. **`Plot microbial genome basic features`**  
   Basic Features = *Forward/Reverse CDS*, *rRNA*, *tRNA*, *GC content*, *GC skew*.
@@ -31,15 +31,15 @@ MGCplotter requires Genbank format genome file and implements following three ma
 
 3. **`Search & Plot conserved CDS between reference and query species`**  
   Conserved CDS of query genome relative to reference genome is searched by [MMseqs2](https://github.com/moshi4/COGclassifier) RBH method.
-  Each query conserved CDS is plotted with gradient color based on CDS identity.
+  Each query conserved CDS is plotted with gradient color based on RBH identity.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/02_mycoplasma.png?raw=true)  
-Fig.1: Plot result of Mycoplasma Gallisepticum genome  
+**Fig.1: Plot result of Mycoplasma Gallisepticum genome**  
 Outer to inner tracks mean (1) Forward CDS (2) Reverse CDS (3) rRNA (4) tRNA (5) GC content (6) GC skew, respectively.
 COG functional classification color is assigned to Forward/Reverse CDSs.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/03_mycoplasma.png?raw=true)  
-Fig.2: Add 3 query species conserved CDS track from Fig.1.
+**Fig.2: Add 3 query species conserved CDS track from Fig.1**  
 Conserved CDS of query genomes relative to reference genome is shown.
 
 ## Installation
@@ -109,7 +109,7 @@ MGCplotter is implemented in Python3.
 
 ## Output Contents
 
-## Gallery
+## Example Gallery
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/05_mycoplasma.png?raw=true)  
 
