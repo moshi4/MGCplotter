@@ -10,6 +10,15 @@
 
 ## Currently Under Construction (Not Released)
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+- [Dependencies](#dependencies)
+- [Usage](#usage)
+- [Output Contents](#output-contents)
+- [Example Gallery](#example-gallery)
+
 ## Overview
 
 MGCplotter is easy-to-use command line tool for plotting microbial genome in circular layout using Circos.
@@ -35,12 +44,12 @@ MGCplotter requires Genbank format genome file and implements following 3 main f
   Each query conserved CDS is plotted with gradient color based on identity of RBH result.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/02_mycoplasma.png?raw=true)  
-**Fig.1: Plot result of Mycoplasma Gallisepticum genome**  
+**Fig.1: Plot result of *Mycoplasma Gallisepticum* genome**  
 Outer to inner tracks mean (1) Forward CDS (2) Reverse CDS (3) rRNA (4) tRNA (5) GC content (6) GC skew, respectively.
 COG functional classification color is assigned to Forward/Reverse CDS.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/03_mycoplasma.png?raw=true)  
-**Fig.2: Add 3 query closely related species conserved CDS track from Fig.1**  
+**Fig.2: Add conserved CDS tracks of 3 query species to Fig.1**  
 Conserved CDS of query genomes relative to reference genome is shown.
 
 ## Installation
@@ -77,12 +86,12 @@ MGCplotter is implemented in Python3.
 ### Options
 
     General Options:
-      -r R, --ref_file R      Reference genbank file (*.gb|*.gbk|*.gbff)
+      -r R, --ref_file R      Reference genome genbank file (*.gb|*.gbk|*.gbff)
       -o O, --outdir O        Output directory
-      --query_files  [ ...]   Query fasta or genbank files (*.fa|*.faa|*.fasta|*.gb|*.gbk|*.gbff)
-      --mmseqs_evalue         MMseqs e-value parameter (Default: 1e-05)
+      --query_files  [ ...]   Query CDS fasta or genome genbank files (*.fa|*.faa|*.fasta|*.gb|*.gbk|*.gbff)
+      --mmseqs_evalue         MMseqs e-value parameter (Default: 1e-03)
       --cog_evalue            COGclassifier e-value parameter (Default: 1e-02)
-      -t , --thread_num       Threads number parameter (Default: MaxThreads - 1)
+      -t , --thread_num       Threads number parameter (Default: MaxThread - 1)
       -f, --force             Forcibly overwrite previous calculation result (Default: OFF)
       -v, --version           Print version information
       -h, --help              show this help message and exit
@@ -115,6 +124,19 @@ MGCplotter is implemented in Python3.
 ### Example Command
 
 ## Output Contents
+
+- **`reference_cds.faa`**  
+  Reference genome CDS fasta file (Extract from genbank file)
+- **`circos[.png|.svg]`**  
+  Plot result figure file
+- **`circos_config/`**  
+  Circos config files directory
+- **`circos_legend/`**  
+  Circos legend files directory
+- **`cogclassifier/`**  
+  COGclassifier result files directory
+- **`rbh_search/`**  
+  MMseqs RBH result files directory
 
 ## Example Gallery
 
