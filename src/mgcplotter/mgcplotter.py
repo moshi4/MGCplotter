@@ -70,8 +70,6 @@ def run(
     outdir.mkdir(exist_ok=True)
     config_dir = outdir / "circos_config"
     config_dir.mkdir(exist_ok=True)
-    config_rbh_dir = config_dir / "rbh_results"
-    config_rbh_dir.mkdir(exist_ok=True)
     rbh_dir = outdir / "rbh_search"
     rbh_dir.mkdir(exist_ok=True)
     add_bin_path()
@@ -131,8 +129,7 @@ def run(
         gc_skew_n_color=gc_skew_n_color,
     )
     for rbh_result_file in rbh_result_files:
-        rbh_config_file = config_rbh_dir / rbh_result_file.with_suffix(".txt").name
-        circos_config.add_rbh_config(rbh_result_file, rbh_config_file)
+        circos_config.add_conserved_cds_config(rbh_result_file)
     config_file = config_dir / "circos.conf"
     circos_config.write_config_file(config_file)
 

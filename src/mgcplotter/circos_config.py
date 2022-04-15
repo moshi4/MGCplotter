@@ -78,8 +78,10 @@ class CircosConfig:
         self._gc_skew_file = config_dir / "gc_skew.txt"
         # Separate config files
         self._separate_file = config_dir / "separate.txt"
-        # RBH config files
-        self._rbh_config_files: List[Path] = []
+        # Conserved CDS config files
+        self._conserved_cds_dir = config_dir / "conserved_cds"
+        self._conserved_cds_dir.mkdir(exist_ok=True)
+        self._conserved_cds_files: List[Path] = []
 
         self._r = 1.0
         self._track_config = ""
@@ -105,11 +107,11 @@ class CircosConfig:
         self._add_feature_track(
             self._trna_file, "tRNA", None, self.trna_color, self.trna_r
         )
-        if len(self._rbh_config_files) != 0 and self.conserved_cds_r != 0:
+        if len(self._conserved_cds_files) != 0 and self.conserved_cds_r != 0:
             self._r -= 0.01
             self._add_separate_track()
-            for rbh_config_file in self._rbh_config_files:
-                self._add_rbh_track(rbh_config_file)
+            for conserved_cds_file in self._conserved_cds_files:
+                self._add_conservd_cds_track(conserved_cds_file)
             self._add_separate_track()
             self._r -= 0.01
         self._add_gc_content_track()
@@ -310,16 +312,16 @@ class CircosConfig:
             f.write(f"main 0 {self._genome_length} + color={self.separate_color}")
 
     ###########################################################################
-    # Add RBH(Conserved CDS) track
+    # Add Conserved CDS track
     ###########################################################################
-    def _add_rbh_track(self, rbh_config_file: Path) -> None:
-        """Add RBH track"""
+    def _add_conservd_cds_track(self, conserved_cds_config_file: Path) -> None:
+        """Add Conserved CDS track"""
         self._track_config += self._concat_lines(
             [
-                "##### RBH(Conserved CDS) Track #####",
+                "##### Conserved CDS Track #####",
                 "<plot>",
                 "type             = tile",
-                "file             = {0}".format(rbh_config_file),
+                "file             = {0}".format(conserved_cds_config_file),
                 "r1               = {0:.3f}r".format(self._r),
                 "r0               = {0:.3f}r".format(self._r - self.conserved_cds_r),
                 "orientation      = center",
@@ -481,14 +483,13 @@ class CircosConfig:
         return 0.7
 
     ###########################################################################
-    # Add RBH config function
+    # Add Conserved CDS config function
     ###########################################################################
-    def add_rbh_config(self, rbh_result_file: Path, rbh_config_file: Path) -> None:
-        """Add RBH config
+    def add_conserved_cds_config(self, rbh_result_file: Path) -> None:
+        """Add conserved CDS config from MMseqs RBH result
 
         Args:
             rbh_result_file (Path): MMseqs RBH result file
-            rbh_config_file (Path): RBH config outfile
         """
         df = self._load_rbh_result(rbh_result_file)
         contents = ""
@@ -496,9 +497,12 @@ class CircosConfig:
             start, end, strand = str(query).split("|")[1].split("_")
             color = self._get_interpolated_color(self.conserved_cds_color, ident)
             contents += f"main {start} {end} {strand} color={color}\n"
-        with open(rbh_config_file, "w") as f:
+
+        filename = rbh_result_file.with_suffix(".txt").name
+        conserved_cds_config_file = self._conserved_cds_dir / filename
+        with open(conserved_cds_config_file, "w") as f:
             f.write(contents)
-        self._rbh_config_files.append(rbh_config_file)
+        self._conserved_cds_files.append(conserved_cds_config_file)
 
     def _load_rbh_result(self, rbh_result_file: Path) -> pd.DataFrame:
         header_names = (
