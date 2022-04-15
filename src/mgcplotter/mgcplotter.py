@@ -14,8 +14,9 @@ import matplotlib as mpl
 import pandas as pd
 from cogclassifier import cogclassifier
 
-from mgcplotter import config, legend
+from mgcplotter import config
 from mgcplotter.circos_config import CircosConfig
+from mgcplotter.circos_legend import CircosLegend
 from mgcplotter.genbank import Genbank
 
 __version__ = "0.1.0"
@@ -165,33 +166,12 @@ def run(
 
     # Plot legend for Circos result
     circos_legend_dir = outdir / "circos_legend"
-    circos_legend_dir.mkdir(exist_ok=True)
-
-    circos_track_png_file = circos_legend_dir / "circos_track.png"
-    circos_track_svg_file = circos_track_png_file.with_suffix(".svg")
-    legend.plot_track_legend(circos_config, circos_track_png_file)
-    legend.plot_track_legend(circos_config, circos_track_svg_file)
-
-    if len(query_files) != 0:
-        conserved_cds_ident_png_file = circos_legend_dir / "conserved_cds_identity.png"
-        conserved_cds_ident_svg_file = conserved_cds_ident_png_file.with_suffix(".svg")
-        legend.plot_ident_legend(conserved_cds_color, conserved_cds_ident_png_file)
-        legend.plot_ident_legend(conserved_cds_color, conserved_cds_ident_svg_file)
-
-    if assign_cog_color:
-        cog_letter_png_file = circos_legend_dir / "cog_letter.png"
-        cog_letter_svg_file = cog_letter_png_file.with_suffix(".svg")
-        legend.plot_cog_letter_legend(config.cog_letter2color, cog_letter_png_file)
-        legend.plot_cog_letter_legend(config.cog_letter2color, cog_letter_svg_file)
-
-        cog_def_png_file = circos_legend_dir / "cog_definition.png"
-        cog_def_svg_file = cog_def_png_file.with_suffix(".svg")
-        legend.plot_cog_def_legend(
-            config.cog_letter2color, config.cog_letter2desc, cog_def_png_file
-        )
-        legend.plot_cog_def_legend(
-            config.cog_letter2color, config.cog_letter2desc, cog_def_svg_file
-        )
+    CircosLegend(
+        circos_config,
+        config.cog_letter2color,
+        config.cog_letter2desc,
+        circos_legend_dir,
+    ).plot_all_legends()
 
 
 def add_bin_path() -> None:
