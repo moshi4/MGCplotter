@@ -293,7 +293,7 @@ def get_args() -> argparse.Namespace:
         "--ref_file",
         required=True,
         type=Path,
-        help="Reference genbank file (*.gb|*.gbk|*.gbff)",
+        help="Reference genome genbank file (*.gb|*.gbk|*.gbff)",
         metavar="R",
     )
     general_opts.add_argument(
@@ -304,20 +304,20 @@ def get_args() -> argparse.Namespace:
         help="Output directory",
         metavar="O",
     )
-    valid_query_suffixs = [f"*{s}" for s in config.valid_query_suffixs]
+    valid_query_suffixs = "|".join([f"*{s}" for s in config.valid_query_suffixs])
     general_opts.add_argument(
         "--query_files",
         nargs="+",
         type=Path,
-        help=f"Query fasta or genbank files ({'|'.join(valid_query_suffixs)})",
+        help=f"Query CDS fasta or genome genbank files ({valid_query_suffixs})",
         default=[],
         metavar="",
     )
-    default_mmseqs_evalue = 1e-5
+    default_mmseqs_evalue = 1e-3
     general_opts.add_argument(
         "--mmseqs_evalue",
         type=float,
-        help=f"MMseqs e-value parameter (Default: {default_mmseqs_evalue})",
+        help=f"MMseqs e-value parameter (Default: {default_mmseqs_evalue:.0e})",
         default=default_mmseqs_evalue,
         metavar="",
     )
