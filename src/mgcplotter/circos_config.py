@@ -105,7 +105,7 @@ class CircosConfig:
         self._add_feature_track(
             self._trna_file, "tRNA", None, self.trna_color, self.trna_r
         )
-        if len(self._rbh_config_files) != 0:
+        if len(self._rbh_config_files) != 0 and self.conserved_cds_r != 0:
             self._r -= 0.01
             self._add_separate_track()
             for rbh_config_file in self._rbh_config_files:
