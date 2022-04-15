@@ -164,17 +164,33 @@ def run(
     sp.run(cmd, shell=True)
 
     # Plot legend for Circos result
-    track_legend_png_file = outdir / "circos_track_legend.png"
-    legend.plot_track_legend(circos_config, track_legend_png_file)
+    circos_legend_dir = outdir / "circos_legend"
+    circos_legend_dir.mkdir(exist_ok=True)
+
+    circos_track_png_file = circos_legend_dir / "circos_track.png"
+    circos_track_svg_file = circos_track_png_file.with_suffix(".svg")
+    legend.plot_track_legend(circos_config, circos_track_png_file)
+    legend.plot_track_legend(circos_config, circos_track_svg_file)
+
+    if len(query_files) != 0:
+        conserved_cds_ident_png_file = circos_legend_dir / "conserved_cds_identity.png"
+        conserved_cds_ident_svg_file = conserved_cds_ident_png_file.with_suffix(".svg")
+        legend.plot_ident_legend(conserved_cds_color, conserved_cds_ident_png_file)
+        legend.plot_ident_legend(conserved_cds_color, conserved_cds_ident_svg_file)
 
     if assign_cog_color:
-        cog_short_legend_png_file = outdir / "cog_letter_legend.png"
-        legend.plot_cog_letter_legend(
-            config.cog_letter2color, cog_short_legend_png_file
-        )
-        cog_def_legend_png_file = outdir / "cog_definition_legend.png"
+        cog_letter_png_file = circos_legend_dir / "cog_letter.png"
+        cog_letter_svg_file = cog_letter_png_file.with_suffix(".svg")
+        legend.plot_cog_letter_legend(config.cog_letter2color, cog_letter_png_file)
+        legend.plot_cog_letter_legend(config.cog_letter2color, cog_letter_svg_file)
+
+        cog_def_png_file = circos_legend_dir / "cog_definition.png"
+        cog_def_svg_file = cog_def_png_file.with_suffix(".svg")
         legend.plot_cog_def_legend(
-            config.cog_letter2color, config.cog_letter2desc, cog_def_legend_png_file
+            config.cog_letter2color, config.cog_letter2desc, cog_def_png_file
+        )
+        legend.plot_cog_def_legend(
+            config.cog_letter2color, config.cog_letter2desc, cog_def_svg_file
         )
 
 

@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 
 from mgcplotter.circos_config import CircosConfig
 
+mpl.rcParams["font.family"] = "monospace"
+mpl.rcParams["svg.fonttype"] = "none"
+
 
 @dataclass
 class Legend:
@@ -29,12 +32,10 @@ def plot_legend(
         ncol (str): Number of Column
     """
     # Setup matplotlib params for only plot legend
-    mpl.rcParams["font.family"] = "monospace"
     for pos in ["left", "right", "top", "bottom"]:
         plt.gca().spines[pos].set_visible(False)
     plt.gca().axes.get_xaxis().set_visible(False)
     plt.gca().axes.get_yaxis().set_visible(False)
-    mpl.rcParams["svg.fonttype"] = "none"
 
     handles = []
     for legend in legends:
@@ -55,7 +56,8 @@ def plot_legend(
     fig = legend.figure
     fig.canvas.draw()
     bbox = legend.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-    fig.savefig(legend_outfile, dpi=500, bbox_inches=bbox)
+    fig.savefig(legend_outfile, dpi=300, bbox_inches=bbox)
+    fig.clear()
 
 
 def plot_track_legend(circos_config: CircosConfig, legend_outfile: Path) -> None:
@@ -115,7 +117,7 @@ def plot_cog_def_legend(
     Args:
         cog_letter2color (Dict[str, str]): COG letter & color dict
         cog_letter2desc (Dict[str, str]): COG letter & description dict
-        legend_outfile (Path): Legend outpu file
+        legend_outfile (Path): Legend output file
     """
     legends = []
     for cog_letter, color in cog_letter2color.items():
@@ -123,3 +125,24 @@ def plot_cog_def_legend(
         legends.append(Legend(color, desc, "s"))
 
     plot_legend(legends, legend_outfile)
+
+
+def plot_ident_legend(color: str, legend_outfile: Path) -> None:
+    """Plot identity legend
+
+    Args:
+        color (str): Color like string
+        legend_outfile (Path): Legend output file
+    """
+    fig = plt.figure(figsize=(5, 1))
+    ax = fig.add_axes([0.05, 0.5, 0.9, 0.2])  # left, bottom, width, height
+    cmap = mpl.colors.LinearSegmentedColormap.from_list("cmap", ("white", color))
+    norm = mpl.colors.Normalize(vmin=0, vmax=100)
+    cb = mpl.colorbar.ColorbarBase(  # type: ignore
+        ax, cmap=cmap, norm=norm, orientation="horizontal"
+    )
+    cb.set_label(label="Identity(%)", loc="center")
+    cb.ax.invert_xaxis()
+
+    fig.savefig(legend_outfile, dpi=300)
+    fig.clear()
