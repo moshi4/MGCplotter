@@ -509,7 +509,8 @@ class CircosConfig:
             "QUERY,TARGET,FIDENT,ALNLEN,MISMATCH,GAPOPEN,"
             + "QSTART,QEND,TSTART,TEND,EVALUE,BITS"
         ).split(",")
-        return pd.read_table(rbh_result_file, header=None, names=header_names)
+        df = pd.read_table(rbh_result_file, header=None, names=header_names)
+        return df.drop_duplicates(subset="TARGET").sort_values("TARGET")
 
     def _get_interpolated_color(
         self, hexcolor: str, interpolate_value: float, vmin: float = 0.0
