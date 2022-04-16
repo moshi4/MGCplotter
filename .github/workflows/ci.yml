@@ -35,12 +35,6 @@ jobs:
           sudo apt install -y circos liblist-moreutils-perl
         if: ${{ matrix.os=='ubuntu-latest' }}
 
-      - name: Install Poetry
-        run: |
-          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
-          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
-        if: ${{ matrix.os=='ubuntu-latest' }}
-
       # MacOS
       - name: Setup Conda(Mamba) Environment
         uses: conda-incubator/setup-miniconda@v2
@@ -50,13 +44,17 @@ jobs:
           channels: bioconda,conda-forge,defaults
           allow-softlinks: true
           channel-priority: true
-          activate-environment: mgcplotter
         if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install requirements on MacOS
         run: |
-          mamba install circos poetry
+          mamba install circos=0.69.8
         if: ${{ matrix.os=='macos-latest' }}
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+          echo "$HOME/.poetry/bin" >> $GITHUB_PATH
 
       - name: Install Dependencies
         run: |
