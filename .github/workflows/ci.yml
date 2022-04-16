@@ -27,6 +27,7 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+        if: ${{ matrix.os=='ubuntu-latest' }}
 
       - name: Install requirements on Ubuntu
         run: |
@@ -47,9 +48,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           mamba-version: "*"
           channels: bioconda,conda-forge,defaults
+          allow-softlinks: true
           channel-priority: true
           activate-environment: mgcplotter
-          auto-activate-base: true
         if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install requirements on MacOS
