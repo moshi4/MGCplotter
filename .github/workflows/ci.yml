@@ -51,6 +51,11 @@ jobs:
           mamba install circos=0.69.8
         if: ${{ matrix.os=='macos-latest' }}
 
+      - name: Check Circos installation
+        run: |
+          circos -h
+          circos -v
+
       - name: Install Poetry
         run: |
           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
