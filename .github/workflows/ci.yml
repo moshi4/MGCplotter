@@ -54,7 +54,7 @@ jobs:
       - name: Check Circos installation
         run: |
           circos -h
-          circos -v
+        if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install Poetry
         run: |
