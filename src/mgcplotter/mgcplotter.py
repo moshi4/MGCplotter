@@ -39,8 +39,8 @@ def run(
     ref_file: Path,
     outdir: Path,
     query_files: List[Path],
-    mmseqs_evalue: float,
     cog_evalue: float,
+    mmseqs_evalue: float,
     thread_num: int,
     force: bool,
     ticks_labelsize: int = 35,
@@ -310,20 +310,20 @@ def get_args() -> argparse.Namespace:
         default=[],
         metavar="",
     )
-    default_mmseqs_evalue = 1e-3
-    general_opts.add_argument(
-        "--mmseqs_evalue",
-        type=float,
-        help=f"MMseqs e-value parameter (Default: {default_mmseqs_evalue:.0e})",
-        default=default_mmseqs_evalue,
-        metavar="",
-    )
     default_cog_evalue = 1e-2
     general_opts.add_argument(
         "--cog_evalue",
         type=float,
         help=f"COGclassifier e-value parameter (Default: {default_cog_evalue:.0e})",
         default=default_cog_evalue,
+        metavar="",
+    )
+    default_rbh_evalue = 1e-3
+    general_opts.add_argument(
+        "--mmseqs_evalue",
+        type=float,
+        help=f"MMseqs RBH search e-value parameter (Default: {default_rbh_evalue:.0e})",
+        default=default_rbh_evalue,
         metavar="",
     )
     cpu_num = os.cpu_count()
@@ -352,7 +352,7 @@ def get_args() -> argparse.Namespace:
     general_opts.add_argument(
         "-h",
         "--help",
-        help="show this help message and exit",
+        help="Show this help message and exit",
         action="help",
     )
 
