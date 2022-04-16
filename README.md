@@ -126,7 +126,7 @@ Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/datas
 **2. *M.Gallisepticum* genome plot with 3 query conserved CDS (= Fig.2):**
 
 Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/Mgallisepticum.zip) (0.63MB),
-Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example01/example02.zip) (2.0MB)
+Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/example02.zip) (2.0MB)
 
     MGCplotter -r Mgallisepticum.gbff -o ./example_result02 --assign_cog_color \
                --query_files ./example02/*.gbff
@@ -171,6 +171,9 @@ Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/g
     MGCplotter -r ./ecoli.gbk -o ./gallery_result02 --assign_cog_color \
                --query_files ./gallery02/NC_011751.gbk ./gallery02/NC_017634.gbk ./gallery02/NC_018658.gbk \
                --ticks_labelsize 50
+
+> Conserved CDS tracks are lined up from outside to inside in `--query_files` argument order.
+> In this case, NC_011751,NC_017634,NC_018658 are lined up from outside to inside.
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result02.png?raw=true)  
 
