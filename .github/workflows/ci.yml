@@ -41,7 +41,7 @@ jobs:
         if: ${{ matrix.os=='ubuntu-latest' }}
 
       # MacOS
-      - name: Setup Environment on MacOS
+      - name: Setup Conda(Mamba) Environment
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python-version }}
@@ -49,6 +49,9 @@ jobs:
           channels: bioconda,conda-forge,defaults
           channel-priority: true
           activate-environment: mgcplotter
+        if: ${{ matrix.os=='macos-latest' }}
+
+      - name: Install requirements on MacOS
         run: |
           mamba install circos poetry
         if: ${{ matrix.os=='macos-latest' }}
