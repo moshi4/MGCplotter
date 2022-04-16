@@ -16,13 +16,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+        os: [ubuntu-latest, macos-latest]
         python-version: [3.7, 3.8, 3.9]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Ubuntu
       - name: Setup Python ${{ matrix.python-version}}
         uses: actions/setup-python@v2
         with:
@@ -34,19 +34,24 @@ jobs:
           sudo apt install -y circos liblist-moreutils-perl
         if: ${{ matrix.os=='ubuntu-latest' }}
 
-      # http://circos.ca/tutorials/lessons/configuration/distribution_and_installation/
-      # - name: Install requirements on MacOS
-      #   run: |
-      #     brew update
-      #     brew tap brewsci/bio
-      #     brew install circos pkg-config libgd cpanminus
-      #     cpanm GD
-      #   if: ${{ matrix.os=='macos-latest' }}
-
       - name: Install Poetry
         run: |
           curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
           echo "$HOME/.poetry/bin" >> $GITHUB_PATH
+        if: ${{ matrix.os=='ubuntu-latest' }}
+
+      # MacOS
+      - name: Setup Environment on MacOS
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+          mamba-version: "*"
+          channels: bioconda,conda-forge,defaults
+          channel-priority: true
+          activate-environment: mgcplotter
+        run: |
+          mamba install circos poetry
+        if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install Dependencies
         run: |
