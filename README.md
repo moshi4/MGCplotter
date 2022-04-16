@@ -119,14 +119,14 @@ MGCplotter is implemented in Python3.
 
 **1. *M.Gallisepticum* genome simple plot (= Fig.1):**
 
-Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example01/Mgallisepticum.zip) (0.63MB)
+Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example01/Mgallisepticum.zip) (0.63 MB)
 
     MGCplotter -r Mgallisepticum.gbff -o ./example_result01 --assign_cog_color
 
 **2. *M.Gallisepticum* genome plot with 3 query conserved CDS (= Fig.2):**
 
-Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/Mgallisepticum.zip) (0.63MB),
-Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/example02.zip) (2.0MB)
+Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/Mgallisepticum.zip) (0.63 MB),
+Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/example02.zip) (2.0 MB)
 
     MGCplotter -r Mgallisepticum.gbff -o ./example_result02 --assign_cog_color \
                --query_files ./example02/*.gbff
@@ -155,7 +155,7 @@ Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/e
 
 **1. *E.coli* genome simple plot (No COG assignment):**
 
-Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery01/ecoli.zip) (3.5MB)
+Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery01/ecoli.zip) (3.5 MB)
 
     MGCplotter -r ./ecoli.gbk -o ./gallery_result01 --rrna_color blue --trna_color red \
                --gc_content_p_color orange --gc_content_n_color blue \
@@ -165,8 +165,8 @@ Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery
 
 **2. *E.coli* genome plot with 3 query conserved CDS:**
 
-Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/ecoli.zip) (3.5MB),
-Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/gallery02.zip) (10.7MB)
+Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/ecoli.zip) (3.5 MB),
+Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/gallery02.zip) (10.7 MB)
 
     MGCplotter -r ./ecoli.gbk -o ./gallery_result02 --assign_cog_color \
                --query_files ./gallery02/NC_011751.gbk ./gallery02/NC_017634.gbk ./gallery02/NC_018658.gbk \
@@ -179,8 +179,8 @@ Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/g
 
 **3. *M.Gallisepticum* genome plot with 30 query conserved CDS:**
 
-Reference: [Mgallisepticum.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/Mgallisepticum.zip) (0.63MB),
-Query: [gallery03](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/gallery03.zip) (19.6MB)
+Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/Mgallisepticum.zip) (0.63 MB),
+Query: [gallery03](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/gallery03.zip) (19.6 MB)
 
     MGCplotter -r ./Mgallisepticum.gbff -o ./gallery_result03 --assign_cog_color \
               --query_files ./gallery03/*.gbff --conserved_cds_color '#dc143c' \
@@ -190,8 +190,8 @@ Query: [gallery03](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/g
 
 **4. *M.Alvi* genome contigs plot with 6 query conserved CDS:**
 
-Reference: [Malvi.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/Malvi.zip) (0.57MB),
-Query: [gallery04](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/gallery04.zip) (1.0MB)
+Reference: [Malvi.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/Malvi.zip) (0.57 MB),
+Query: [gallery04](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/gallery04.zip) (1.0 MB)
 
     MGCplotter -r ./Malvi.gbk -o ./gallery_result04 --assign_cog_color \
                --query_files ./gallery04/*.faa --conserved_cds_r 0.05 \
@@ -205,8 +205,8 @@ Query: [gallery04](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/g
 
 **5. *M.Gallisepticum* genome plot (User-defined COG classification color):**
 
-Reference: [Mgallisepticum.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/Mgallisepticum.zip) (0.63MB),
-COG Color Json: [cog_color.json](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/cog_color.zip) (0.5KB)
+Reference: [Mgallisepticum.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/Mgallisepticum.zip) (0.63 MB),
+COG Color Json: [cog_color.json](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/cog_color.zip) (0.5 KB)
 
     MGCplotter -r ./Mgallisepticum.gbff -o ./gallery_result05 --assign_cog_color \
               --cog_color_json ./cog_color.json
