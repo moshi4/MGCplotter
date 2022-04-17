@@ -72,8 +72,6 @@ def run(
     """Run MGCplotter workflow"""
     # Setup directory
     outdir.mkdir(exist_ok=True)
-    config_dir = outdir / "circos_config"
-    config_dir.mkdir(exist_ok=True)
     rbh_dir = outdir / "rbh_search"
     rbh_dir.mkdir(exist_ok=True)
     add_bin_path()
@@ -110,8 +108,7 @@ def run(
     # Setup Circos config
     circos_config = CircosConfig(
         ref_gbk=ref_gbk,
-        config_dir=config_dir,
-        img_dir=outdir,
+        outdir=outdir,
         ticks_labelsize=ticks_labelsize,
         # Radius
         forward_cds_r=forward_cds_r,
@@ -134,8 +131,7 @@ def run(
     )
     for rbh_result_file in rbh_result_files:
         circos_config.add_conserved_cds_config(rbh_result_file)
-    config_file = config_dir / "circos.conf"
-    circos_config.write_config_file(config_file)
+    circos_config.write_config_file()
 
     # Run COGclassifier for Functional Classification of Reference CDSs
     if assign_cog_color:
@@ -156,12 +152,12 @@ def run(
         location_id2color = get_location_id2color(
             cog_classifier_result_file, config.cog_letter2color
         )
-        rewrite_circos_cds_color(circos_config._f_cds_file, location_id2color)
-        rewrite_circos_cds_color(circos_config._r_cds_file, location_id2color)
+        rewrite_circos_cds_color(circos_config.f_cds_file, location_id2color)
+        rewrite_circos_cds_color(circos_config.r_cds_file, location_id2color)
 
     # Run Circos
     em_print("Run Circos")
-    cmd = f"circos -conf {config_file}"
+    cmd = f"circos -conf {circos_config.config_file}"
     print(f"$ {cmd}\n")
     sp.run(cmd, shell=True)
 

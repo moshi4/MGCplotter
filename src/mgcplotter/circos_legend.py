@@ -79,7 +79,7 @@ class CircosLegend:
             legends.append(Legend(f"#{cc.rrna_color}", "rRNA", "s"))
         if cc.trna_r != 0:
             legends.append(Legend(f"#{cc.trna_color}", "tRNA", "s"))
-        if cc.conserved_cds_r != 0 and len(cc._conserved_cds_files) != 0:
+        if cc.conserved_cds_r != 0 and len(cc.conserved_cds_files) != 0:
             legends.append(Legend(f"#{cc.conserved_cds_color}", "Conserved CDS", "s"))
         if cc.gc_content_r != 0:
             legends.append(Legend(f"#{cc.gc_content_p_color}", "GC Content (+)", "^"))

@@ -13,8 +13,7 @@ class CircosConfig:
     def __init__(
         self,
         ref_gbk: Genbank,
-        config_dir: Path,
-        img_dir: Path,
+        outdir: Path,
         ticks_labelsize=35,
         # Radius
         forward_cds_r=0.07,
@@ -37,8 +36,7 @@ class CircosConfig:
     ):
         """Constructor"""
         self.ref_gbk = ref_gbk
-        self.config_dir = config_dir
-        self.img_dir = img_dir
+        self.outdir = outdir
         self.ticks_labelsize = ticks_labelsize
         # Radius
         self.f_cds_r = forward_cds_r
@@ -61,56 +59,57 @@ class CircosConfig:
         self.gc_skew_n_color = self._to_hex(gc_skew_n_color)
         self.separate_color = self._to_hex("grey")
 
+        # Setup output directory
+        self.outdir.mkdir(exist_ok=True)
+        self.config_dir = self.outdir / "circos_config"
+        self.config_dir.mkdir(exist_ok=True)
+        self.ref_features_dir = self.config_dir / "reference_features"
+        self.ref_features_dir.mkdir(exist_ok=True)
+        self.conserved_cds_dir = self.config_dir / "conserved_cds"
+        self.conserved_cds_dir.mkdir(exist_ok=True)
+
         # Circos config file
-        self._config_file = config_dir / "circos.conf"
-        self._ideogram_file = config_dir / "ideogram.conf"
-        self._ticks_file = config_dir / "ticks.conf"
-        self._karyotype_file = config_dir / "karyotype.txt"
+        self.config_file = self.config_dir / "circos.conf"
+        self.ideogram_file = self.config_dir / "ideogram.conf"
+        self.ticks_file = self.config_dir / "ticks.conf"
+        self.karyotype_file = self.config_dir / "karyotype.txt"
         # Features config files
-        self._ref_features_dir = config_dir / "reference_features"
-        self._ref_features_dir.mkdir(exist_ok=True)
-        self._f_cds_file = self._ref_features_dir / "forward_cds.txt"
-        self._r_cds_file = self._ref_features_dir / "reverse_cds.txt"
-        self._rrna_file = self._ref_features_dir / "rRNA.txt"
-        self._trna_file = self._ref_features_dir / "tRNA.txt"
+        self.f_cds_file = self.ref_features_dir / "forward_cds.txt"
+        self.r_cds_file = self.ref_features_dir / "reverse_cds.txt"
+        self.rrna_file = self.ref_features_dir / "rRNA.txt"
+        self.trna_file = self.ref_features_dir / "tRNA.txt"
         # GC content & GC skew config file
-        self._gc_content_file = config_dir / "gc_content.txt"
-        self._gc_skew_file = config_dir / "gc_skew.txt"
+        self.gc_content_file = self.config_dir / "gc_content.txt"
+        self.gc_skew_file = self.config_dir / "gc_skew.txt"
         # Separate config files
-        self._separate_file = config_dir / "separate.txt"
+        self.separate_file = self.config_dir / "separate.txt"
         # Conserved CDS config files
-        self._conserved_cds_dir = config_dir / "conserved_cds"
-        self._conserved_cds_dir.mkdir(exist_ok=True)
-        self._conserved_cds_files: List[Path] = []
+        self.conserved_cds_files: List[Path] = []
 
         self._r = 1.0
         self._track_config = ""
 
-    def write_config_file(self, config_outfile: Path) -> None:
-        """Write Circos config file
-
-        Args:
-            config_outfile (Path): Circos config file
-        """
+    def write_config_file(self) -> None:
+        """Write Circos config file"""
         self._write_ideogram_conf()
         self._write_ticks_conf()
         self._write_karyotype_file()
         self._add_feature_track(
-            self._f_cds_file, "CDS", 1, self.f_cds_color, self.f_cds_r
+            self.f_cds_file, "CDS", 1, self.f_cds_color, self.f_cds_r
         )
         self._add_feature_track(
-            self._r_cds_file, "CDS", -1, self.r_cds_color, self.r_cds_r
+            self.r_cds_file, "CDS", -1, self.r_cds_color, self.r_cds_r
         )
         self._add_feature_track(
-            self._rrna_file, "rRNA", None, self.rrna_color, self.rrna_r
+            self.rrna_file, "rRNA", None, self.rrna_color, self.rrna_r
         )
         self._add_feature_track(
-            self._trna_file, "tRNA", None, self.trna_color, self.trna_r
+            self.trna_file, "tRNA", None, self.trna_color, self.trna_r
         )
-        if len(self._conserved_cds_files) != 0 and self.conserved_cds_r != 0:
+        if len(self.conserved_cds_files) != 0 and self.conserved_cds_r != 0:
             self._r -= 0.01
             self._add_separate_track()
-            for conserved_cds_file in self._conserved_cds_files:
+            for conserved_cds_file in self.conserved_cds_files:
                 self._add_conservd_cds_track(conserved_cds_file)
             self._add_separate_track()
             self._r -= 0.01
@@ -120,22 +119,22 @@ class CircosConfig:
         # Circos overall config
         config_contents = self._concat_lines(
             [
-                "karyotype = {0}".format(self._karyotype_file),
+                "karyotype = {0}".format(self.karyotype_file),
                 "chromosomes_units = {0}".format(self._chromosome_units),
-                "<<include {0}>>".format(self._ideogram_file),
-                "<<include {0}>>".format(self._ticks_file),
+                "<<include {0}>>".format(self.ideogram_file),
+                "<<include {0}>>".format(self.ticks_file),
                 "<plots>",
                 self._track_config.rstrip("\n"),
                 "</plots>",
                 "<image>",
                 "<<include image.conf>>",
-                "dir* = {0}".format(self.img_dir),
+                "dir* = {0}".format(self.outdir),
                 "</image>",
                 "<<include colors_fonts_patterns.conf>> ",
                 "<<include housekeeping.conf>> ",
             ]
         )
-        with open(config_outfile, "w") as f:
+        with open(self.config_file, "w") as f:
             f.write(config_contents)
 
     ###########################################################################
@@ -150,7 +149,7 @@ class CircosConfig:
             start, end, color = base_len, base_len + len(contig_seq), colors[idx % 2]
             contents += f"band main band{idx+1} band{idx+1} {start} {end} {color}\n"
             base_len += len(contig_seq)
-        with open(self._karyotype_file, "w") as f:
+        with open(self.karyotype_file, "w") as f:
             f.write(contents)
 
     ###########################################################################
@@ -179,7 +178,7 @@ class CircosConfig:
                 "</ideogram>",
             ]
         )
-        with open(self._ideogram_file, "w") as f:
+        with open(self.ideogram_file, "w") as f:
             f.write(contents)
 
     ###########################################################################
@@ -213,7 +212,7 @@ class CircosConfig:
                 "</ticks>",
             ]
         )
-        with open(self._ticks_file, "w") as f:
+        with open(self.ticks_file, "w") as f:
             f.write(contents)
 
     ###########################################################################
@@ -293,7 +292,7 @@ class CircosConfig:
                 "##### Separate Track #####",
                 "<plot>",
                 "type             = tile",
-                "file             = {0}".format(self._separate_file),
+                "file             = {0}".format(self.separate_file),
                 "r1               = {0:.3f}r".format(self._r),
                 "r0               = {0:.3f}r".format(self._r - self.separate_r),
                 "orientation      = center",
@@ -308,7 +307,7 @@ class CircosConfig:
         self._r -= self.separate_r
 
     def _write_separate_file(self) -> None:
-        with open(self._separate_file, "w") as f:
+        with open(self.separate_file, "w") as f:
             f.write(f"main 0 {self._genome_length} + color={self.separate_color}")
 
     ###########################################################################
@@ -349,7 +348,7 @@ class CircosConfig:
                 "##### GC Content Track #####",
                 "<plot>",
                 "type        = histogram",
-                "file        = {0}".format(self._gc_content_file),
+                "file        = {0}".format(self.gc_content_file),
                 "r1          = {0:.3f}r".format(self._r),
                 "r0          = {0:.3f}r".format(self._r - self.gc_content_r),
                 "min         = {0:.3f}".format(-abs_max_value),
@@ -372,7 +371,7 @@ class CircosConfig:
             end = self._genome_length if end > self._genome_length else end
             color = self.gc_content_p_color if value > 0 else self.gc_content_n_color
             contents += f"main {start} {end} {value} fill_color={color}\n"
-        with open(self._gc_content_file, "w") as f:
+        with open(self.gc_content_file, "w") as f:
             f.write(contents)
         return max(abs(v) for v in gc_content_values)
 
@@ -388,7 +387,7 @@ class CircosConfig:
                 "##### GC Skew Track #####",
                 "<plot>",
                 "type        = histogram",
-                "file        = {0}".format(self._gc_skew_file),
+                "file        = {0}".format(self.gc_skew_file),
                 "r1          = {0:.3f}r".format(self._r),
                 "r0          = {0:.3f}r".format(self._r - self.gc_skew_r),
                 "min         = {0:.3f}".format(-abs_max_value),
@@ -410,7 +409,7 @@ class CircosConfig:
             end = self._genome_length if end > self._genome_length else end
             color = self.gc_skew_p_color if value > 0 else self.gc_skew_n_color
             contents += f"main {start} {end} {value} fill_color={color}\n"
-        with open(self._gc_skew_file, "w") as f:
+        with open(self.gc_skew_file, "w") as f:
             f.write(contents)
         return max(abs(v) for v in gc_skew_values)
 
@@ -499,10 +498,10 @@ class CircosConfig:
             contents += f"main {start} {end} {strand} color={color}\n"
 
         filename = rbh_result_file.with_suffix(".txt").name
-        conserved_cds_config_file = self._conserved_cds_dir / filename
+        conserved_cds_config_file = self.conserved_cds_dir / filename
         with open(conserved_cds_config_file, "w") as f:
             f.write(contents)
-        self._conserved_cds_files.append(conserved_cds_config_file)
+        self.conserved_cds_files.append(conserved_cds_config_file)
 
     def _load_rbh_result(self, rbh_result_file: Path) -> pd.DataFrame:
         header_names = (
