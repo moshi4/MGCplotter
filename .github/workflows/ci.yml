@@ -14,6 +14,9 @@ on:
 jobs:
   CI_black-flake8-pytest:
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest]
@@ -40,20 +43,13 @@ jobs:
         uses: conda-incubator/setup-miniconda@v2
         with:
           python-version: ${{ matrix.python-version }}
-          mamba-version: "*"
-          channels: bioconda,conda-forge,defaults
+          channels: conda-forge,bioconda,defaults
           channel-priority: true
         if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install requirements on MacOS
         run: |
-          conda activate test
-          mamba install circos=0.69.8
-        if: ${{ matrix.os=='macos-latest' }}
-
-      - name: Check Circos installation
-        run: |
-          circos -h
+          conda install circos
         if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install Poetry
