@@ -5,7 +5,7 @@
 ![License](https://img.shields.io/badge/License-GPL3-steelblue)
 [![Latest PyPI version](https://img.shields.io/pypi/v/mgcplotter.svg)](https://pypi.python.org/pypi/mgcplotter)
 [![Bioconda](https://img.shields.io/conda/vn/bioconda/mgcplotter.svg?color=green)](https://anaconda.org/bioconda/mgcplotter)  
-[![CI](https://github.com/moshi4/CSplotter/actions/workflows/ci.yml/badge.svg)](https://github.com/moshi4/CSplotter/actions/workflows/ci.yml)
+[![CI](https://github.com/moshi4/MGCplotter/workflows/CI/badge.svg)](https://github.com/moshi4/MGCplotter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/moshi4/MGCplotter/branch/main/graph/badge.svg?token=IEVJ47GXZY)](https://codecov.io/gh/moshi4/MGCplotter)
 
 ## Table of Contents
@@ -56,7 +56,7 @@ MGCplotter is implemented in Python3.
 
 **Install bioconda package:**
 
-    conda install -c conda-forge -c bioconda  mgcplotter
+    conda install -c conda-forge -c bioconda mgcplotter
 
 **Install PyPI pakcage:**
 
