@@ -8,8 +8,6 @@
 [![CI](https://github.com/moshi4/CSplotter/actions/workflows/ci.yml/badge.svg)](https://github.com/moshi4/CSplotter/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/moshi4/MGCplotter/branch/main/graph/badge.svg?token=IEVJ47GXZY)](https://codecov.io/gh/moshi4/MGCplotter)
 
-## Currently Under Construction (Not Released)
-
 ## Table of Contents
 
 - [Overview](#overview)
@@ -58,11 +56,16 @@ MGCplotter is implemented in Python3.
 
 **Install bioconda package:**
 
-    conda install -c bioconda -c conda-forge mgcplotter
+    conda install -c conda-forge -c bioconda  mgcplotter
 
 **Install PyPI pakcage:**
 
     pip install mgcplotter
+
+**Use Docker:**
+
+    docker pull moshi4/mgcplotter:latest
+    docker run moshi4/mgcplotter:latest MGCplotter -h
 
 ## Dependencies
 
