@@ -25,18 +25,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Ubuntu
-      - name: Setup Python ${{ matrix.python-version}}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-        if: ${{ matrix.os=='ubuntu-latest' }}
+      # # Ubuntu
+      # - name: Setup Python ${{ matrix.python-version}}
+      #   uses: actions/setup-python@v2
+      #   with:
+      #     python-version: ${{ matrix.python-version }}
+      #   if: ${{ matrix.os=='ubuntu-latest' }}
 
-      - name: Install requirements on Ubuntu
-        run: |
-          sudo apt update -y
-          sudo apt install -y circos liblist-moreutils-perl
-        if: ${{ matrix.os=='ubuntu-latest' }}
+      # - name: Install requirements on Ubuntu
+      #   run: |
+      #     sudo apt update -y
+      #     sudo apt install -y circos liblist-moreutils-perl
+      #   if: ${{ matrix.os=='ubuntu-latest' }}
 
       # MacOS
       - name: Setup Conda(Mamba) Environment
@@ -45,12 +45,12 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: conda-forge,bioconda,defaults
           channel-priority: true
-        if: ${{ matrix.os=='macos-latest' }}
+        # if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install requirements on MacOS
         run: |
           conda install circos
-        if: ${{ matrix.os=='macos-latest' }}
+        # if: ${{ matrix.os=='macos-latest' }}
 
       - name: Install Poetry
         run: |
