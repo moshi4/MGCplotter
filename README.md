@@ -22,11 +22,11 @@
 MGCplotter is easy-to-use command line tool for plotting microbial genome in circular layout using Circos.
 MGCplotter requires Genbank format genome file and implements following 3 main functions for plotting figure.
 
-1. **`Plot basic features of microbial genome`**  
-  Basic Features = *Forward/Reverse CDS*, *rRNA*, *tRNA*, *GC content*, *GC skew*.  
+1. **`Plot Basic Features of Microbial Genome`**  
+  Basic Features mean *Forward/Reverse CDS*, *rRNA*, *tRNA*, *GC content*, *GC skew*.  
   MGCplotter can control plot result of feature's color/size/visibility by command options.  
 
-2. **`Assign & Plot COG functional classification`**  
+2. **`Assign & Plot COG Functional Classification`**  
   Assign COG functional classification to reference genome CDS using [COGclassifier](https://github.com/moshi4/COGclassifier).
   COG functional classification colors are used in plot result of forward/reverse CDS.
 
@@ -37,7 +37,7 @@ MGCplotter requires Genbank format genome file and implements following 3 main f
 
     </details>
 
-3. **`Search & Plot conserved CDS between reference and query species`**  
+3. **`Search & Plot Conserved CDS between reference and query species`**  
   Conserved CDS of query genome relative to reference genome is searched by [MMseqs2](https://github.com/moshi4/COGclassifier) RBH method.
   Each query conserved CDS is plotted with gradient color based on identity of RBH result.
 
@@ -54,7 +54,7 @@ Conserved CDS of query genomes relative to reference genome is shown.
 
 MGCplotter is implemented in Python3.
 
-**Install bioconda package (:warning: In Preparation):**
+**Install bioconda package:**
 
     conda install -c conda-forge -c bioconda mgcplotter
 
