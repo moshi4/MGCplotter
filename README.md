@@ -62,7 +62,7 @@ MGCplotter is implemented in Python3.
 
     pip install mgcplotter
 
-**Use Docker ([Docker Image](https://hub.docker.com/repository/docker/moshi4/mgcplotter/general)):**
+**Use Docker ([Docker Image](https://hub.docker.com/r/moshi4/mgcplotter)):**
 
     docker pull moshi4/mgcplotter:latest
     docker run moshi4/mgcplotter:latest MGCplotter -h
