@@ -120,13 +120,13 @@ MGCplotter is implemented in Python3.
 
 ### Example Command
 
-**1. *M.Gallisepticum* genome simple plot (= Fig.1):**
+#### 1. *M.Gallisepticum* genome simple plot (= Fig.1)
 
 Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example01/Mgallisepticum.zip) (0.63 MB)
 
     MGCplotter -r Mgallisepticum.gbff -o ./example_result01 --assign_cog_color
 
-**2. *M.Gallisepticum* genome plot with 3 query conserved CDS (= Fig.2):**
+#### 2. *M.Gallisepticum* genome plot with 3 query conserved CDS (= Fig.2)
 
 Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/Mgallisepticum.zip) (0.63 MB),
 Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/example02.zip) (2.0 MB)
@@ -156,7 +156,7 @@ Query: [example02](https://github.com/moshi4/MGCplotter/wiki/dataset/example02/e
 
 ## Example Gallery
 
-**1. *E.coli* genome simple plot (No COG assignment):**
+### 1. *E.coli* genome simple plot (No COG assignment)
 
 Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery01/ecoli.zip) (3.5 MB)
 
@@ -166,7 +166,7 @@ Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result01.png?raw=true)  
 
-**2. *E.coli* genome plot with 3 query conserved CDS:**
+### 2. *E.coli* genome plot with 3 query conserved CDS
 
 Reference: [ecoli.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/ecoli.zip) (3.5 MB),
 Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/gallery02.zip) (10.7 MB)
@@ -180,7 +180,7 @@ Query: [gallery02](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery02/g
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result02.png?raw=true)  
 
-**3. *M.Gallisepticum* genome plot with 30 query conserved CDS:**
+### 3. *M.Gallisepticum* genome plot with 30 query conserved CDS
 
 Reference: [Mgallisepticum.gbff](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/Mgallisepticum.zip) (0.63 MB),
 Query: [gallery03](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/gallery03.zip) (19.6 MB)
@@ -191,7 +191,7 @@ Query: [gallery03](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery03/g
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result03.png?raw=true)  
 
-**4. *M.Alvi* genome contigs plot with 6 query conserved CDS:**
+### 4. *M.Alvi* genome contigs plot with 6 query conserved CDS
 
 Reference: [Malvi.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/Malvi.zip) (0.57 MB),
 Query: [gallery04](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/gallery04.zip) (1.0 MB)
@@ -206,7 +206,7 @@ Query: [gallery04](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery04/g
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result04.png?raw=true)  
 
-**5. *M.Gallisepticum* genome plot (User-defined COG classification color):**
+### 5. *M.Gallisepticum* genome plot (User-defined COG classification color)
 
 Reference: [Mgallisepticum.gbk](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/Mgallisepticum.zip) (0.63 MB),
 COG Color Json: [cog_color.json](https://github.com/moshi4/MGCplotter/wiki/dataset/gallery05/cog_color.zip) (0.5 KB)
