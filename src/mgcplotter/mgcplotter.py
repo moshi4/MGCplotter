@@ -19,7 +19,7 @@ from mgcplotter.circos_config import CircosConfig
 from mgcplotter.circos_legend import CircosLegend
 from mgcplotter.genbank import Genbank
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 
 def main():
