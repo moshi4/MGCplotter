@@ -38,7 +38,7 @@ MGCplotter requires Genbank format genome file and implements following 3 main f
     </details>
 
 3. **`Search & Plot Conserved CDS between reference and query species`**  
-  Conserved CDS of query genome relative to reference genome is searched by [MMseqs2](https://github.com/moshi4/COGclassifier) RBH method.
+  Conserved CDS of query genome relative to reference genome is searched by [MMseqs2](https://github.com/soedinglab/MMseqs2) RBH method.
   Each query conserved CDS is plotted with gradient color based on identity of RBH result.
 
 ![MGCplotter_example_fig](https://github.com/moshi4/MGCplotter/blob/main/images/example_result01.png?raw=true)  
@@ -117,6 +117,15 @@ MGCplotter is implemented in Python3.
       --gc_content_n_color    GC content color for negative value from average (Default: 'grey')
       --gc_skew_p_color       GC skew color for positive value (Default: 'olive')
       --gc_skew_n_color       GC skew color for negative value (Default: 'purple')
+
+For graph color options, user can use matplotlib named color (e.g. 'red') or hexcolor code (e.g. '#ff0000').
+
+<details>
+<summary>Matplotlib named color list</summary>
+
+![Matplotlib named color list](https://github.com/moshi4/MGCplotter/blob/main/images/matplotlib_named_color_list.png?raw=true)  
+
+</details>
 
 ### Example Command
 
@@ -217,39 +226,86 @@ COG Color Json: [cog_color.json](https://github.com/moshi4/MGCplotter/wiki/datas
 > User can change COG functional classification color by user-defined color json file.
 > Template json file can be obtained by `generate_cog_color_template` command.
 
-  <details>
-  <summary>COG functional classification color template json</summary>
+<details>
+<summary>COG functional classification color template json</summary>
 
-    {
-      "J": "#f43cf3",
-      "A": "#f04ff0",
-      "K": "#f04fa0",
-      "L": "#f04f4f",
-      "B": "#f4793c",
-      "D": "#f0f04f",
-      "Y": "#f3f43c",
-      "V": "#f5f52a",
-      "T": "#f7f718",
-      "M": "#caf718",
-      "N": "#9ef718",
-      "Z": "#71f718",
-      "W": "#45f718",
-      "U": "#18f718",
-      "O": "#07f830",
-      "X": "#07f807",
-      "C": "#2af5f5",
-      "G": "#3cf3f4",
-      "E": "#4ff0f0",
-      "F": "#4f9ff0",
-      "H": "#4f4ff0",
-      "I": "#793cf4",
-      "P": "#3c3cf4",
-      "Q": "#2a5df5",
-      "R": "#939393",
-      "S": "#808080",
-      "-": "#6c6c6c"
-    }
+```json
+{
+  "J": "#f43cf3",
+  "A": "#f04ff0",
+  "K": "#f04fa0",
+  "L": "#f04f4f",
+  "B": "#f4793c",
+  "D": "#f0f04f",
+  "Y": "#f3f43c",
+  "V": "#f5f52a",
+  "T": "#f7f718",
+  "M": "#caf718",
+  "N": "#9ef718",
+  "Z": "#71f718",
+  "W": "#45f718",
+  "U": "#18f718",
+  "O": "#07f830",
+  "X": "#07f807",
+  "C": "#2af5f5",
+  "G": "#3cf3f4",
+  "E": "#4ff0f0",
+  "F": "#4f9ff0",
+  "H": "#4f4ff0",
+  "I": "#793cf4",
+  "P": "#3c3cf4",
+  "Q": "#2a5df5",
+  "R": "#939393",
+  "S": "#808080",
+  "-": "#6c6c6c"
+}
+```
 
   </details>
+
+<details>
+<summary>COG color json used in this gallery (cog_color.json)</summary>
+
+```json
+{
+  "J": "red",
+  "A": "red",
+  "K": "red",
+  "L": "red",
+  "B": "red",
+  "D": "limegreen",
+  "Y": "limegreen",
+  "V": "limegreen",
+  "T": "limegreen",
+  "M": "limegreen",
+  "N": "limegreen",
+  "Z": "limegreen",
+  "W": "limegreen",
+  "U": "limegreen",
+  "O": "limegreen",
+  "X": "limegreen",
+  "C": "deepskyblue",
+  "G": "deepskyblue",
+  "E": "deepskyblue",
+  "F": "deepskyblue",
+  "H": "deepskyblue",
+  "I": "deepskyblue",
+  "P": "deepskyblue",
+  "Q": "deepskyblue",
+  "R": "lightgrey",
+  "S": "lightgrey",
+  "-": "darkgrey"
+}
+```
+
+In this gallery, color classification is defined based on following five COG major categories.
+
+- Information Storage and Processing (J,A,K,L,B) => red
+- Cellular Processes and Signaling (D,Y,V,T,M,N,Z,W,U,O,X) => limegreen
+- Metabolism (C,G,E,F,H,I,P,Q) => deepskyblue
+- Poorly Characterized (R,S) => lightgrey
+- No COG Classified (-) => darkgrey
+
+</details>
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result05.png?raw=true)  
