@@ -298,14 +298,14 @@ COG Color Json: [cog_color.json](https://github.com/moshi4/MGCplotter/wiki/datas
 }
 ```
 
-In this gallery, color classification is defined based on following five COG major categories.
-
-- Information Storage and Processing (J,A,K,L,B) => red
-- Cellular Processes and Signaling (D,Y,V,T,M,N,Z,W,U,O,X) => limegreen
-- Metabolism (C,G,E,F,H,I,P,Q) => deepskyblue
-- Poorly Characterized (R,S) => lightgrey
-- No COG Classified (-) => darkgrey
-
 </details>
 
 ![MGCplotter_gallery_fig](https://github.com/moshi4/MGCplotter/blob/main/images/gallery_result05.png?raw=true)  
+
+In this gallery, color classification is defined based on following five COG major categories.
+
+1. `Information Storage and Processing` (J,A,K,L,B) => red
+2. `Cellular Processes and Signaling` (D,Y,V,T,M,N,Z,W,U,O,X) => limegreen
+3. `Metabolism` (C,G,E,F,H,I,P,Q) => deepskyblue
+4. `Poorly Characterized` (R,S) => lightgrey
+5. `No COG Classified` (-) => darkgrey
