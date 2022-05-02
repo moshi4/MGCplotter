@@ -1,0 +1,1049 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>mgcplotter.mgcplotter API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>mgcplotter.mgcplotter</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">#!/usr/bin/env python3
+import argparse
+import json
+import os
+import platform
+import shutil
+import subprocess as sp
+import tempfile
+from collections import defaultdict
+from pathlib import Path
+from typing import Dict, List, Optional
+
+import matplotlib as mpl
+import pandas as pd
+from cogclassifier import cogclassifier
+
+from mgcplotter import config
+from mgcplotter.circos_config import CircosConfig
+from mgcplotter.circos_legend import CircosLegend
+from mgcplotter.genbank import Genbank
+
+__version__ = &#34;1.0.1&#34;
+
+
+def main():
+    &#34;&#34;&#34;MGCplotter main function for entrypoint&#34;&#34;&#34;
+    # Get arguments
+    args = get_args()
+
+    # Copy circos &#39;etc&#39; config directory to current directory
+    # Required if Circos is installed in unusual location
+    circos_etc_dir = Path(__file__).parent / &#34;etc&#34;
+    shutil.copytree(circos_etc_dir, &#34;etc&#34;, dirs_exist_ok=True)
+
+    # Run MGCplotter workflow
+    run(**args.__dict__)
+
+    # Delete &#39;etc&#39; config directory after run
+    shutil.rmtree(&#34;etc&#34;, ignore_errors=True)
+
+
+def run(
+    ref_file: Path,
+    outdir: Path,
+    query_files: List[Path],
+    cog_evalue: float,
+    mmseqs_evalue: float,
+    thread_num: int,
+    force: bool,
+    ticks_labelsize: int = 35,
+    # Radius
+    forward_cds_r: float = 0.07,
+    reverse_cds_r: float = 0.07,
+    rrna_r: float = 0.07,
+    trna_r: float = 0.07,
+    conserved_cds_r: float = 0.04,
+    gc_content_r: float = 0.15,
+    gc_skew_r: float = 0.15,
+    # Color
+    assign_cog_color: bool = False,
+    cog_color_json: Optional[Path] = None,
+    forward_cds_color: str = &#34;red&#34;,
+    reverse_cds_color: str = &#34;blue&#34;,
+    rrna_color: str = &#34;green&#34;,
+    trna_color: str = &#34;magenta&#34;,
+    conserved_cds_color: str = &#34;chocolate&#34;,
+    gc_content_p_color: str = &#34;black&#34;,
+    gc_content_n_color: str = &#34;grey&#34;,
+    gc_skew_p_color: str = &#34;olive&#34;,
+    gc_skew_n_color: str = &#34;purple&#34;,
+) -&gt; None:
+    &#34;&#34;&#34;Run MGCplotter workflow&#34;&#34;&#34;
+    # Setup directory
+    outdir.mkdir(exist_ok=True)
+    rbh_dir = outdir / &#34;rbh_search&#34;
+    rbh_dir.mkdir(exist_ok=True)
+    add_bin_path()
+
+    # Search conserved CDS by MMseqs RBH method
+    ref_gbk = Genbank(ref_file)
+    ref_faa_file = outdir / &#34;reference_cds.faa&#34;
+    ref_gbk.write_cds_fasta(ref_faa_file)
+    rbh_result_files: List[Path] = []
+    for idx, query_file in enumerate(query_files, 1):
+        query_num = len(query_files)
+        if idx == 1:
+            em_print(f&#34;Search Conserved CDS ({query_num} Query vs Reference)&#34;)
+        # Setup query CDS faa file
+        query_faa_file = rbh_dir / query_file.with_suffix(&#34;.faa&#34;).name
+        if query_file.suffix in config.fasta_suffixs:
+            shutil.copy(query_file, query_faa_file)
+        elif query_file.suffix in config.gbk_suffixs and not query_faa_file.exists():
+            Genbank(query_file).write_cds_fasta(query_faa_file)
+        # Run MMseqs RBH search
+        query_name = query_file.with_suffix(&#34;&#34;).name
+        ref_name = ref_file.with_suffix(&#34;&#34;).name
+        target_info = f&#34;{query_name} vs {ref_name}[reference]&#34;
+        rbh_result_file = rbh_dir / f&#34;{query_name}_vs_reference_rbh.tsv&#34;
+        if force or not rbh_result_file.exists():
+            print(f&#34;# Run MMseqs RBH search ({target_info})&#34;)
+            run_mmseqs_rbh_search(
+                query_faa_file, ref_faa_file, rbh_result_file, mmseqs_evalue, thread_num
+            )
+        else:
+            print(f&#34;# Reuse previous MMseqs RBH search result ({target_info})&#34;)
+        rbh_result_files.append(rbh_result_file)
+
+    # Setup Circos config
+    circos_config = CircosConfig(
+        ref_gbk=ref_gbk,
+        outdir=outdir,
+        ticks_labelsize=ticks_labelsize,
+        # Radius
+        forward_cds_r=forward_cds_r,
+        reverse_cds_r=reverse_cds_r,
+        rrna_r=rrna_r,
+        trna_r=trna_r,
+        conserved_cds_r=conserved_cds_r,
+        gc_content_r=gc_content_r,
+        gc_skew_r=gc_skew_r,
+        # Color
+        forward_cds_color=forward_cds_color,
+        reverse_cds_color=reverse_cds_color,
+        rrna_color=rrna_color,
+        trna_color=trna_color,
+        conserved_cds_color=conserved_cds_color,
+        gc_content_p_color=gc_content_p_color,
+        gc_content_n_color=gc_content_n_color,
+        gc_skew_p_color=gc_skew_p_color,
+        gc_skew_n_color=gc_skew_n_color,
+    )
+    for rbh_result_file in rbh_result_files:
+        circos_config.add_conserved_cds_config(rbh_result_file)
+    circos_config.write_config_file()
+
+    # Run COGclassifier for Functional Classification of Reference CDSs
+    if assign_cog_color:
+        cog_dir = outdir / &#34;cogclassifier&#34;
+        cog_classifier_result_file = cog_dir / &#34;classifier_result.tsv&#34;
+        em_print(&#34;Run COGclassifier for Functional Classification of Reference CDSs&#34;)
+        if force or not cog_classifier_result_file.exists():
+            cogclassifier.run(
+                ref_faa_file, cog_dir, thread_num=thread_num, evalue=cog_evalue
+            )
+        else:
+            print(&#34;# Reuse previous COGclassifier result&#34;)
+
+        # Assign COG color to reference CDS
+        if cog_color_json is not None:
+            with open(cog_color_json) as f:
+                config.cog_letter2color = json.load(f)
+        location_id2color = get_location_id2color(
+            cog_classifier_result_file, config.cog_letter2color
+        )
+        rewrite_circos_cds_color(circos_config.f_cds_file, location_id2color)
+        rewrite_circos_cds_color(circos_config.r_cds_file, location_id2color)
+
+    # Run Circos
+    em_print(&#34;Run Circos&#34;)
+    cmd = f&#34;circos -conf {circos_config.config_file}&#34;
+    print(f&#34;$ {cmd}\n&#34;)
+    sp.run(cmd, shell=True)
+
+    # Plot legend for Circos result
+    circos_legend_dir = outdir / &#34;circos_legend&#34;
+    CircosLegend(
+        circos_config,
+        config.cog_letter2color,
+        config.cog_letter2desc,
+        circos_legend_dir,
+    ).plot_all_legends()
+
+
+def add_bin_path() -&gt; None:
+    &#34;&#34;&#34;Add executable binary path to PATH&#34;&#34;&#34;
+    os_name = platform.system()  # &#39;Windows&#39; or &#39;Darwin&#39; or &#39;Linux&#39;
+    bin_path = Path(__file__).parent / &#34;bin&#34; / os_name
+    sep = &#34;;&#34; if os_name == &#34;Windows&#34; else &#34;:&#34;
+    env_path = f&#34;{os.environ[&#39;PATH&#39;]}{sep}{bin_path}&#34;
+    os.environ[&#34;PATH&#34;] = env_path
+
+
+def run_mmseqs_rbh_search(
+    query_fasta_file: Path,
+    ref_fasta_file: Path,
+    rbh_result_file: Path,
+    evalue: float = 1e-3,
+    thread_num: int = 1,
+) -&gt; None:
+    &#34;&#34;&#34;Run MMseqs rbh search
+
+    Args:
+        query_fasta_file (Path): Query fasta file
+        ref_fasta_file (Path): Reference fasta file
+        rbh_result_file (Path): RBH result file
+        evalue (float, optional): E-value
+        thread_num (int, optional): Thread number
+    &#34;&#34;&#34;
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = (
+            f&#34;mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} {rbh_result_file} &#34;
+            + f&#34;{tmpdir} -e {evalue} --threads {thread_num} -v 0&#34;
+        )
+        print(f&#34;$ {cmd}\n&#34;)
+        sp.run(cmd, shell=True)
+
+
+def get_location_id2color(
+    cog_classifier_result_file: Path,
+    cog_letter2color: Dict[str, str],
+) -&gt; Dict[str, str]:
+    &#34;&#34;&#34;Get CDS location ID &amp; Color dict
+
+    Args:
+        cog_classifier_result_file (Path): COGclassifier result file
+        cog_letter2color (Dict[str, str]): COG letter &amp; Color dict
+
+    Returns:
+        Dict[str, str]: CDS location ID &amp; COG Color dict
+
+    Notes:
+        CDS location ID = &#34;start end strand&#34; (e.g. &#34;300 1000 +&#34;)
+    &#34;&#34;&#34;
+    df = pd.read_csv(cog_classifier_result_file, delimiter=&#34;\t&#34;)
+    location_id2color = defaultdict(str)
+    for query_id, cog_letter in zip(df[&#34;QUERY_ID&#34;], df[&#34;COG_LETTER&#34;]):
+        location_id = query_id.split(&#34;|&#34;)[1].replace(&#34;_&#34;, &#34; &#34;)
+        location_id2color[location_id] = cog_letter2color[cog_letter]
+    return location_id2color
+
+
+def rewrite_circos_cds_color(
+    circos_cds_file: Path, location_id2color: Dict[str, str]
+) -&gt; None:
+    &#34;&#34;&#34;Rewrite Circos CDS color to COG classification color
+
+    Args:
+        circos_cds_file (Path): Circos CDS file
+        location_id2color (Dict[str, str]): CDS location ID &amp; COG Color dict
+    &#34;&#34;&#34;
+    contents = &#34;&#34;
+    with open(circos_cds_file) as f:
+        for line in f.read().splitlines():
+            location_id = &#34; &#34;.join(line.split(&#34; &#34;)[1:4])
+            color = location_id2color.get(location_id, config.cog_letter2color[&#34;-&#34;])
+            hexcolor = mpl.colors.to_hex(color).lstrip(&#34;#&#34;)
+            contents += &#34; &#34;.join(line.split(&#34; &#34;)[0:4]) + f&#34; color={hexcolor}\n&#34;
+    with open(circos_cds_file, &#34;w&#34;) as f:
+        f.write(contents)
+
+
+def em_print(content: str) -&gt; None:
+    &#34;&#34;&#34;Emphasis print content
+
+    Args:
+        content (str): Print content
+    &#34;&#34;&#34;
+    print(f&#34;\n{&#39;*&#39; * 80}\n* {content}\n{&#39;*&#39;* 80}\n&#34;)
+
+
+def generate_cog_color_template() -&gt; None:
+    &#34;&#34;&#34;Generate COG color template json file&#34;&#34;&#34;
+    color_template_json_file = &#34;cog_color_template.json&#34;
+    with open(color_template_json_file, &#34;w&#34;) as f:
+        json.dump(config.cog_letter2color, f, indent=2)
+    print(f&#34;Generate COG color template json file (&#39;{color_template_json_file}&#39;)&#34;)
+
+
+def get_args() -&gt; argparse.Namespace:
+    &#34;&#34;&#34;Get arguments
+
+    Returns:
+        argparse.Namespace: Argument values
+    &#34;&#34;&#34;
+
+    class CustomHelpFormatter(argparse.HelpFormatter):
+        # Change default &#39;max_help_position&#39; (24 -&gt; 30)
+        def __init__(self, prog, indent_increment=2, max_help_position=30, width=None):
+            super().__init__(prog, indent_increment, max_help_position, width)
+
+    desc = &#34;Microbial Genome Circular plotting tool&#34;
+    parser = argparse.ArgumentParser(
+        description=desc, add_help=False, formatter_class=CustomHelpFormatter
+    )
+
+    # General Options
+    general_opts = parser.add_argument_group(&#34;General Options&#34;)
+    general_opts.add_argument(
+        &#34;-r&#34;,
+        &#34;--ref_file&#34;,
+        required=True,
+        type=Path,
+        help=&#34;Reference genome genbank file (*.gb|*.gbk|*.gbff)&#34;,
+        metavar=&#34;R&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-o&#34;,
+        &#34;--outdir&#34;,
+        required=True,
+        type=Path,
+        help=&#34;Output directory&#34;,
+        metavar=&#34;O&#34;,
+    )
+    valid_query_suffixs = &#34;|&#34;.join([f&#34;*{s}&#34; for s in config.valid_query_suffixs])
+    general_opts.add_argument(
+        &#34;--query_files&#34;,
+        nargs=&#34;+&#34;,
+        type=Path,
+        help=f&#34;Query CDS fasta or genome genbank files ({valid_query_suffixs})&#34;,
+        default=[],
+        metavar=&#34;&#34;,
+    )
+    default_cog_evalue = 1e-2
+    general_opts.add_argument(
+        &#34;--cog_evalue&#34;,
+        type=float,
+        help=f&#34;COGclassifier e-value parameter (Default: {default_cog_evalue:.0e})&#34;,
+        default=default_cog_evalue,
+        metavar=&#34;&#34;,
+    )
+    default_rbh_evalue = 1e-3
+    general_opts.add_argument(
+        &#34;--mmseqs_evalue&#34;,
+        type=float,
+        help=f&#34;MMseqs RBH search e-value parameter (Default: {default_rbh_evalue:.0e})&#34;,
+        default=default_rbh_evalue,
+        metavar=&#34;&#34;,
+    )
+    cpu_num = os.cpu_count()
+    default_thread_num = 1 if cpu_num is None or cpu_num == 1 else cpu_num - 1
+    general_opts.add_argument(
+        &#34;-t&#34;,
+        &#34;--thread_num&#34;,
+        type=int,
+        help=f&#34;Threads number parameter (Default: {default_thread_num})&#34;,
+        default=default_thread_num,
+        metavar=&#34;&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-f&#34;,
+        &#34;--force&#34;,
+        help=&#34;Forcibly overwrite previous calculation result (Default: OFF)&#34;,
+        action=&#34;store_true&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-v&#34;,
+        &#34;--version&#34;,
+        version=f&#34;v{__version__}&#34;,
+        help=&#34;Print version information&#34;,
+        action=&#34;version&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-h&#34;,
+        &#34;--help&#34;,
+        help=&#34;Show this help message and exit&#34;,
+        action=&#34;help&#34;,
+    )
+
+    # Graph Size Options
+    size_opts = parser.add_argument_group(&#34;Graph Size Options&#34;)
+    default_ticks_labelsize = 35
+    size_opts.add_argument(
+        &#34;--ticks_labelsize&#34;,
+        type=float,
+        help=f&#34;Ticks label size (Default: {default_ticks_labelsize})&#34;,
+        default=default_ticks_labelsize,
+        metavar=&#34;&#34;,
+    )
+    for k, v in config.radius_args_dict.items():
+        # Track radius control arguments
+        size_opts.add_argument(
+            f&#34;--{k}&#34;,
+            type=float,
+            help=f&#34;{v.desc} (Default: {v.default})&#34;,
+            default=v.default,
+            metavar=&#34;&#34;,
+        )
+
+    # Graph Color Options
+    color_opts = parser.add_argument_group(&#34;Graph Color Options&#34;)
+    color_opts.add_argument(
+        &#34;--assign_cog_color&#34;,
+        help=&#34;Assign COG classification color to reference CDSs (Default: OFF)&#34;,
+        action=&#34;store_true&#34;,
+    )
+    color_opts.add_argument(
+        &#34;--cog_color_json&#34;,
+        type=Path,
+        help=&#34;User-defined COG classification color json file&#34;,
+        default=None,
+        metavar=&#34;&#34;,
+    )
+    for k, v in config.color_args_dict.items():
+        # Color control arguments
+        color_opts.add_argument(
+            f&#34;--{k}&#34;,
+            type=str,
+            help=f&#34;{v.desc} (Default: &#39;{v.default}&#39;)&#34;,
+            default=v.default,
+            metavar=&#34;&#34;,
+        )
+    args = parser.parse_args()
+
+    # Argument value validation check
+    err_info = &#34;&#34;
+    if not args.ref_file.exists():
+        err_info += f&#34;-r/--ref_file: File not found &#39;{args.ref_file}&#39;\n&#34;
+    for f in args.query_files:
+        if f.suffix not in config.valid_query_suffixs:
+            err_info += f&#34;&#39;{f.suffix}&#39; is invalid file suffix ({f.name})\n&#34;
+    for k, v in args.__dict__.items():
+        if k in config.color_args_dict.keys():
+            if not mpl.colors.is_color_like(v):
+                err_info += f&#34;--{k}: &#39;{v}&#39; is invalid color like string\n&#34;
+        elif k in config.radius_args_dict.keys():
+            if not 0 &lt;= v &lt;= 0.3:
+                err_info += f&#34;--{k}: &#39;{v}&#39; is invalid value range (0 &lt;= value &lt;= 0.3)\n&#34;
+
+    if args.cog_color_json is not None:
+        if not args.cog_color_json.exists():
+            err_info += f&#34;--cog_color_json: File not found &#39;{args.cog_color_json}&#39;\n&#34;
+        else:
+            with open(args.cog_color_json) as f:
+                cog_color_json_dict: Dict[str, str] = json.load(f)
+            for k, v in cog_color_json_dict.items():
+                if k not in config.cog_letter2color:
+                    err_info += f&#34;--cog_color_json: &#39;{k}&#39; is not COG letter\n&#34;
+                if not mpl.colors.is_color_like(v):
+                    err_info += f&#34;--cog_color_json: &#39;{v}&#39; is not color like string\n&#34;
+
+    if err_info != &#34;&#34;:
+        parser.error(&#34;\n&#34; + err_info)
+
+    return args
+
+
+if __name__ == &#34;__main__&#34;:
+    main()</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="mgcplotter.mgcplotter.main"><code class="name flex">
+<span>def <span class="ident">main</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>MGCplotter main function for entrypoint</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def main():
+    &#34;&#34;&#34;MGCplotter main function for entrypoint&#34;&#34;&#34;
+    # Get arguments
+    args = get_args()
+
+    # Copy circos &#39;etc&#39; config directory to current directory
+    # Required if Circos is installed in unusual location
+    circos_etc_dir = Path(__file__).parent / &#34;etc&#34;
+    shutil.copytree(circos_etc_dir, &#34;etc&#34;, dirs_exist_ok=True)
+
+    # Run MGCplotter workflow
+    run(**args.__dict__)
+
+    # Delete &#39;etc&#39; config directory after run
+    shutil.rmtree(&#34;etc&#34;, ignore_errors=True)</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.run"><code class="name flex">
+<span>def <span class="ident">run</span></span>(<span>ref_file: pathlib.Path, outdir: pathlib.Path, query_files: List[pathlib.Path], cog_evalue: float, mmseqs_evalue: float, thread_num: int, force: bool, ticks_labelsize: int = 35, forward_cds_r: float = 0.07, reverse_cds_r: float = 0.07, rrna_r: float = 0.07, trna_r: float = 0.07, conserved_cds_r: float = 0.04, gc_content_r: float = 0.15, gc_skew_r: float = 0.15, assign_cog_color: bool = False, cog_color_json: Optional[pathlib.Path] = None, forward_cds_color: str = 'red', reverse_cds_color: str = 'blue', rrna_color: str = 'green', trna_color: str = 'magenta', conserved_cds_color: str = 'chocolate', gc_content_p_color: str = 'black', gc_content_n_color: str = 'grey', gc_skew_p_color: str = 'olive', gc_skew_n_color: str = 'purple') ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run MGCplotter workflow</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run(
+    ref_file: Path,
+    outdir: Path,
+    query_files: List[Path],
+    cog_evalue: float,
+    mmseqs_evalue: float,
+    thread_num: int,
+    force: bool,
+    ticks_labelsize: int = 35,
+    # Radius
+    forward_cds_r: float = 0.07,
+    reverse_cds_r: float = 0.07,
+    rrna_r: float = 0.07,
+    trna_r: float = 0.07,
+    conserved_cds_r: float = 0.04,
+    gc_content_r: float = 0.15,
+    gc_skew_r: float = 0.15,
+    # Color
+    assign_cog_color: bool = False,
+    cog_color_json: Optional[Path] = None,
+    forward_cds_color: str = &#34;red&#34;,
+    reverse_cds_color: str = &#34;blue&#34;,
+    rrna_color: str = &#34;green&#34;,
+    trna_color: str = &#34;magenta&#34;,
+    conserved_cds_color: str = &#34;chocolate&#34;,
+    gc_content_p_color: str = &#34;black&#34;,
+    gc_content_n_color: str = &#34;grey&#34;,
+    gc_skew_p_color: str = &#34;olive&#34;,
+    gc_skew_n_color: str = &#34;purple&#34;,
+) -&gt; None:
+    &#34;&#34;&#34;Run MGCplotter workflow&#34;&#34;&#34;
+    # Setup directory
+    outdir.mkdir(exist_ok=True)
+    rbh_dir = outdir / &#34;rbh_search&#34;
+    rbh_dir.mkdir(exist_ok=True)
+    add_bin_path()
+
+    # Search conserved CDS by MMseqs RBH method
+    ref_gbk = Genbank(ref_file)
+    ref_faa_file = outdir / &#34;reference_cds.faa&#34;
+    ref_gbk.write_cds_fasta(ref_faa_file)
+    rbh_result_files: List[Path] = []
+    for idx, query_file in enumerate(query_files, 1):
+        query_num = len(query_files)
+        if idx == 1:
+            em_print(f&#34;Search Conserved CDS ({query_num} Query vs Reference)&#34;)
+        # Setup query CDS faa file
+        query_faa_file = rbh_dir / query_file.with_suffix(&#34;.faa&#34;).name
+        if query_file.suffix in config.fasta_suffixs:
+            shutil.copy(query_file, query_faa_file)
+        elif query_file.suffix in config.gbk_suffixs and not query_faa_file.exists():
+            Genbank(query_file).write_cds_fasta(query_faa_file)
+        # Run MMseqs RBH search
+        query_name = query_file.with_suffix(&#34;&#34;).name
+        ref_name = ref_file.with_suffix(&#34;&#34;).name
+        target_info = f&#34;{query_name} vs {ref_name}[reference]&#34;
+        rbh_result_file = rbh_dir / f&#34;{query_name}_vs_reference_rbh.tsv&#34;
+        if force or not rbh_result_file.exists():
+            print(f&#34;# Run MMseqs RBH search ({target_info})&#34;)
+            run_mmseqs_rbh_search(
+                query_faa_file, ref_faa_file, rbh_result_file, mmseqs_evalue, thread_num
+            )
+        else:
+            print(f&#34;# Reuse previous MMseqs RBH search result ({target_info})&#34;)
+        rbh_result_files.append(rbh_result_file)
+
+    # Setup Circos config
+    circos_config = CircosConfig(
+        ref_gbk=ref_gbk,
+        outdir=outdir,
+        ticks_labelsize=ticks_labelsize,
+        # Radius
+        forward_cds_r=forward_cds_r,
+        reverse_cds_r=reverse_cds_r,
+        rrna_r=rrna_r,
+        trna_r=trna_r,
+        conserved_cds_r=conserved_cds_r,
+        gc_content_r=gc_content_r,
+        gc_skew_r=gc_skew_r,
+        # Color
+        forward_cds_color=forward_cds_color,
+        reverse_cds_color=reverse_cds_color,
+        rrna_color=rrna_color,
+        trna_color=trna_color,
+        conserved_cds_color=conserved_cds_color,
+        gc_content_p_color=gc_content_p_color,
+        gc_content_n_color=gc_content_n_color,
+        gc_skew_p_color=gc_skew_p_color,
+        gc_skew_n_color=gc_skew_n_color,
+    )
+    for rbh_result_file in rbh_result_files:
+        circos_config.add_conserved_cds_config(rbh_result_file)
+    circos_config.write_config_file()
+
+    # Run COGclassifier for Functional Classification of Reference CDSs
+    if assign_cog_color:
+        cog_dir = outdir / &#34;cogclassifier&#34;
+        cog_classifier_result_file = cog_dir / &#34;classifier_result.tsv&#34;
+        em_print(&#34;Run COGclassifier for Functional Classification of Reference CDSs&#34;)
+        if force or not cog_classifier_result_file.exists():
+            cogclassifier.run(
+                ref_faa_file, cog_dir, thread_num=thread_num, evalue=cog_evalue
+            )
+        else:
+            print(&#34;# Reuse previous COGclassifier result&#34;)
+
+        # Assign COG color to reference CDS
+        if cog_color_json is not None:
+            with open(cog_color_json) as f:
+                config.cog_letter2color = json.load(f)
+        location_id2color = get_location_id2color(
+            cog_classifier_result_file, config.cog_letter2color
+        )
+        rewrite_circos_cds_color(circos_config.f_cds_file, location_id2color)
+        rewrite_circos_cds_color(circos_config.r_cds_file, location_id2color)
+
+    # Run Circos
+    em_print(&#34;Run Circos&#34;)
+    cmd = f&#34;circos -conf {circos_config.config_file}&#34;
+    print(f&#34;$ {cmd}\n&#34;)
+    sp.run(cmd, shell=True)
+
+    # Plot legend for Circos result
+    circos_legend_dir = outdir / &#34;circos_legend&#34;
+    CircosLegend(
+        circos_config,
+        config.cog_letter2color,
+        config.cog_letter2desc,
+        circos_legend_dir,
+    ).plot_all_legends()</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.add_bin_path"><code class="name flex">
+<span>def <span class="ident">add_bin_path</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add executable binary path to PATH</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_bin_path() -&gt; None:
+    &#34;&#34;&#34;Add executable binary path to PATH&#34;&#34;&#34;
+    os_name = platform.system()  # &#39;Windows&#39; or &#39;Darwin&#39; or &#39;Linux&#39;
+    bin_path = Path(__file__).parent / &#34;bin&#34; / os_name
+    sep = &#34;;&#34; if os_name == &#34;Windows&#34; else &#34;:&#34;
+    env_path = f&#34;{os.environ[&#39;PATH&#39;]}{sep}{bin_path}&#34;
+    os.environ[&#34;PATH&#34;] = env_path</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.run_mmseqs_rbh_search"><code class="name flex">
+<span>def <span class="ident">run_mmseqs_rbh_search</span></span>(<span>query_fasta_file: pathlib.Path, ref_fasta_file: pathlib.Path, rbh_result_file: pathlib.Path, evalue: float = 0.001, thread_num: int = 1) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Run MMseqs rbh search</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>query_fasta_file</code></strong> :&ensp;<code>Path</code></dt>
+<dd>Query fasta file</dd>
+<dt><strong><code>ref_fasta_file</code></strong> :&ensp;<code>Path</code></dt>
+<dd>Reference fasta file</dd>
+<dt><strong><code>rbh_result_file</code></strong> :&ensp;<code>Path</code></dt>
+<dd>RBH result file</dd>
+<dt><strong><code>evalue</code></strong> :&ensp;<code>float</code>, optional</dt>
+<dd>E-value</dd>
+<dt><strong><code>thread_num</code></strong> :&ensp;<code>int</code>, optional</dt>
+<dd>Thread number</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def run_mmseqs_rbh_search(
+    query_fasta_file: Path,
+    ref_fasta_file: Path,
+    rbh_result_file: Path,
+    evalue: float = 1e-3,
+    thread_num: int = 1,
+) -&gt; None:
+    &#34;&#34;&#34;Run MMseqs rbh search
+
+    Args:
+        query_fasta_file (Path): Query fasta file
+        ref_fasta_file (Path): Reference fasta file
+        rbh_result_file (Path): RBH result file
+        evalue (float, optional): E-value
+        thread_num (int, optional): Thread number
+    &#34;&#34;&#34;
+    with tempfile.TemporaryDirectory() as tmpdir:
+        cmd = (
+            f&#34;mmseqs easy-rbh {query_fasta_file} {ref_fasta_file} {rbh_result_file} &#34;
+            + f&#34;{tmpdir} -e {evalue} --threads {thread_num} -v 0&#34;
+        )
+        print(f&#34;$ {cmd}\n&#34;)
+        sp.run(cmd, shell=True)</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.get_location_id2color"><code class="name flex">
+<span>def <span class="ident">get_location_id2color</span></span>(<span>cog_classifier_result_file: pathlib.Path, cog_letter2color: Dict[str, str]) ‑> Dict[str, str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get CDS location ID &amp; Color dict</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>cog_classifier_result_file</code></strong> :&ensp;<code>Path</code></dt>
+<dd>COGclassifier result file</dd>
+<dt><strong><code>cog_letter2color</code></strong> :&ensp;<code>Dict[str, str]</code></dt>
+<dd>COG letter &amp; Color dict</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>Dict[str, str]</code></dt>
+<dd>CDS location ID &amp; COG Color dict</dd>
+</dl>
+<h2 id="notes">Notes</h2>
+<p>CDS location ID = "start end strand" (e.g. "300 1000 +")</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_location_id2color(
+    cog_classifier_result_file: Path,
+    cog_letter2color: Dict[str, str],
+) -&gt; Dict[str, str]:
+    &#34;&#34;&#34;Get CDS location ID &amp; Color dict
+
+    Args:
+        cog_classifier_result_file (Path): COGclassifier result file
+        cog_letter2color (Dict[str, str]): COG letter &amp; Color dict
+
+    Returns:
+        Dict[str, str]: CDS location ID &amp; COG Color dict
+
+    Notes:
+        CDS location ID = &#34;start end strand&#34; (e.g. &#34;300 1000 +&#34;)
+    &#34;&#34;&#34;
+    df = pd.read_csv(cog_classifier_result_file, delimiter=&#34;\t&#34;)
+    location_id2color = defaultdict(str)
+    for query_id, cog_letter in zip(df[&#34;QUERY_ID&#34;], df[&#34;COG_LETTER&#34;]):
+        location_id = query_id.split(&#34;|&#34;)[1].replace(&#34;_&#34;, &#34; &#34;)
+        location_id2color[location_id] = cog_letter2color[cog_letter]
+    return location_id2color</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.rewrite_circos_cds_color"><code class="name flex">
+<span>def <span class="ident">rewrite_circos_cds_color</span></span>(<span>circos_cds_file: pathlib.Path, location_id2color: Dict[str, str]) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Rewrite Circos CDS color to COG classification color</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>circos_cds_file</code></strong> :&ensp;<code>Path</code></dt>
+<dd>Circos CDS file</dd>
+<dt><strong><code>location_id2color</code></strong> :&ensp;<code>Dict[str, str]</code></dt>
+<dd>CDS location ID &amp; COG Color dict</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rewrite_circos_cds_color(
+    circos_cds_file: Path, location_id2color: Dict[str, str]
+) -&gt; None:
+    &#34;&#34;&#34;Rewrite Circos CDS color to COG classification color
+
+    Args:
+        circos_cds_file (Path): Circos CDS file
+        location_id2color (Dict[str, str]): CDS location ID &amp; COG Color dict
+    &#34;&#34;&#34;
+    contents = &#34;&#34;
+    with open(circos_cds_file) as f:
+        for line in f.read().splitlines():
+            location_id = &#34; &#34;.join(line.split(&#34; &#34;)[1:4])
+            color = location_id2color.get(location_id, config.cog_letter2color[&#34;-&#34;])
+            hexcolor = mpl.colors.to_hex(color).lstrip(&#34;#&#34;)
+            contents += &#34; &#34;.join(line.split(&#34; &#34;)[0:4]) + f&#34; color={hexcolor}\n&#34;
+    with open(circos_cds_file, &#34;w&#34;) as f:
+        f.write(contents)</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.em_print"><code class="name flex">
+<span>def <span class="ident">em_print</span></span>(<span>content: str) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Emphasis print content</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>content</code></strong> :&ensp;<code>str</code></dt>
+<dd>Print content</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def em_print(content: str) -&gt; None:
+    &#34;&#34;&#34;Emphasis print content
+
+    Args:
+        content (str): Print content
+    &#34;&#34;&#34;
+    print(f&#34;\n{&#39;*&#39; * 80}\n* {content}\n{&#39;*&#39;* 80}\n&#34;)</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.generate_cog_color_template"><code class="name flex">
+<span>def <span class="ident">generate_cog_color_template</span></span>(<span>) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate COG color template json file</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_cog_color_template() -&gt; None:
+    &#34;&#34;&#34;Generate COG color template json file&#34;&#34;&#34;
+    color_template_json_file = &#34;cog_color_template.json&#34;
+    with open(color_template_json_file, &#34;w&#34;) as f:
+        json.dump(config.cog_letter2color, f, indent=2)
+    print(f&#34;Generate COG color template json file (&#39;{color_template_json_file}&#39;)&#34;)</code></pre>
+</details>
+</dd>
+<dt id="mgcplotter.mgcplotter.get_args"><code class="name flex">
+<span>def <span class="ident">get_args</span></span>(<span>) ‑> argparse.Namespace</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Get arguments</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>argparse.Namespace</code></dt>
+<dd>Argument values</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_args() -&gt; argparse.Namespace:
+    &#34;&#34;&#34;Get arguments
+
+    Returns:
+        argparse.Namespace: Argument values
+    &#34;&#34;&#34;
+
+    class CustomHelpFormatter(argparse.HelpFormatter):
+        # Change default &#39;max_help_position&#39; (24 -&gt; 30)
+        def __init__(self, prog, indent_increment=2, max_help_position=30, width=None):
+            super().__init__(prog, indent_increment, max_help_position, width)
+
+    desc = &#34;Microbial Genome Circular plotting tool&#34;
+    parser = argparse.ArgumentParser(
+        description=desc, add_help=False, formatter_class=CustomHelpFormatter
+    )
+
+    # General Options
+    general_opts = parser.add_argument_group(&#34;General Options&#34;)
+    general_opts.add_argument(
+        &#34;-r&#34;,
+        &#34;--ref_file&#34;,
+        required=True,
+        type=Path,
+        help=&#34;Reference genome genbank file (*.gb|*.gbk|*.gbff)&#34;,
+        metavar=&#34;R&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-o&#34;,
+        &#34;--outdir&#34;,
+        required=True,
+        type=Path,
+        help=&#34;Output directory&#34;,
+        metavar=&#34;O&#34;,
+    )
+    valid_query_suffixs = &#34;|&#34;.join([f&#34;*{s}&#34; for s in config.valid_query_suffixs])
+    general_opts.add_argument(
+        &#34;--query_files&#34;,
+        nargs=&#34;+&#34;,
+        type=Path,
+        help=f&#34;Query CDS fasta or genome genbank files ({valid_query_suffixs})&#34;,
+        default=[],
+        metavar=&#34;&#34;,
+    )
+    default_cog_evalue = 1e-2
+    general_opts.add_argument(
+        &#34;--cog_evalue&#34;,
+        type=float,
+        help=f&#34;COGclassifier e-value parameter (Default: {default_cog_evalue:.0e})&#34;,
+        default=default_cog_evalue,
+        metavar=&#34;&#34;,
+    )
+    default_rbh_evalue = 1e-3
+    general_opts.add_argument(
+        &#34;--mmseqs_evalue&#34;,
+        type=float,
+        help=f&#34;MMseqs RBH search e-value parameter (Default: {default_rbh_evalue:.0e})&#34;,
+        default=default_rbh_evalue,
+        metavar=&#34;&#34;,
+    )
+    cpu_num = os.cpu_count()
+    default_thread_num = 1 if cpu_num is None or cpu_num == 1 else cpu_num - 1
+    general_opts.add_argument(
+        &#34;-t&#34;,
+        &#34;--thread_num&#34;,
+        type=int,
+        help=f&#34;Threads number parameter (Default: {default_thread_num})&#34;,
+        default=default_thread_num,
+        metavar=&#34;&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-f&#34;,
+        &#34;--force&#34;,
+        help=&#34;Forcibly overwrite previous calculation result (Default: OFF)&#34;,
+        action=&#34;store_true&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-v&#34;,
+        &#34;--version&#34;,
+        version=f&#34;v{__version__}&#34;,
+        help=&#34;Print version information&#34;,
+        action=&#34;version&#34;,
+    )
+    general_opts.add_argument(
+        &#34;-h&#34;,
+        &#34;--help&#34;,
+        help=&#34;Show this help message and exit&#34;,
+        action=&#34;help&#34;,
+    )
+
+    # Graph Size Options
+    size_opts = parser.add_argument_group(&#34;Graph Size Options&#34;)
+    default_ticks_labelsize = 35
+    size_opts.add_argument(
+        &#34;--ticks_labelsize&#34;,
+        type=float,
+        help=f&#34;Ticks label size (Default: {default_ticks_labelsize})&#34;,
+        default=default_ticks_labelsize,
+        metavar=&#34;&#34;,
+    )
+    for k, v in config.radius_args_dict.items():
+        # Track radius control arguments
+        size_opts.add_argument(
+            f&#34;--{k}&#34;,
+            type=float,
+            help=f&#34;{v.desc} (Default: {v.default})&#34;,
+            default=v.default,
+            metavar=&#34;&#34;,
+        )
+
+    # Graph Color Options
+    color_opts = parser.add_argument_group(&#34;Graph Color Options&#34;)
+    color_opts.add_argument(
+        &#34;--assign_cog_color&#34;,
+        help=&#34;Assign COG classification color to reference CDSs (Default: OFF)&#34;,
+        action=&#34;store_true&#34;,
+    )
+    color_opts.add_argument(
+        &#34;--cog_color_json&#34;,
+        type=Path,
+        help=&#34;User-defined COG classification color json file&#34;,
+        default=None,
+        metavar=&#34;&#34;,
+    )
+    for k, v in config.color_args_dict.items():
+        # Color control arguments
+        color_opts.add_argument(
+            f&#34;--{k}&#34;,
+            type=str,
+            help=f&#34;{v.desc} (Default: &#39;{v.default}&#39;)&#34;,
+            default=v.default,
+            metavar=&#34;&#34;,
+        )
+    args = parser.parse_args()
+
+    # Argument value validation check
+    err_info = &#34;&#34;
+    if not args.ref_file.exists():
+        err_info += f&#34;-r/--ref_file: File not found &#39;{args.ref_file}&#39;\n&#34;
+    for f in args.query_files:
+        if f.suffix not in config.valid_query_suffixs:
+            err_info += f&#34;&#39;{f.suffix}&#39; is invalid file suffix ({f.name})\n&#34;
+    for k, v in args.__dict__.items():
+        if k in config.color_args_dict.keys():
+            if not mpl.colors.is_color_like(v):
+                err_info += f&#34;--{k}: &#39;{v}&#39; is invalid color like string\n&#34;
+        elif k in config.radius_args_dict.keys():
+            if not 0 &lt;= v &lt;= 0.3:
+                err_info += f&#34;--{k}: &#39;{v}&#39; is invalid value range (0 &lt;= value &lt;= 0.3)\n&#34;
+
+    if args.cog_color_json is not None:
+        if not args.cog_color_json.exists():
+            err_info += f&#34;--cog_color_json: File not found &#39;{args.cog_color_json}&#39;\n&#34;
+        else:
+            with open(args.cog_color_json) as f:
+                cog_color_json_dict: Dict[str, str] = json.load(f)
+            for k, v in cog_color_json_dict.items():
+                if k not in config.cog_letter2color:
+                    err_info += f&#34;--cog_color_json: &#39;{k}&#39; is not COG letter\n&#34;
+                if not mpl.colors.is_color_like(v):
+                    err_info += f&#34;--cog_color_json: &#39;{v}&#39; is not color like string\n&#34;
+
+    if err_info != &#34;&#34;:
+        parser.error(&#34;\n&#34; + err_info)
+
+    return args</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="mgcplotter" href="index.html">mgcplotter</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="mgcplotter.mgcplotter.main" href="#mgcplotter.mgcplotter.main">main</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.run" href="#mgcplotter.mgcplotter.run">run</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.add_bin_path" href="#mgcplotter.mgcplotter.add_bin_path">add_bin_path</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.run_mmseqs_rbh_search" href="#mgcplotter.mgcplotter.run_mmseqs_rbh_search">run_mmseqs_rbh_search</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.get_location_id2color" href="#mgcplotter.mgcplotter.get_location_id2color">get_location_id2color</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.rewrite_circos_cds_color" href="#mgcplotter.mgcplotter.rewrite_circos_cds_color">rewrite_circos_cds_color</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.em_print" href="#mgcplotter.mgcplotter.em_print">em_print</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.generate_cog_color_template" href="#mgcplotter.mgcplotter.generate_cog_color_template">generate_cog_color_template</a></code></li>
+<li><code><a title="mgcplotter.mgcplotter.get_args" href="#mgcplotter.mgcplotter.get_args">get_args</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
