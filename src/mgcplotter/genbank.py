@@ -145,7 +145,7 @@ class Genbank:
         """Write CDS protein features fasta file
 
         Args:
-            fasta_outfile (Union[str, Path]): _description_
+            fasta_outfile (Union[str, Path]): CDS fasta file
         """
         features = self.extract_all_features("CDS", None)
         cds_seq_records: List[SeqRecord] = []
