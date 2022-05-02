@@ -173,7 +173,7 @@ class Genbank:
         &#34;&#34;&#34;Write CDS protein features fasta file
 
         Args:
-            fasta_outfile (Union[str, Path]): _description_
+            fasta_outfile (Union[str, Path]): CDS fasta file
         &#34;&#34;&#34;
         features = self.extract_all_features(&#34;CDS&#34;, None)
         cds_seq_records: List[SeqRecord] = []
@@ -383,7 +383,7 @@ class Genbank:
         &#34;&#34;&#34;Write CDS protein features fasta file
 
         Args:
-            fasta_outfile (Union[str, Path]): _description_
+            fasta_outfile (Union[str, Path]): CDS fasta file
         &#34;&#34;&#34;
         features = self.extract_all_features(&#34;CDS&#34;, None)
         cds_seq_records: List[SeqRecord] = []
@@ -677,7 +677,7 @@ def contig_seqs(self) -&gt; List[str]:
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>fasta_outfile</code></strong> :&ensp;<code>Union[str, Path]</code></dt>
-<dd><em>description</em></dd>
+<dd>CDS fasta file</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -690,7 +690,7 @@ def contig_seqs(self) -&gt; List[str]:
     &#34;&#34;&#34;Write CDS protein features fasta file
 
     Args:
-        fasta_outfile (Union[str, Path]): _description_
+        fasta_outfile (Union[str, Path]): CDS fasta file
     &#34;&#34;&#34;
     features = self.extract_all_features(&#34;CDS&#34;, None)
     cds_seq_records: List[SeqRecord] = []
